@@ -1,8 +1,8 @@
 import SearchBar from "./SearchBar";
-
+import heroSectionImage from '../assets/heroSectionImage.svg'
 const Hero = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
+    <div className="max-w-7xl  mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
 
       {/* Left Content */}
       <div>
@@ -28,7 +28,7 @@ const Hero = () => {
       {/* Right Illustration */}
       <div className="flex justify-center">
         <img
-          src="/hero-illustration.svg"
+          src={heroSectionImage}
           alt="Hero"
           className="max-w-md"
         />
