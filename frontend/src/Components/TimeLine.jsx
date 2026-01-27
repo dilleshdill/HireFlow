@@ -1,36 +1,54 @@
+import { UserPlus, UploadCloud, Search, CheckCircle } from "lucide-react";
 
-import { useState } from 'react';
-import { Stepper, Button, Group } from '@mantine/core';
-
-const TimeLine = () => {
-  const [active, setActive] = useState(1);
-  const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+export default function HowItWorks() {
+  const steps = [
+    {
+      icon: <UserPlus className="w-6 h-6 text-blue-600" />,
+      title: "Create account",
+      desc: "Aliquam facilisis egestas sapien, nec tempor leo tristique at."
+    },
+    {
+      icon: <Search className="w-6 h-6 text-blue-600" />,
+      title: "Find suitable job",
+      desc: "Phasellus quis eleifend ex. Morbi nec fringilla nibh."
+    },
+    {
+      icon: <UploadCloud className="w-6 h-6 text-blue-600" />,
+      title: "Upload CV/Resume",
+      desc: "Curabitur sit amet maximus ligula. Nam a nulla ante."
+    },
+    
+    {
+      icon: <CheckCircle className="w-6 h-6 text-blue-600" />,
+      title: "Apply job",
+      desc: "Curabitur sit amet maximus ligula. Nam sodales purus."
+    }
+  ];
 
   return (
-    <>
-      <Stepper active={active} onStepClick={setActive}>
-        <Stepper.Step label="First step" description="Create an account">
-          Step 1 content: Create an account
-        </Stepper.Step>
-        <Stepper.Step label="Second step" description="Verify email">
-          Step 2 content: Verify email
-        </Stepper.Step>
-        <Stepper.Step label="Final step" description="Get full access">
-          Step 3 content: Get full access
-        </Stepper.Step>
-        <Stepper.Completed>
-          Completed, click back button to get to previous step
-        </Stepper.Completed>
-      </Stepper>
+    <div className="bg-gray-100 py-16">
+      <h2 className="text-center text-3xl font-semibold mb-12">
+        How HireFlow work
+      </h2>
 
-      <Group justify="center" mt="xl">
-        <Button variant="default" onClick={prevStep}>Back</Button>
-        <Button onClick={nextStep}>Next step</Button>
-      </Group>
-    </>
+      <div className="flex justify-center gap-16 px-6">
+        {steps.map((item, idx) => (
+          <div key={idx} className="flex flex-col items-center max-w-xs text-center relative">
+            
+            <div className="w-16 h-16 rounded-full bg-white shadow flex items-center justify-center mb-4">
+              {item.icon}
+            </div>
+
+            <h3 className="font-semibold text-lg">{item.title}</h3>
+            <p className="text-sm text-gray-500 mt-2">{item.desc}</p>
+
+            
+            {idx < steps.length - 1 && (
+              <div className="absolute top-8 -right-20 w-32 h-10 border-t-2 border-dashed border-blue-300 rounded-full"></div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
-
-
-export default TimeLine
