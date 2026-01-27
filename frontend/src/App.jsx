@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import { Route ,Routes } from 'react-router-dom'
 import Home from './Pages/Home.jsx'
 import Login from './Pages/Login.jsx'
+import EmailVerficationPage from './Pages/EmailVerficationPage.jsx'
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/email-verification' element={<EmailVerficationPage />} />
       </Routes>
     </>
   )

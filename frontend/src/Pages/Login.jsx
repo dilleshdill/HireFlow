@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 
 const Login = () => {
     const [state, setState] = useState("login")
+
     const [formData, setFormData] = React.useState({
             name: '',
             email: '',
             password: ''
         })
+    
+    const Data = []
 
     const handleSubmit = async (e) => {
         e.preventDefault()
