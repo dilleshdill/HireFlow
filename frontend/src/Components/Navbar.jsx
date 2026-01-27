@@ -35,7 +35,7 @@ const Navbar = () => {
       </div>
 
       {/* 🔹 Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
 
         {/* Logo */}
         <div className="flex items-center gap-2">

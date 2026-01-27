@@ -2,7 +2,8 @@ import SearchBar from "./SearchBar";
 import heroSectionImage from '../assets/heroSectionImage.svg'
 const Hero = () => {
   return (
-    <div className="max-w-7xl  mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
+    <div className="bg-gray-100">
+        <div className=" max-w-7xl  mx-auto px-4 py-16 grid md:grid-cols-2 gap-10 items-center">
 
       {/* Left Content */}
       <div>
@@ -33,6 +34,7 @@ const Hero = () => {
           className="max-w-md"
         />
       </div>
+    </div>
     </div>
   );
 };
