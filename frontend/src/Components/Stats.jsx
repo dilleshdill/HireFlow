@@ -7,7 +7,8 @@ const stats = [
 
 const Stats = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 pb-5 grid grid-cols-2 md:grid-cols-4 gap-6">
       {stats.map((item, i) => (
         <div
           key={i}
@@ -17,6 +18,7 @@ const Stats = () => {
           <p className="text-sm text-gray-500 mt-1">{item.label}</p>
         </div>
       ))}
+    </div>
     </div>
   )
 }

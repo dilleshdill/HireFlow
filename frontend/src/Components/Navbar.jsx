@@ -13,7 +13,7 @@ const Navbar = () => {
             <Link to='/' className="text-[#0A65CC] font-medium text-sm border-b-2 border-[#0A65CC]">
               Home
             </Link>
-            <Link to='find-job' className="hover:text-[#0A65CC] text-sm cursor-pointer">Find Job</Link>
+            <Link to='find-jobs' className="hover:text-[#0A65CC] text-sm cursor-pointer">Find Job</Link>
             <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Employers</li>
             <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Candidates</li>
             <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Pricing Plans</li>

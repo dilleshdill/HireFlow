@@ -7,6 +7,7 @@ import Login from './Pages/Login.jsx'
 import EmailVerficationPage from './Pages/EmailVerficationPage.jsx'
 import UserJobPage from './Pages/UserJobPage.jsx'
 import { User } from 'lucide-react'
+import FindJobs from './Pages/FindJobs.jsx'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/email-verification' element={<EmailVerficationPage />} />
         <Route path="/user/job-page" element={<UserJobPage />} />
+        <Route path='/find-jobs' element={<FindJobs />} />
       </Routes>
     </>
   )
