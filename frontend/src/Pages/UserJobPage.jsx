@@ -1,10 +1,235 @@
 import React from 'react'
+import NavBar from '../Components/Navbar.jsx'
+import { Link,Phone,Mail,Bookmark,MoveRight,CalendarDays,Timer,GraduationCap, Wallet,MapPin,BriefcaseBusiness ,ShieldCheck} from 'lucide-react';
+import { Facebook,Twitter,MessageCircle,Youtube } from 'lucide-react';
+import RelatedJobs from '../Components/RelatedJobs.jsx';
+
+const Responsibilites = [
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  {
+    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
+  },
+  
+  
+]
 
 const UserJobPage = () => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <NavBar />
+      <div className='w-full bg-gray-200 pt-3 pb-3'>
+        <div className = "flex max-w-7xl mx-auto justify-between px-4">
+            <h1 className='text-lg'>Job Detailes</h1>
+            <div className='flex'>
+            <p className='text-md text-gray-400'>Home/JobFind/JobDetailes</p>
+            </div>
+          </div>
+      </div>
+      <div className='w-full'>
+        <div className = "flex flex-col max-w-7xl mx-auto justify-between px-4">
+          <div className='flex w-full justify-between items-center'>
+            <div className='flex items-center gap-5 mt-5'>
+              <img 
+              src='https://uttrakhandcoldandcuttings.co.in/images/Instagram-Log-in.jpg'
+              className='h-20 w-20 rounded-full'/>
+              <div className='flex flex-col gap-2'>
+                  <div className='flex gap-5'>
+                    <p className='text-xl'>Senior UX Designer</p>
+                    <button className='bg-red-200 text-red-500 rounded-lg text-sm px-2 py-1'>
+                      Featured
+                    </button>
+                    <button className='bg-green-200 text-green-500 rounded-lg text-sm px-2 py-1'>
+                      Full Time
+                    </button>
+                  </div>
+                  <div className='flex gap-3'>
+                    <div className='flex items-center gap-1'>
+                        <Link size={15} className='text-blue-400'/>
+                        <p className='text-sm'>http://localhost:5000</p>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                        <Phone size={15} className='text-blue-400'/>
+                        <p className='text-sm'>9010144168</p>
+                    </div>
+                    <div className='flex items-center gap-1' >
+                        <Mail size={15} className='text-blue-400'/>
+                        <p className='text-sm'>tarunbommana798@gmail.com</p>
+                    </div>
+                  </div>
+              </div>
+          
+            </div>
+            <div className='flex flex-col'>
+              <div className='flex gap-3'>
+                  <button className='bg-blue-100 p-2 rounded-sm'>
+                    <Bookmark size={20} className="text-blue-400"/>
+                  </button>
+                    <div className='flex bg-blue-600 px-6 py-2 items-center gap-1 rounded-sm'>
+                      <p className='text-white'>Apply Now</p>
+                      <MoveRight size={20} className='text-white'/>
+                    </div>
+              </div>
+              <div className='flex justify-end '>
+                <p className='text-gray-500 font-bold text-sm'>Job Expired : </p>
+                <p className='text-red-400 text-sm'>Jan 23,2026</p>
+              </div>
+
+            </div>
+            
+          </div>
+          <div className='flex mt-5 gap-16'>
+            <div className='flex flex-col max-w-3xl'>
+              <h1 className='text-gray-600 text-lg font-semibold'>Job Description</h1>
+              <p className='text-gray-500 mt-3'>Job Description
+                Integer aliquet pretium consequat. Donec et sapien id leo accumsan pellentesque eget maximus tellus. Duis et est ac 
+                leo rhoncus tincidunt vitae vehicula augue. Donec in suscipit diam. Pellentesque quis justo sit amet arcu commodo sollicitudin. Integer 
+                finibus blandit condimentum. Vivamus sit amet ligula ullamcorper, 
+                pulvinar ante id, tristique erat. Quisque sit amet aliquam urna. Maecenas blandit felis id massa sodales finibus. Integer bibendum eu nulla eu 
+                sollicitudin. Sed lobortis diam tincidunt accumsan faucibus. Quisque blandit augue quis turpis auctor, dapibus euismod ante ultricies. Ut non felis lacinia turpis feugiat euismod at id magna. Sed ut orci arcu. Suspendisse sollicitudin faucibus aliquet.
+                Nam dapibus consectetur erat in euismod. Cras urna augue, mollis venenatis augue sed, porttitor aliquet nibh. Sed tristique dictum elementum. Nulla imperdiet sit amet quam eget lobortis. Etiam in neque sit amet orci interdum tincidunt.
+                
+                  sollicitudin. Sed lobortis diam tincidunt accumsan faucibus. Quisque blandit augue quis turpis auctor, dapibus euismod ante ultricies. Ut non felis lacinia turpis feugiat euismod at id magna. Sed ut orci arcu. Suspendisse sollicitudin faucibus aliquet.
+                Nam dapibus consectetur erat in euismod. Cras urna augue, mollis venenatis augue sed, porttitor aliquet nibh. Sed tristique dictum elementum. Nulla imperdiet sit amet quam eget lobortis. Etiam in neque sit amet orci interdum tincidunt.</p>
+            
+                <h1 className='text-gray-600 text-lg font-semibold mt-4'>Responsibilites</h1>
+                <div className='px-7'>
+                  {
+                  Responsibilites.map(each => (
+                    <li className='text-gray-400 mb-2'>{each.data}</li>
+                  ))
+                }
+                </div>
+                <div className='flex mt-5 gap-2'>
+                <h1 className="text-gray-600 font-medium">Share this job:</h1>
+                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
+                    <Facebook className='text-blue-700'/>
+                    <p className='text-blue-700'>FaceBook</p>
+
+                </div>
+                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
+                    <Twitter className='text-blue-400'/>
+                    <p className='text-blue-400'>Twitter</p>
+
+                </div>
+                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
+                    <MessageCircle className='text-green-500'/>
+                    <p className='text-green-500'>WhatsApp</p>
+
+                </div>
+              </div>
+
+            </div>
+            <div className='flex flex-col gap-3'>
+              <div className='border-2 border-gray-300 p-5'>
+                <h1 className='text-lg text-gray-500 font-semibold'>Job OverView</h1>
+                <div className='p-2 grid sm:grid-cols-2 md:grid-cols-3 gap-12'>
+                  <div className='flex flex-col gap-1'>
+                    <CalendarDays size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Job Posted</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <Timer size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Job Expires In</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <GraduationCap size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Education</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <Wallet  size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Salary</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <MapPin size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Location</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <BriefcaseBusiness size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Job Time</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                  <div className='flex flex-col gap-1'>
+                    <ShieldCheck size={30} className='text-blue-400'/>
+                    <p className='text-gray-500 font-bold'>Experience</p>
+                    <p className=''>14,Jan 2026</p>
+                  </div>
+                </div>
+                
+              </div>
+              <div className='flex flex-col gap-2 border-2 border-gray-300 p-5'>
+                  <div className='flex gap-3 items-center'>
+                      <img 
+                        src='https://uttrakhandcoldandcuttings.co.in/images/Instagram-Log-in.jpg'
+                        className='h-15 w-15 rounded-md'/>
+                        <div className='flex flex-col gap-1'>
+                            <p className='text-lg'>Senior UX Designer</p>
+                            <p className='text-md text-gray-400'>Social Networking Service</p>
+                        </div>
+                  </div>
+                  <div className='flex justify-between'>
+                    <p className='text-gray-400 font-medium'>Founded in:</p>
+                    <p className='text-sm'>17 2008</p>
+                  </div>
+                  <div className='flex justify-between'>
+                    <p className='text-gray-400 font-medium'>Founded in:</p>
+                    <p className='text-sm'>Private Compayn</p>
+                  </div>
+                  <div className='flex justify-between'>
+                    <p className='text-gray-400 font-medium'>Founded in:</p>
+                    <p className='text-sm'>17 2008</p>
+                  </div>
+                  <div className='flex justify-between'>
+                    <p className='text-gray-400 font-medium'>Founded in:</p>
+                    <p className='text-sm'>17 2008</p>
+                  </div>
+                  <div className='flex justify-between'>
+                    <p className='text-gray-400 font-medium'>Founded in:</p>
+                    <p className='text-sm'>17 2008</p>
+                  </div>
+                  <div className='flex gap-2 mt-2'>
+                      <div className='bg-blue-200 p-1.5 rounded-md'>
+                        <Facebook className='text-blue-400'/>
+                      </div>
+                      <div className='bg-blue-800 p-1.5 rounded-md'>
+                        <Twitter className='text-white'/>
+                      </div>
+                      <div className='bg-green-200 p-1.5 rounded-md'>
+                        <MessageCircle className='text-green-600'/>
+                      </div>
+                      <div className='bg-red-200 p-1.5 rounded-md'>
+                        <Youtube className='text-red-500' />
+                      </div>
+                  </div>
+              </div>
+              
+              
+            </div>
+          </div>
+          <div>
+            <RelatedJobs />
+          </div>
+        </div> 
+      </div>  
+    </>
   )
 }
 
