@@ -6,12 +6,13 @@ import Home from './Pages/Home.jsx'
 import Login from './Pages/Login.jsx'
 import EmailVerficationPage from './Pages/EmailVerficationPage.jsx'
 import UserJobPage from './Pages/UserJobPage.jsx'
-import { User } from 'lucide-react'
+import { ImageOff, User } from 'lucide-react'
 import FindJobs from './Pages/FindJobs.jsx'
 import RecruterCompanyPage from './Pages/RecruterCompanyPage.jsx'
 import FindCompanis from './Pages/FindCompanis.jsx'
 import FindCandidates from './Pages/FindCandidates.jsx'
 import UserDashboard from './Pages/UserDashboard.jsx'
+import CompanyRegistrationPage from './Pages/CompanyRegistrationPage.jsx'
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path='/find-companies' element={<FindCompanis />} />
         <Route path='/find-candidates' element={<FindCandidates />} />
         <Route path='/user-dashboard' element={<UserDashboard />} />
+        <Route path='/company-registration' element={<CompanyRegistrationPage />} />
       </Routes>
     </>
   )
