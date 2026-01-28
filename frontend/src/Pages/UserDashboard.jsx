@@ -165,7 +165,7 @@ const jobs = [
       {/* <Navbar /> */}
 
       {/* Content wrapper */}
-      <div className="flex flex-1 max-w-7xl mx-auto w-full px-4 py-4 gap-4">
+      <div className="flex flex-1 max-w-9xl mx-auto w-full px-4 py-4 gap-4">
 
         {/* Sidebar */}
         <div className="w-64 pl-4 pt-4 pb-4 border-r border-gray-200  hidden sm:block sticky top-0 h-[calc(100vh-64px)]">
@@ -197,7 +197,7 @@ const jobs = [
 
 
         {/* Main Content */}
-        <div className="flex-1 p-4 overflow-y-auto h-[calc(100vh-64px)]">
+        <div className="flex-1 max-w-6xl p-4 overflow-y-auto h-[calc(100vh-64px)]">
           {selectedSidebar === "overview" && (
             <>
                 <div className="flex flex-col gap-1">
