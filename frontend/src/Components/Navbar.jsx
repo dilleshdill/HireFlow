@@ -2,7 +2,7 @@ import { Search, Phone } from "lucide-react";
 import {Link} from 'react-router-dom'
 const Navbar = () => {
   return (
-    <header className="w-full bg-white ">
+    <header className="w-full bg-white  ">
 
       {/* 🔹 Top Bar */}
       <div className="bg-gray-100 text-xs text-gray-600">

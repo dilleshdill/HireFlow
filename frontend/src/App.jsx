@@ -13,7 +13,7 @@ import FindCompanis from './Pages/FindCompanis.jsx'
 import FindCandidates from './Pages/FindCandidates.jsx'
 import UserDashboard from './Pages/UserDashboard.jsx'
 import CompanyRegistrationPage from './Pages/CompanyRegistrationPage.jsx'
-
+import RecruiterPostJob from './Components/Recruiter/RecruiterPostJob.jsx'
 const App = () => {
   return (
     <>
@@ -29,6 +29,7 @@ const App = () => {
         <Route path='/find-candidates' element={<FindCandidates />} />
         <Route path='/user-dashboard' element={<UserDashboard />} />
         <Route path='/company-registration' element={<CompanyRegistrationPage />} />
+        <Route path='/recruiter-dashboard' element={<RecruiterPostJob />} />
       </Routes>
     </>
   )
