@@ -1,4 +1,3 @@
-
 import React from 'react'
 import {
   Briefcase,
@@ -12,10 +11,10 @@ import {
   Bookmark,
   Calendar,
   DollarSign,
+  CirclePlus,
 } from "lucide-react";
-const UserJobAlerts = () => {
 
-  const jobAlerts = [
+  const favoriteJobs = [
     {
       id: 1,
       name: "Tech Solutions Inc.",
@@ -25,7 +24,7 @@ const UserJobAlerts = () => {
       status: "active",
       type: "full-time",
       salary: "$120,000 / year",
-      postedDate: "4",
+      postedDate: "expired",
     },
     {
       id: 2,
@@ -58,7 +57,7 @@ const UserJobAlerts = () => {
       status: "pending",
       type: "full-time",
       salary: "$105,000 / year",
-      postedDate: "4",
+      postedDate: "expired",
     },
     {
       id: 5,
@@ -91,7 +90,7 @@ const UserJobAlerts = () => {
       status: "active",
       type: "full-time",
       salary: "$98,000 / year",
-      postedDate: "3",
+      postedDate: "expired",
     },
     {
       id: 8,
@@ -113,7 +112,7 @@ const UserJobAlerts = () => {
       status: "active",
       type: "full-time",
       salary: "$90,000 / year",
-      postedDate: "7",
+      postedDate: "expired",
     },
     {
       id: 10,
@@ -127,10 +126,11 @@ const UserJobAlerts = () => {
       postedDate: "1",
     },
   ];
+const UserFavoriteJobs = () => {
   return (
     <div>
         <div className="flex items-center justify-between p-2">
-            <p>Job Alerts(567)</p>
+            <p className='font-medium text-gray-700'>Favorite Jobs(567)</p>
             <div>
             <button
                 onClick={() => setShowAllJobs((prev) => !prev)}
@@ -144,7 +144,7 @@ const UserJobAlerts = () => {
         </div>
         {/* MOBILE VIEW (GRID CARDS) */}
       <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
-        {jobAlerts.map((job) => (
+        {favoriteJobs.map((job) => (
           <div
             key={job.id}
             className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
@@ -183,7 +183,7 @@ const UserJobAlerts = () => {
 
       {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
       <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
-        {jobAlerts.map((job) => (
+        {favoriteJobs.map((job) => (
           <div
             key={job.id}
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
@@ -217,8 +217,16 @@ const UserJobAlerts = () => {
                     {job.salary} 
                   </div>
                   <div className="flex items-center gap-1">
-                    <Calendar className="size-4" />
-                    {job.postedDate} Days Remaining
+                    
+                    {job.postedDate === "expired" ? (
+                        <div className='flex gap-1'>
+                            <CirclePlus className='size-3 text-red-500' />
+                            <p className='text-red-500 text-xs'>Job Expired</p>
+                        </div>
+                    ):(<div className='flex gap-1 items-center'>
+                        <Calendar className="size-4" />
+                        <p>{job.postedDate} Days Remaining</p>
+                        </div>)}
                   </div>
                 </div>
               </div>
@@ -227,7 +235,7 @@ const UserJobAlerts = () => {
             {/* RIGHT */}
             <div className="flex items-center gap-2">
                 <button className="flex items-center text-md text-gray-600 cursor-pointer transition">
-                <Bookmark className='size-5' />
+                <Bookmark className='size-5' fill='black' />
               </button>
 
               <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 cursor-pointer font-medium bg-blue-100 rounded-md hover:bg-blue-600 hover:text-white transition">
@@ -241,4 +249,4 @@ const UserJobAlerts = () => {
   )
 }
 
-export default UserJobAlerts
+export default UserFavoriteJobs
