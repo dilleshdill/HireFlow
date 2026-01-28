@@ -14,6 +14,7 @@ import FindCandidates from './Pages/FindCandidates.jsx'
 import UserDashboard from './Pages/UserDashboard.jsx'
 import CompanyRegistrationPage from './Pages/CompanyRegistrationPage.jsx'
 import RecruiterDashboard from './Pages/RecruiterDashboard.jsx'
+import NotFound from './Pages/NotFound.jsx'
 const App = () => {
   return (
     <>
@@ -30,6 +31,7 @@ const App = () => {
         <Route path='/user-dashboard' element={<UserDashboard />} />
         <Route path='/company-registration' element={<CompanyRegistrationPage />} />
         <Route path='/recruiter-dashboard' element={<RecruiterDashboard />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </>
   )
