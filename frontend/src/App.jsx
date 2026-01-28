@@ -10,6 +10,8 @@ import { User } from 'lucide-react'
 import FindJobs from './Pages/FindJobs.jsx'
 import RecruterCompanyPage from './Pages/RecruterCompanyPage.jsx'
 import FindCompanis from './Pages/FindCompanis.jsx'
+import FindCandidates from './Pages/FindCandidates.jsx'
+import UserDashboard from './Pages/UserDashboard.jsx'
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
         <Route path='/find-jobs' element={<FindJobs />} />
         <Route path='/company-details' element={<RecruterCompanyPage />} />
         <Route path='/find-companies' element={<FindCompanis />} />
+        <Route path='/find-candidates' element={<FindCandidates />} />
+        <Route path='/user-dashboard' element={<UserDashboard />} />
       </Routes>
     </>
   )
