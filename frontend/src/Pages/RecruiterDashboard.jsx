@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import RecruiterPostJob from '../Components/Recruiter/RecruiterPostJob.jsx'
+import RecruiterSettings from "../Components/Recruiter/RecruiterSettings.jsx";
 
 
 const RecruiterDashboard = () => {
@@ -119,10 +120,11 @@ const sidebarData = [
             </>
             )}
 
-            {/* {selectedSidebar === "applied-jobs" && (
+            {selectedSidebar === "settings" && (
                 <>
+                  <RecruiterSettings />
                 </>
-            )} */}
+            )}
 
         </div>
 
