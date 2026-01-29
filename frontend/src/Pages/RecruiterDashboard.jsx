@@ -19,6 +19,7 @@ import {
 import RecruiterPostJob from '../Components/Recruiter/RecruiterPostJob.jsx'
 import RecruiterSettings from "../Components/Recruiter/RecruiterSettings.jsx";
 import RecruiterPostedJobs from "../Components/Recruiter/RecruiterPostedJobs.jsx";
+import SavedCandidates from "../Components/Recruiter/SavedCandidates.jsx";
 
 
 const RecruiterDashboard = () => {
@@ -463,6 +464,12 @@ const sidebarData = [
             {selectedSidebar === "settings" && (
                 <>
                   <RecruiterSettings />
+                </>
+            )}
+
+            {selectedSidebar === "saved-candidates" && (
+                <>
+                  <SavedCandidates />
                 </>
             )}
 
