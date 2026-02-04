@@ -1,4 +1,4 @@
-import SearchBar from "./SearchBar";
+import SearchBar from "../SearchBar";
 import heroSectionImage from '../assets/heroSectionImage.svg'
 const Hero = () => {
   return (
