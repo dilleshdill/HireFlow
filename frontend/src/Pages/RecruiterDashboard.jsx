@@ -21,63 +21,62 @@ import RecruiterSettings from "../Components/Recruiter/RecruiterSettings.jsx";
 import RecruiterPostedJobs from "../Components/Recruiter/RecruiterPostedJobs.jsx";
 import SavedCandidates from "../Components/Recruiter/SavedCandidates.jsx";
 
-
 const RecruiterDashboard = () => {
 
     const [selectedSidebar , setSelectedSidebar] = useState('overview')
     const [showAllJobs, setShowAllJobs] = useState(false);
 
 
-const sidebarData = [
-  {
-    id: 1,
-    icon: <LayoutDashboard />,
-    label: "Overview",
-    value: "overview",
-  },
-  {
-    id: 2,
-    icon: <User />,
-    label: "Profile",
-    value: "profile",
-  },
-  {
-    id: 3,
-    icon: <PlusSquare />,
-    label: "Post a Job",
-    value: "post-job",
-  },
-  {
-    id: 4,
-    icon: <Briefcase />,
-    label: "My Jobs",
-    value: "my-jobs",
-  },
-  {
-    id: 5,
-    icon: <Bookmark />,
-    label: "Saved Candidates",
-    value: "saved-candidates",
-  },
-  {
-    id: 6,
-    icon: <Users />,
-    label: "Employee Profile",
-    value: "employee-profile",
-  },
-  {
-    id: 7,
-    icon: <Building2 />,
-    label: "All Companies",
-    value: "all-companies",
-  },
-  {
-    id: 8,
-    icon: <Settings />,
-    label: "Settings",
-    value: "settings",
-  },
-];
+  const sidebarData = [
+    {
+      id: 1,
+      icon: <LayoutDashboard />,
+      label: "Overview",
+      value: "overview",
+    },
+    {
+      id: 2,
+      icon: <User />,
+      label: "Profile",
+      value: "profile",
+    },
+    {
+      id: 3,
+      icon: <PlusSquare />,
+      label: "Post a Job",
+      value: "post-job",
+    },
+    {
+      id: 4,
+      icon: <Briefcase />,
+      label: "My Jobs",
+      value: "my-jobs",
+    },
+    {
+      id: 5,
+      icon: <Bookmark />,
+      label: "Saved Candidates",
+      value: "saved-candidates",
+    },
+    {
+      id: 6,
+      icon: <Users />,
+      label: "Employee Profile",
+      value: "employee-profile",
+    },
+    {
+      id: 7,
+      icon: <Building2 />,
+      label: "All Companies",
+      value: "all-companies",
+    },
+    {
+      id: 8,
+      icon: <Settings />,
+      label: "Settings",
+      value: "settings",
+    },
+  ];
 
   const jobs = [
     {
@@ -207,11 +206,6 @@ const sidebarData = [
 
   return (
     <div className="min-h-screen flex flex-col">
-
-      {/* Navbar */}
-      {/* <Navbar /> */}
-
-      {/* Content wrapper */}
       <div className="flex flex-1 max-w-9xl mx-auto w-full px-4 py-4 gap-4">
 
         {/* Sidebar */}
