@@ -34,8 +34,8 @@ const Login = () => {
     try {
         const url =
         state === "login"
-            ? DOMAIN + "/api/auth/login"
-            : DOMAIN + "/api/auth/signup"
+            ? DOMAIN + "/auth/login"
+            : DOMAIN + "/auth/signup"
 
         const response = await axios.post(url, payload, {
         withCredentials: true,
