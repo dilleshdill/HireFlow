@@ -93,9 +93,9 @@ const maritalStatus = [
 
 const UserSettings = () => {
     const [progress, setProgress] = useState(1);
-      const [value, setValue] = useState("");
+    //const [value, setValue] = useState("");
       const [showModel,setShowModel] = useState(false)
-    //   const [isSubmit,setSubmit] = useState(false)
+    //const [isSubmit,setSubmit] = useState(false)
   return (
     <div className='w-full bg-white py-5'>
       <div className='max-w-6xl mx-auto'>

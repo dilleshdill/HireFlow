@@ -2,7 +2,7 @@ import React from 'react'
 import pageNotFoundImage from '../assets/pageNotFoundImage.svg'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import Footer from '../Components/HomePageComponents/Footer.jsx'
+import Footer from '../Components/Footer'
 
 const NotFound = () => {
   return (
