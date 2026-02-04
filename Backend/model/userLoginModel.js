@@ -6,7 +6,6 @@ const userLoginSchema = mongoose.Schema({
     },
     password:{
         type:String,
-        
-    }
 
+    }
 })
