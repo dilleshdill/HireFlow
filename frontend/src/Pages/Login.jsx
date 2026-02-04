@@ -8,7 +8,7 @@ const Login = () => {
     const [state, setState] = useState("login");
     const [role , setRole] = useState("User")
 
-    const [formData, setFormData] = React.useState({
+    const [formData, setFormData] = useState({
             name: 'dillesh',
             email: 'dillesh@gmail.com',
             password: '123',
