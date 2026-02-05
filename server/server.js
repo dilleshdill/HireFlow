@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import authRoute from './routes/authRoute.js'
 import { connectDB } from './config/db.js'
+import jobRoute from './routes/jobsRoutes.js'
 
 dotenv.config()
 const app = express()
@@ -31,6 +32,7 @@ app.get('/api/check',(req,res)=>{
 })
 
 app.use('/api/auth',authRoute)
+app.use('/api/job',jobRoute)
 
 await connectDB();
 
