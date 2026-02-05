@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import authRoute from './routes/authRoute.js'
+import { connectDB } from './config/db.js'
 
 dotenv.config()
 const app = express()
@@ -27,6 +29,10 @@ app.get('/api/check',(req,res)=>{
     console.log("Server is Live")
     res.status(200).json({success:true,message:"server is live"})
 })
+
+app.use('/api/auth',authRoute)
+
+await connectDB();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT,()=>{
