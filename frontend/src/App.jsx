@@ -17,6 +17,7 @@ import RecruiterDashboard from './Pages/RecruiterDashboard.jsx'
 import NotFound from './Pages/NotFound.jsx'
 import RecruiterJobPage from './Pages/RecruiterJobPage.jsx'
 import ForgotPage from './Pages/ForgotPage.jsx'
+import ResetPage from './Pages/ResetPage.jsx'
 const App = () => {
   return (
     <>
@@ -35,7 +36,7 @@ const App = () => {
         <Route path='/recruiter-dashboard' element={<RecruiterDashboard />} />
         <Route path='/recruiter-jobpage' element={<RecruiterJobPage />} />
         <Route path="/forgot-password" element={<ForgotPage />} />
-
+        <Route path="/reset-password" element={<ResetPage />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
