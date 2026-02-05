@@ -4,8 +4,18 @@
 
 *{
   font-family: "Outfit", sans-serif;
+  
+}
+
+input{
+  outline: none;
+}
+
+select{
+  outline: none;
 }
 
 ::-webkit-scrollbar{
   display: none;
 }
+
