@@ -1,24 +1,25 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-
+import {useNavigate} from 'react-router-dom'
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const Login = () => {
     const [state, setState] = useState("login");
-    const [role , setRole] = useState("User")
+    const [role , setRole] = useState("USER")
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
             name: 'dillesh',
-            email: 'dillesh@gmail.com',
+            email: 'dangerdil43@gmail.com',
             password: '123',
             role:''
         })
     
     const Data = [
-        { id: "1", role: "User" },
-        { id: "2", role: "Admin" },
-        { id: "3", role: "Recruiter" },
+        { id: "1", role: "USER" },
+        { id: "2", role: "ADMIN" },
+        { id: "3", role: "RECRUITER" },
     ]
 
     const handleSubmit = async (e) => {
@@ -34,14 +35,23 @@ const Login = () => {
     try {
         const url =
         state === "login"
-            ? DOMAIN + "/auth/login"
-            : DOMAIN + "/auth/signup"
+            ? DOMAIN + "/api/auth/login"
+            : DOMAIN + "/api/auth/signup"
 
-        const response = await axios.post(url, payload, {
+        const response = await axios.post(url,{
+            name:payload.name,
+            email:payload.email,
+            password:payload.password,
+            role:payload.role
+        }, {
         withCredentials: true,
         })
 
         console.log(response.data)
+
+        if (response.status === 201){
+            navigate('/email-verification')
+        }
     } catch (error) {
         console.log(error.response?.data || error.message)
     }
@@ -55,7 +65,7 @@ const Login = () => {
     return (
             <div className='h-screen flex items-center justify-center'>
                 <form onSubmit={handleSubmit} className="sm:w-[400px]  w-full text-center border border-gray-300/60  px-8 bg-white">
-                    <h1 className="text-gray-900 text-3xl mt-10 font-medium">{state === "login" ? "Login" : "Sign up"}</h1>
+                    <h1 className="text-gray-900 text-3xl mt-10 font-medium">{state === "login" ? "Login" : "Create Account"}</h1>
                     <p className="text-gray-500 text-sm mt-2">Please sign in to continue</p>
 
                     <div className='flex justify-center gap-3 mt-5'>
@@ -80,7 +90,7 @@ const Login = () => {
 
                     {state !== "login" && (
                         <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12  overflow-hidden pl-6 gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-icon lucide-user-round"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-USER-round-icon lucide-USER-round"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
                             <input type="text" name="name" placeholder="Name" className="border-none outline-none ring-0" value={formData.name} onChange={handleChange} required />
                         </div>
                     )}

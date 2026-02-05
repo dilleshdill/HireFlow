@@ -2,6 +2,7 @@ import validator from "validator";
 import User from "../model/user.js";
 import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
+import generateUserToken from "../utils/generateUserToken.js";
 
 
 const sendOtpEmail = async (email, otp) => {
@@ -127,8 +128,11 @@ const verifyOtp = async (email, otp) => {
 }
 
 export const otpVerification = async (req , res) => {
+
     try {
-        const {email , otp} = req.body;
+        const {otp} = req.body;
+        const email = req.user.email
+
         const normalizedEmail = validator.normalizeEmail(email)
         
         await verifyOtp(normalizedEmail,otp)
@@ -166,13 +170,21 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    const newUser = await User.create({
       name,
       email: normalizedEmail,
       password: hashedPassword,
       role
     });
 
+    const token = generateUserToken(newUser._id,newUser.email)
+
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: true,       // REQUIRED on HTTPS (Vercel)
+      sameSite: "none",   // REQUIRED for cross-origin
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
     await sendOtp(normalizedEmail);
 
     return res.status(201).json({
@@ -188,3 +200,53 @@ export const signup = async (req, res) => {
     });
   }
 };
+
+export const login = async (req , res) => {
+  try {
+    const {email , password} = req.body;
+
+    if(!email || !password){
+      return res.status(400).json({message:"all fields are required"})
+    }
+    const normalizedEmail = validator.normalizeEmail(email);
+    const user = await User.findOne({ email: normalizedEmail });
+ 
+    if (!user){
+      return res.status(400).json({message:"no user found"})
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({
+        message: "Please verify your account first"
+      });
+    }
+
+    const ispasswordCorrect = await bcrypt.compare(password,user.password)
+    if(!ispasswordCorrect){
+      return res.status(400).json({message:"password is incorrect"})
+    }
+
+    const token = generateUserToken(user._id,user.email)
+
+    res.cookie("token",token,{
+      httpOnly: true,
+      secure: true,       // REQUIRED on HTTPS (Vercel)
+      sameSite: "none",   // REQUIRED for cross-origin
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Server error"
+    });
+  }
+}

@@ -1,11 +1,13 @@
 import React, { useRef ,useState} from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const EmailVerficationPage = () => {
     const [otp,setOtp] = useState(["","","",""])
     const inputRef = useRef([])
+    const navigate = useNavigate()
 
     const handleChange = (val,index) => {
         if (!/^\d?$/.test(val)) return;
@@ -37,15 +39,19 @@ const EmailVerficationPage = () => {
         }
     }
 
-    const getSubmit = async() => {
+    const getSubmit = async(e) => {
+        e.preventDefault()
         const otpString = otp.join("")
         try{
             
-            const response = await axios.post(DOMAIN + "/otpVerification",{
-                otpString 
-            })
+            const response = await axios.post(DOMAIN + "/api/auth/otp-verification",
+              {
+                otp:otpString 
+            },{withCredentials:true})
             if(response.status === 200){
                 console.log(response.data)
+                navigate('/')
+                
             }
         }catch(err){
             console.log("something went wrong",err)
@@ -65,7 +71,7 @@ const EmailVerficationPage = () => {
               </p>
             </div>
 
-            <form>
+            <form onSubmit={getSubmit}>
               <div className="flex flex-col space-y-16">
 
                <div className='flex gap-5 justify-center'>
@@ -84,7 +90,7 @@ const EmailVerficationPage = () => {
     </div>
 
                 <div className="flex flex-col space-y-5">
-                  <button className="w-full py-5 bg-blue-700 text-white rounded-xl shadow-sm" onClick={getSubmit}>
+                  <button type='submit' className="w-full py-5 bg-blue-700 text-white rounded-xl shadow-sm" >
                     Verify Account
                   </button>
 
