@@ -3,7 +3,6 @@ import User from "../model/user.js";
 import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
 
-
 const sendOtpEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -75,7 +74,6 @@ const sendOtpEmail = async (email, otp) => {
   });
 };
 
-
 const sendOtp = async (email) => {
   const normalizedEmail = validator.normalizeEmail(email);
   const user = await User.findOne({ email: normalizedEmail });
@@ -121,8 +119,6 @@ const verifyOtp = async (email, otp) => {
     user.otp = null
     user.otpExpiry = null
     await user.save()
-
-    
 
 }
 
