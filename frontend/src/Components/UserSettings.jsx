@@ -14,6 +14,8 @@ import {
   Plus,
   CirclePlus,
   Eye,
+  PrinterCheck,
+  ScanBarcodeIcon,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -102,43 +104,45 @@ const maritalStatus = [
   { id: 5, name: "Separated" },
 ];
 
+
 const UserSettings = () => {
   const [progress, setProgress] = useState(1);
   const [showModel, setShowModel] = useState(false);
   const [userProfileData, setUserProfileData] = useState({ 
-    fullName: "",
-    email: "",
-    phone: "",
-    location: "",
+    fullName: "Hari Tarun kumar",
+    email: "tarunbommana798@gmail.com",
+    phone: "9010144168",
+    location: "Boppadam",
 
     
-    title: "", // e.g. MERN Developer
-    skills: [], // ["React", "Node", "MongoDB"]
+    title: "MERN Stack Developer", 
+    skills: [],
     overallExperience: 0, 
     noticePeriod: 0, 
-    resumeName:"",
-    websiteUrl:"",
-    education:"",
-    experience: "",
-    nationalitie:"",
+    resumeName:"HariTarun Resume",
+    websiteUrl:"www.localhost.com",
+    education:"RGUKT SKLM",
+    experience: "5",
+    nationalitie:"India",
     resumeUrl: "",
-    dateOfBirth:"",
+    dateOfBirth:"26-06-2005",
     linkedin: "",
     github: "",
     portfolio: "",
-    martinalStatus:"",
+    martinalStatus:"Single",
     description:"",
     // Preferences
-    preferredLocation: "",
-    expectedCTC: "",
+    preferredLocation: "Vizag",
+    expectedCTC: "6",
   });
   const [previewResume,setPreviewResume] = useState("")
 
   const fileRef = useRef(null)
 
-  const getSubmit = async () => {
+  const getSubmit = async() => {
     try {
-      const response = await axios.post(DOMAIN + "/user/user-detailes", {
+        
+      const response = await axios.post(DOMAIN + "/api/user/user-detailes", {
         userProfileData
       },
         {withCredentials:true});
@@ -150,15 +154,31 @@ const UserSettings = () => {
         }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async(e) => {
     const file = e.target.files[0]
-    
+    console.log(file)
     if (!file){
         toast.error("Give Valid Resume")
     }
-    setPreviewResume("Your Resume")
 
-    setUserProfileData({...userProfileData,resumeUrl:file})
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+        const res = await axios.post(
+        `${DOMAIN}/api/user/upload-resume`,
+        formData,
+        {withCredentials:true}
+        );
+        if(res.status === 200){
+          
+            setPreviewResume("Your Resume")
+            setUserProfileData({...userProfileData,resumeUrl:res.data.resumeUrl})
+        }
+    }
+    catch(e){
+        console.log(e)
+    }
 
   }
 
@@ -231,7 +251,7 @@ const UserSettings = () => {
           </div>
 
           <div className="mt-7 text-center max-w-5xl mx-auto ">
-            {/* FirstPage */}
+            
             {progress === 1 && (
               <div className="flex flex-col gap-3 w-full">
                 <h1 className="text-lg font-medium text-gray-700 text-start">
@@ -529,7 +549,7 @@ const UserSettings = () => {
                 </div>
               </div>
             )}
-            {/* thirdPage */}
+            
             {progress === 3 && (
               <div className="flex flex-col gap-2 mt-7 text-center max-w-5xl mx-auto ">
                 <h1 className="text-gray-500 text-lg text-start">
@@ -721,6 +741,7 @@ const UserSettings = () => {
                 </label>
                 <input
                   type="text"
+                  value = {userProfileData.resumeName}
                   onChange={(e)=>setUserProfileData({...userProfileData,resumeName:e.target.value})}
                   className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter resume name"

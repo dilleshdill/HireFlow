@@ -1,22 +1,13 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+
+/* ---------------- Resume Schema ---------------- */
 
 const ResumeSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      default: "Untitled Resume",
-    },
+    title: { type: String, default: "Untitled Resume" },
+    professional_summary: { type: String, default: "" },
 
-    professional_summary: {
-      type: String,
-      default: "",
-    },
-
-    skills: [
-      {
-        type: String,
-      },
-    ],
+    skills: [{ type: String }],
 
     personal_info: {
       image: { type: String, default: "" },
@@ -58,10 +49,12 @@ const ResumeSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true, minimize:false }
-)
+  { timestamps: true, minimize: false }
+);
 
-const UserProfileSchema = new mongoose.scheam(
+/* ---------------- User Profile Schema ---------------- */
+
+const UserProfileSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -71,12 +64,12 @@ const UserProfileSchema = new mongoose.scheam(
 
     title: {
       type: String,
-      default: "User Detailes",
+      default: "User Details",
     },
 
-    gender:{
-        type:String,
-        required:true
+    gender: {
+      type: String,
+
     },
 
     public: {
@@ -84,59 +77,44 @@ const UserProfileSchema = new mongoose.scheam(
       default: false,
     },
 
-    experience:{
-        type:String,
-        default:"0"
-    },
-    education:{
-        type:String,
-        default:"BTech"
-    },
-    resumeUrl: {
-        type:String,
-
-    },
-    websiteUrl:{
-        type:String,
-
-    },
-    dateOfBirth:{
-        type:String,
-        require:true
-    },
-    bioGraphy:{
-        type:String,
-
-    },  
-    facebook:{
-        type:String,
-    },
-    instagram:{
-        type:String
-    },
-    youtube:{
-        type:String
-    },
-    twitter:{
-        type:String
-    },
-    location:{
-        type:String
-    },
-    phoneNo:{
-        type:String
+    experience: {
+      type: String,
+      default: "0",
     },
 
-    martinalStatus : {
-        type:String, 
+    education: {
+      type: String,
+      default: "BTech",
     },
 
-    nationality  : {
-        type:String,
+    resumeUrl: String,
+    websiteUrl: String,
+
+    dateOfBirth: {
+      type: String,
+      required: true,
     },
-    resume:[ResumeSchema]
+
+    biography: {
+        String,
+    },
+
+    facebook: String,
+    instagram: String,
+    youtube: String,
+    twitter: String,
+
+    location: String,
+    phoneNo: String,
+
+    maritalStatus: String,
+    nationality: String,
+    resumeUrl:String,
+
+    // ✅ correct way to embed resume schema
+    resumes: [ResumeSchema],
   },
-  { timestamps: true, minimize:false }
-)
+  { timestamps: true, minimize: false }
+);
 
-export const UserProfile  = mongoose.model("UserProfile",UserProfileSchema)
+export const UserProfile = mongoose.model("UserProfile", UserProfileSchema);
