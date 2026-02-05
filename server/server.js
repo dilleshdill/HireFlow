@@ -6,6 +6,7 @@ import authRoute from './routes/authRoute.js'
 import { connectDB } from './config/db.js'
 import jobRoute from './routes/jobsRoutes.js'
 import userRoute from './routes/userRoute.js'
+import recruiterRoute from './routes/recruiterRoute.js'
 
 import './config/cloudinary.js';
 const app = express()
@@ -35,6 +36,7 @@ app.get('/api/check',(req,res)=>{
 app.use('/api/auth',authRoute)
 app.use('/api/job',jobRoute)
 app.use('/api/user',userRoute)
+app.use('/api/recruiter',recruiterRoute)
 
 await connectDB();
 
