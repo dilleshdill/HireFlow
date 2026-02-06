@@ -4,11 +4,13 @@ import { MapPin, Briefcase, ArrowRight } from "lucide-react";
 import { useEffect } from "react";
 import axios from "axios";
 import iphonelogo from "../assets/iphonelogo.png";
+import { useNavigate } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindCompanis = () => {
   const [organization, setOrganization] = useState("");
   const [companies , setCompanies] = useState([])
+  const navigate = useNavigate();
 
   // const companies = [
   //   {
@@ -162,7 +164,9 @@ const organizations = [
                     </div>
                   </div>
 
-                  <button className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
+                  <button
+                    onClick={()=>navigate(`/company-jobs/${company.recruiterId}`)}
+                  className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
                     Open positions
                     <ArrowRight className="size-4" />
                   </button>
@@ -208,7 +212,7 @@ const organizations = [
 
                   {/* RIGHT */}
                   <button
-                    onClick={()=>naviga}
+                    onClick={()=>navigate(`/company-jobs/${company.recruiterId}`)}
                    className="flex items-center gap-3 px-4 py-2 text-sm text-white bg-blue-400 rounded-md hover:bg-blue-500 transition">
                     Open positions
                     <ArrowRight className="size-4" />

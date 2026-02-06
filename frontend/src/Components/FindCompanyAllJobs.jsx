@@ -10,11 +10,15 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+
+
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
-const FindJobCard = () => {
-
+const FindCompanyAllJobs = () => {
+    
+    const { id } = useParams();
   const [jobs , setJobs] = useState([])
   const [appliedJobs , setAppliedJobs] = useState([])
   const [favoriteJobs , setFavoriteJobs] = useState([])
@@ -23,7 +27,7 @@ const FindJobCard = () => {
   const [showAdded, setShowAdded] = useState(false);
   const [curAddedId, setCurAddedId] = useState("");
 
-
+    console.log("id",id)
   useEffect(()=>{
     const fetchJobs = async () => {
       try {
@@ -63,9 +67,22 @@ const FindJobCard = () => {
       }
     }
 
-    fetchJobs();
-    fetchAppliedJobs();
-    fetchFavoriteJobs();
+    const companyJobs = async () => {
+        try {
+            
+            const response = await axios.get(DOMAIN + `/api/job/company-jobs/${id}`)
+            if(response.status === 200){
+                console.log(response.data)
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+    // fetchJobs();
+    // fetchAppliedJobs();
+    // fetchFavoriteJobs();
+    companyJobs();
   },[])
 
   const isExpired = (date) => new Date(date) < new Date();
@@ -306,4 +323,4 @@ const FindJobCard = () => {
   );
 };
 
-export default FindJobCard;
+export default FindCompanyAllJobs;

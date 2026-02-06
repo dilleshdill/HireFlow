@@ -125,11 +125,11 @@ export const getComapanies = async (req , res) => {
 // get all jobs for the specified company
 export const getCompanyJobs = async (req , res) => {
     try {
-        const {postedBy} = req.params;
-        if (!postedBy){
+        const {id} = req.params;
+        if (!id){
             return res.status(400).json({message:"postedby is invalid"})
         }
-        const allJobs = await Job.find({postedBy})
+        const allJobs = await Job.find({postedBy:id})
         if (!allJobs){
             return res.status(400).json({message:"no jobs are found"})
         }
