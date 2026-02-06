@@ -21,6 +21,7 @@ import ResetPage from './Pages/ResetPage.jsx'
 import OnlineTestHomePage from './Pages/OnlineTest/OnlineTestHomePage.jsx'
 import FindCompanyJobs from './Pages/FindCompanyJobs.jsx'
 import OnlineTestConfirmPage from './Pages/OnlineTest/OnlineTestConfirmPage.jsx'
+import OnlineTestDetailes from './Pages/OnlineTest/OnlineTestDetailes.jsx'
 const App = () => {
   return (
     <>
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/job/homepage" element={<OnlineTestHomePage />} />
         <Route path='/company-jobs/:id' element={<FindCompanyJobs />} />
         <Route path="/job/confirmtest" element= {<OnlineTestConfirmPage />} />
+        <Route path="/job/test/detailes" element = {<OnlineTestDetailes />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
