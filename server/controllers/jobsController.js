@@ -1,4 +1,5 @@
 import Job from "../model/job.js"
+import { RecruiterProfile } from "../model/recruiterProfileModel.js"
 import User from "../model/user.js"
 
 
@@ -106,3 +107,34 @@ export const toggleJob = async (req , res) => {
     }
 }
 
+// get all the comapanies
+export const getComapanies = async (req , res) => {
+
+    try {
+        const allCompanies = await RecruiterProfile.find()
+        if (!allCompanies){
+            return res.status(400).json({message:"no companies found"})
+        }
+
+        return res.status(200).json({companies:allCompanies,message:"all company details"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
+
+// get all jobs for the specified company
+export const getCompanyJobs = async (req , res) => {
+    try {
+        const {postedBy} = req.params;
+        if (!postedBy){
+            return res.status(400).json({message:"postedby is invalid"})
+        }
+        const allJobs = await Job.find({postedBy})
+        if (!allJobs){
+            return res.status(400).json({message:"no jobs are found"})
+        }
+        return res.status(200).json({jobs:allJobs,message:"jobs are fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
