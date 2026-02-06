@@ -1,27 +1,44 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const jobSchema = new mongoose.Schema({
-    postedBy:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref: "User",
+const jobSchema = new mongoose.Schema(
+  {
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    role: {
+      type: String,
+      required: true
+    },
+
+    tags: [
+      {
+        type: String,
+        trim: true
+      }
+    ],
+
+    location: {
+        type:String,
         required:true
     },
 
-    title:{
-        type:String,
-        required:true,
-        trim:true
-    },
-
-    role:{
-        type:String,
-        required:true
-    },
-
-    tags:[{
-        type:String,
-        trim:true
+    applications:[{
+        userId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User",
+        }
     }],
+
+    qualifyingScore: { type: Number, default: 60 },
 
     salary: {
       min: {
@@ -38,7 +55,15 @@ const jobSchema = new mongoose.Schema({
       },
       type: {
         type: String,
-        enum: ["Hourly", "Monthly", "Yearly"],
+        enum: [
+          "Hourly",
+          "Daily",
+          "Weekly",
+          "Monthly",
+          "Yearly",
+          "Contract-Based",
+          "Fixed + Incentives"
+        ],
         required: true
       }
     },
@@ -50,13 +75,28 @@ const jobSchema = new mongoose.Schema({
 
     experience: {
       type: String,
-      enum: ["Fresher", "1-3 Years", "3-5 Years", "5+ Years"],
+      enum: [
+        "Fresher",
+        "0 - 1 year",
+        "1 - 2 years",
+        "2 - 3 years",
+        "3 - 5 years",
+        "5 - 7 years",
+        "7+ years"
+      ],
       required: true
     },
 
     jobType: {
       type: String,
-      enum: ["Full-Time", "Part-Time", "Internship", "Contract"],
+      enum: [
+        "Full-Time",
+        "Part-Time",
+        "Internship",
+        "Contract",
+        "Remote",
+        "Hybrid"
+      ],
       required: true
     },
 
@@ -73,7 +113,15 @@ const jobSchema = new mongoose.Schema({
 
     jobLevel: {
       type: String,
-      enum: ["Intern", "Junior", "Mid", "Senior", "Lead"],
+      enum: [
+        "Intern",
+        "Entry Level",
+        "Junior",
+        "Mid Level",
+        "Senior",
+        "Lead",
+        "Manager"
+      ],
       required: true
     },
 
@@ -82,16 +130,26 @@ const jobSchema = new mongoose.Schema({
       required: true
     },
 
-    responsibilities: [{
-        type:String,
-        trim:true
-    }],
+    responsibilities: {
+      type: [String],
+      required: true
+    },
 
     isActive: {
       type: Boolean,
       default: true
-    },
-},{timestamps:true})
+    }
+  },
+  { timestamps: true }
+);
 
-const Job = mongoose.model("Job",jobSchema);
-export default Job
+// Salary validation
+// jobSchema.pre("save", function (next) {
+//   if (this.salary.min > this.salary.max) {
+//     return next(new Error("Minimum salary cannot be greater than maximum salary"));
+//   }
+//   next();
+// });
+
+const Job = mongoose.model("Job", jobSchema);
+export default Job;

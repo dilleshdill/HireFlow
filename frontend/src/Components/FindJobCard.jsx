@@ -1,63 +1,163 @@
-import React from "react";
+import React, { useEffect } from "react";
 import iphonelogo from "../assets/iphonelogo.png";
 import {
   ArrowRight,
   Bookmark,
   Calendar,
+  CircleCheck,
   DollarSignIcon,
   MapPin,
 } from "lucide-react";
+import axios from "axios";
+import { useState } from "react";
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindJobCard = () => {
-  const jobs = [
-    {
-      id: 1,
-      title: "Marketing Manager",
-      companyLogo: iphonelogo,
-      featured: true,
-      jobType: "Remote",
-      location: "Delhi, India",
-      salary: "$30k - $50k / Month",
-      remaining: "4 Days remaining",
-    },
-    {
-      id: 2,
-      title: "Frontend Developer",
-      companyLogo:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/330px-Instagram_logo_2022.svg.png",
-      featured: false,
-      jobType: "Full Time",
-      location: "Bangalore, India",
-      salary: "$40k - $70k / Month",
-      remaining: "7 Days remaining",
-    },
-    {
-      id: 3,
-      title: "Backend Developer",
-      companyLogo: iphonelogo,
-      featured: true,
-      jobType: "Hybrid",
-      location: "Hyderabad, India",
-      salary: "$50k - $90k / Month",
-      remaining: "2 Days remaining",
-    },
-    {
-      id: 4,
-      title: "UI / UX Designer",
-      companyLogo:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/330px-Instagram_logo_2022.svg.png",
-      featured: false,
-      jobType: "Remote",
-      location: "Mumbai, India",
-      salary: "$25k - $45k / Month",
-      remaining: "10 Days remaining",
-    },
-  ];
+  // const jobs = [
+  //   {
+  //     id: 1,
+  //     title: "Marketing Manager",
+  //     companyLogo: iphonelogo,
+  //     featured: true,
+  //     jobType: "Remote",
+  //     location: "Delhi, India",
+  //     salary: "$30k - $50k / Month",
+  //     remaining: "4 Days remaining",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Frontend Developer",
+  //     companyLogo:
+  //       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/330px-Instagram_logo_2022.svg.png",
+  //     featured: false,
+  //     jobType: "Full Time",
+  //     location: "Bangalore, India",
+  //     salary: "$40k - $70k / Month",
+  //     remaining: "7 Days remaining",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Backend Developer",
+  //     companyLogo: iphonelogo,
+  //     featured: true,
+  //     jobType: "Hybrid",
+  //     location: "Hyderabad, India",
+  //     salary: "$50k - $90k / Month",
+  //     remaining: "2 Days remaining",
+  //   },
+  //   {
+  //     id: 4,
+  //     title: "UI / UX Designer",
+  //     companyLogo:
+  //       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/330px-Instagram_logo_2022.svg.png",
+  //     featured: false,
+  //     jobType: "Remote",
+  //     location: "Mumbai, India",
+  //     salary: "$25k - $45k / Month",
+  //     remaining: "10 Days remaining",
+  //   },
+  // ];
 
+  const [jobs , setJobs] = useState([])
+  const [appliedJobs , setAppliedJobs] = useState([])
+  const [favoriteJobs , setFavoriteJobs] = useState([])
+  const [showDelete, setShowDelete] = useState(false);
+  const [curDeleteId, setCurDeleteId] = useState("");
+  const [showAdded, setShowAdded] = useState(false);
+  const [curAddedId, setCurAddedId] = useState("");
+
+
+  useEffect(()=>{
+    const fetchJobs = async () => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/job/all-jobs')
+
+        if (response.status === 200){
+          console.log(response.data.jobs)
+          setJobs(response.data.jobs)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+
+    const fetchAppliedJobs = async () => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{withCredentials:true})
+        if(response.status === 200){
+          console.log(response.data)
+          setAppliedJobs(response.data.jobs)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+    
+    const fetchFavoriteJobs = async () => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/job/get-favorite',{withCredentials:true})
+
+        if(response.status === 200){
+          console.log(response.data)
+          setFavoriteJobs(response.data.jobs)
+        }
+      } catch (error) {
+        
+      }
+    }
+
+    fetchJobs();
+    fetchAppliedJobs();
+    fetchFavoriteJobs();
+  },[])
+
+  const isExpired = (date) => new Date(date) < new Date();
+
+  const applyJob = async (jobId) =>{
+    try {
+      const response = await axios.post(DOMAIN + '/api/job/apply',{jobId},{withCredentials:true})
+      if(response.status === 200){
+        console.log(response.data)
+        setAppliedJobs((prev) => [...prev, response.data.application]);
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  const addToFavorite = async (jobId) => {
+    try {
+      const response = await axios.post(DOMAIN + '/api/job/addTo-favorite',{jobId},{withCredentials:true})
+      
+      if (response.status === 200){
+        console.log(response.data)
+        setFavoriteJobs((prev) => [...prev,response.data.favorite])
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+
+  const removeFavorite = async (jobId) => {
+    try {
+      const response = await axios.post(DOMAIN + '/api/job/remove-favorite',{jobId},{withCredentials:true})
+      
+      if (response.status === 200){
+        console.log(response.data)
+        setFavoriteJobs((prev) => prev.filter((fav)=> fav.jobId?._id !== jobId))
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  
   return (
     <div className="w-full bg-gray-50 py-4">
       {jobs.map((job) => (
-        <div key={job.id} className="w-full bg-white p-4">
+        <div key={job._id} className="w-full bg-white p-4">
           <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
 
             {/* MAIN FLEX */}
@@ -68,7 +168,7 @@ const FindJobCard = () => {
 
                 {/* Logo */}
                 <img
-                  src={job.companyLogo}
+                  src={iphonelogo}
                   alt="logo"
                   className="h-14 w-14 rounded-lg object-contain"
                 />
@@ -92,15 +192,19 @@ const FindJobCard = () => {
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
                       <MapPin className="size-4" />
-                      <span>{job.location}</span>
+                      <span>{job.location || "Hyderabad"}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <DollarSignIcon className="size-4" />
-                      <span>{job.salary}</span>
+                      <span>
+                        {job.salary?.max
+                          ? `${job.salary.max}k ${job.salary.type}`
+                          : "Not disclosed"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="size-4" />
-                      <span>{job.remaining}</span>
+                      <span>{new Date(job.expirationDate).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -108,17 +212,140 @@ const FindJobCard = () => {
 
               {/* RIGHT SECTION */}
               <div className="flex items-center justify-between sm:justify-end gap-4 sm:flex-shrink-0">
-                <Bookmark className="size-6 text-gray-500 cursor-pointer hover:text-blue-500" />
-                <button className="bg-blue-100 px-4 py-2 flex items-center gap-2 text-blue-500 rounded-md hover:bg-blue-200 transition">
-                  Apply Now
-                  <ArrowRight className="size-4" />
-                </button>
+                {favoriteJobs.some((f)=>  f.jobId?._id === job._id)?(
+                  <button
+                      onClick={() => {
+                        setCurDeleteId(job._id);
+                          setShowDelete(true);}}
+                            className="cursor-pointer">
+                            <Bookmark className="size-5" fill="black" />
+                    </button>
+                ):(
+                  <button onClick={()=>{setCurAddedId(job._id);setShowAdded(true);}} >
+                    <Bookmark 
+                  
+                 className="size-5 text-gray-500 cursor-pointer hover:text-blue-500" />
+                  </button>
+                )}
+                {isExpired(job.expirationDate) ? (
+                    <button
+                      disabled
+                      className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
+                    >
+                      Expired
+                    </button>
+                  ) : appliedJobs.some((app) => app.jobId?._id === job._id)
+                     ? (
+                    <button
+                      disabled
+                      className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
+                    >
+                      Already Applied
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => applyJob(job._id)}
+                      className="bg-blue-100 px-4 py-2 flex items-center gap-2 text-blue-500 rounded-md hover:bg-blue-200 transition"
+                    >
+                      Apply Now
+                      <ArrowRight className="size-4" />
+                    </button>
+                  )}
+
               </div>
 
             </div>
           </div>
         </div>
       ))}
+
+      {/* DELETE MODAL */}
+      {showDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white shadow-md rounded-xl py-6 px-5 md:w-[460px] w-[370px] border border-gray-200">
+            <div className="flex items-center justify-center p-4 bg-red-100 rounded-full">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl text-center">
+              Are you sure?
+            </h2>
+
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Do you really want to continue? <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-center gap-4 mt-5">
+              <button
+                onClick={() => {
+                  setShowDelete(false);
+                  setCurDeleteId("");
+                }}
+                className="w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 text-sm hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  removeFavorite(curDeleteId);
+                  setCurDeleteId("");
+                  setShowDelete(false);
+                }}
+                className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Added MODAL */}
+      {showAdded && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white shadow-md rounded-xl py-6 px-5 md:w-[460px] w-[370px] border border-gray-200">
+            <div className="flex items-center justify-center p-4 bg-blue-100 rounded-full">
+                <CircleCheck className="size-8 text-blue-600" />
+            </div>
+
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl text-center">
+              Are you sure?
+            </h2>
+
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Do you really want to continue? <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-center gap-4 mt-5">
+              <button
+                onClick={() => {
+                  setShowAdded(false);
+                  setCurAddedId("");
+                }}
+                className="w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 text-sm hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  addToFavorite(curAddedId);
+                  setCurAddedId("");
+                  setShowAdded(false);
+                }}
+                className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

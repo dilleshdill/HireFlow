@@ -52,6 +52,7 @@ const Login = () => {
         if (response.status === 201){
             navigate('/email-verification')
         }
+        navigate('/')
     } catch (error) {
         console.log(error.response?.data || error.message)
     }
