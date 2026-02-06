@@ -3,12 +3,15 @@ import { useState } from 'react'
 import hireflow from '../../assets/hireflow.jpg'
 import naukriimage from '../../assets/naukriimage.png'
 import images from '../../assets/images.png'
+import logoimage from '../../assets/logoimage.jpg'
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { PiDotDuotone } from "react-icons/pi";
 import { SiTicktick } from "react-icons/si";
 
 
 
 const OnlineTestHomePage = () => {
-    const [jobStatus,setJobStatus] = useState("notstart")
+    const [jobStatus,setJobStatus] = useState("start")
   return (
     <div >
   <div className="min-h-screen flex max-w-7xl mx-auto gap-3">
@@ -37,11 +40,32 @@ const OnlineTestHomePage = () => {
             </div>
             <div>
                 {
-                    jobStatus === "notstart" && 
+                    jobStatus === "completed" && 
                     <div className='flex text-gray-400 items-center gap-2 font-semibold'>
                         <SiTicktick />
                         <p>Contest Completed</p>
                     </div>
+                }
+                {
+                    jobStatus === "notstart"  && 
+                        <div className='flex items-center'>
+                            <h1 className='text-gray-700 font-medium'>Round 1 </h1>
+                            <PiDotDuotone size={20} className='fill-green-600'/>
+                            <p className='text-green-600'>Upcoming</p>
+                        </div>
+                }
+                {
+                    jobStatus === "start"  && 
+                        <div className='flex flex-row gap-9'>
+                            <div className='flex items-center'>
+                                <h1 className='text-gray-700 font-medium'>Round 1 </h1>
+                                <PiDotDuotone size={20} className='fill-red-600'/>
+                                <p className='text-red-600'>Live</p>
+                            </div>
+                            <button className='bg-blue-700 text-white px-9 py-2 text-lg rounded-4xl font-medium '>
+                                Start
+                            </button>
+                        </div>
                 }
             </div>
         </div>
@@ -96,10 +120,10 @@ const OnlineTestHomePage = () => {
 
     </div>
     <div className='flex flex-col h-fit max-w-xl gap-5'>
-        <div className="max-w-5xl w-full bg-gradient-to-r from-pink-100 via-pink-50 to-pink-200 rounded-2xl flex items-center justify-between px-8 py-6">
+        <div className="max-w-5xl w-full bg-gradient-to-r from-pink-100 via-pink-50 to-pink-200 rounded-2xl flex  px-8 pt-3 gap-3">
         
         
-        <div className="max-w-md">
+        <div className="max-w-md flex items-start flex-col">
           <h2 className="text-md font-normal text-gray-700 leading-snug">
             Contest are fun with friends. Invite your crew & see who comes on top
           </h2>
@@ -109,21 +133,141 @@ const OnlineTestHomePage = () => {
           </button>
         </div>
 
-        {/* Right Image */}
-        <div className="hidden md:block">
+        <div className=" hidden md:block">
           <img
-            src={images}   // replace with your image
+            src={logoimage}   
             alt="Invite Friends"
-            className="h-24 object-contain"
+            className="h-24 object-top-right rounded-2xl"
           />
         </div>
 
       </div>
-    </div>
-    
-  </div>
+      <div className='flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl gap-3'>
+        <h1 className='text-gray-600 font-semibold text-lg' >Similar contests</h1>
+        <div className='flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl'>
 
-</div>
+    
+        <div className='flex items-center bg-white'>
+            <img src={hireflow} className='h-15 w-15 rounded-xl'/>
+            <div>
+                <h1 className='text-xl font-medium text-gray-900'>Deloite National Test</h1>
+                <p className='text-md text-gray-600'>Hireflow campus</p>
+            </div>     
+        </div>
+
+        <div className='flex flex-wrap gap-3'>  
+                 <h1 className='flex text-gray-400 mb-0'>Roundes : <span className='flex text-gray-500 font-normal'>1</span></h1>
+                <h1 className='flex text-gray-400 mb-0'>Duration : <span className='flex text-gray-500 font-normal'>07 Feb to 07 Feb</span></h1>
+                <h1 className='flex text-gray-400 mt-0'>Partipation : <span className='flex text-gray-500 font-normal'>Individual</span></h1>
+        </div>
+
+        <div className='flex flex-wrap gap-3'>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>cgl</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>gate</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>exam</h1>
+            </div>
+        </div>
+
+        <div className='border border-dashed border-gray-300 '>
+        </div>
+
+        <div className='flex gap-3'>
+            <div className='flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1'>
+                <MdOutlineAccountCircle size={16}/>
+                <p className='text-sm'>5798 Applied</p>
+            </div>
+            <p className='flex text-gray-500'>Reg. Closes on Feb 07.10 pm</p>
+        </div>
+        </div>
+        <div className='flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl'>
+
+    
+        <div className='flex items-center bg-white'>
+            <img src={hireflow} className='h-15 w-15 rounded-xl'/>
+            <div>
+                <h1 className='text-xl font-medium text-gray-900'>Deloite National Test</h1>
+                <p className='text-md text-gray-600'>Hireflow campus</p>
+            </div>     
+        </div>
+
+        <div className='flex flex-wrap gap-3'>  
+                 <h1 className='flex text-gray-400 mb-0'>Roundes : <span className='flex text-gray-500 font-normal'>1</span></h1>
+                <h1 className='flex text-gray-400 mb-0'>Duration : <span className='flex text-gray-500 font-normal'>07 Feb to 07 Feb</span></h1>
+                <h1 className='flex text-gray-400 mt-0'>Partipation : <span className='flex text-gray-500 font-normal'>Individual</span></h1>
+        </div>
+
+        <div className='flex flex-wrap gap-3'>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>cgl</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>gate</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>exam</h1>
+            </div>
+        </div>
+
+        <div className='border border-dashed border-gray-300 '>
+        </div>
+
+        <div className='flex gap-3'>
+            <div className='flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1'>
+                <MdOutlineAccountCircle size={16}/>
+                <p className='text-sm'>5798 Applied</p>
+            </div>
+            <p className='flex text-gray-500'>Reg. Closes on Feb 07.10 pm</p>
+        </div>
+        </div>
+        <div className='flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl'>
+
+    
+        <div className='flex items-center bg-white'>
+            <img src={hireflow} className='h-15 w-15 rounded-xl'/>
+            <div>
+                <h1 className='text-xl font-medium text-gray-900'>Deloite National Test</h1>
+                <p className='text-md text-gray-600'>Hireflow campus</p>
+            </div>     
+        </div>
+
+        <div className='flex flex-wrap gap-3'>  
+                 <h1 className='flex text-gray-400 mb-0'>Roundes : <span className='flex text-gray-500 font-normal'>1</span></h1>
+                <h1 className='flex text-gray-400 mb-0'>Duration : <span className='flex text-gray-500 font-normal'>07 Feb to 07 Feb</span></h1>
+                <h1 className='flex text-gray-400 mt-0'>Partipation : <span className='flex text-gray-500 font-normal'>Individual</span></h1>
+        </div>
+
+        <div className='flex flex-wrap gap-3'>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>cgl</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>gate</h1>
+            </div>
+            <div className='border border-gray-200 rounded-xl px-2.5'>
+                <h1 className='text-md text-gray-400 text-center'>exam</h1>
+            </div>
+        </div>
+
+        <div className='border border-dashed border-gray-300 '>
+        </div>
+
+        <div className='flex gap-3'>
+            <div className='flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1'>
+                <MdOutlineAccountCircle size={16}/>
+                <p className='text-sm'>5798 Applied</p>
+            </div>
+            <p className='flex text-gray-500'>Reg. Closes on Feb 07.10 pm</p>
+        </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
 
   )
 }
