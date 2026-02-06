@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import iphonelogo from "../assets/iphonelogo.png";
 import {
   Briefcase,
   ArrowRightIcon,
@@ -9,124 +9,143 @@ import {
   Check,
   CircleDashed,
 } from "lucide-react";
+import { useEffect } from "react";
+import axios from "axios";
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const UserAppliedJobs = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
+  const [appliedJobs , setAppliedJobs] = useState([])
 
-  const jobs = [
-    {
-      id: 1,
-      name: "Tech Solutions Inc.",
-      jobRole: "Frontend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png",
-      location: "San Francisco, CA",
-      status: "active",
-      type: "full-time",
-      salary: "$120,000 / year",
-      dateApplied: "2025-01-05",
-    },
-    {
-      id: 2,
-      name: "Innovatech Corp.",
-      jobRole: "Full Stack Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
-      location: "New York, NY",
-      status: "pending",
-      type: "remote",
-      salary: "$95,000 / year",
-      dateApplied: "2025-01-08",
-    },
-    {
-      id: 3,
-      name: "Global Enterprises",
-      jobRole: "Backend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
-      location: "Chicago, IL",
-      status: "active",
-      type: "part-time",
-      salary: "$45 / hour",
-      dateApplied: "2025-01-10",
-    },
-    {
-      id: 4,
-      name: "Creative Minds LLC",
-      jobRole: "UI/UX Designer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968267.png",
-      location: "Austin, TX",
-      status: "pending",
-      type: "full-time",
-      salary: "$105,000 / year",
-      dateApplied: "2025-01-12",
-    },
-    {
-      id: 5,
-      name: "CloudNine Systems",
-      jobRole: "DevOps Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968282.png",
-      location: "Seattle, WA",
-      status: "active",
-      type: "remote",
-      salary: "$110,000 / year",
-      dateApplied: "2025-01-15",
-    },
-    {
-      id: 6,
-      name: "NextGen Innovations",
-      jobRole: "QA Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968295.png",
-      location: "Boston, MA",
-      status: "pending",
-      type: "part-time",
-      salary: "$40 / hour",
-      dateApplied: "2025-01-17",
-    },
-    {
-      id: 7,
-      name: "Apex Technologies",
-      jobRole: "Software Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968300.png",
-      location: "Denver, CO",
-      status: "active",
-      type: "full-time",
-      salary: "$98,000 / year",
-      dateApplied: "2025-01-19",
-    },
-    {
-      id: 8,
-      name: "Bright Future Labs",
-      jobRole: "Data Scientist",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968312.png",
-      location: "Los Angeles, CA",
-      status: "pending",
-      type: "remote",
-      salary: "$115,000 / year",
-      dateApplied: "2025-01-21",
-    },
-    {
-      id: 9,
-      name: "Summit Solutions",
-      jobRole: "Product Manager",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968321.png",
-      location: "Dallas, TX",
-      status: "active",
-      type: "full-time",
-      salary: "$90,000 / year",
-      dateApplied: "2025-01-23",
-    },
-    {
-      id: 10,
-      name: "BlueWave Tech",
-      jobRole: "Mobile App Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968330.png",
-      location: "Miami, FL",
-      status: "pending",
-      type: "part-time",
-      salary: "$42 / hour",
-      dateApplied: "2025-01-25",
-    },
-  ];
+  // const jobs = [
+  //   {
+  //     id: 1,
+  //     name: "Tech Solutions Inc.",
+  //     jobRole: "Frontend Developer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png",
+  //     location: "San Francisco, CA",
+  //     status: "active",
+  //     type: "full-time",
+  //     salary: "$120,000 / year",
+  //     dateApplied: "2025-01-05",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Innovatech Corp.",
+  //     jobRole: "Full Stack Engineer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
+  //     location: "New York, NY",
+  //     status: "pending",
+  //     type: "remote",
+  //     salary: "$95,000 / year",
+  //     dateApplied: "2025-01-08",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Global Enterprises",
+  //     jobRole: "Backend Developer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
+  //     location: "Chicago, IL",
+  //     status: "active",
+  //     type: "part-time",
+  //     salary: "$45 / hour",
+  //     dateApplied: "2025-01-10",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Creative Minds LLC",
+  //     jobRole: "UI/UX Designer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968267.png",
+  //     location: "Austin, TX",
+  //     status: "pending",
+  //     type: "full-time",
+  //     salary: "$105,000 / year",
+  //     dateApplied: "2025-01-12",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "CloudNine Systems",
+  //     jobRole: "DevOps Engineer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968282.png",
+  //     location: "Seattle, WA",
+  //     status: "active",
+  //     type: "remote",
+  //     salary: "$110,000 / year",
+  //     dateApplied: "2025-01-15",
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "NextGen Innovations",
+  //     jobRole: "QA Engineer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968295.png",
+  //     location: "Boston, MA",
+  //     status: "pending",
+  //     type: "part-time",
+  //     salary: "$40 / hour",
+  //     dateApplied: "2025-01-17",
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "Apex Technologies",
+  //     jobRole: "Software Engineer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968300.png",
+  //     location: "Denver, CO",
+  //     status: "active",
+  //     type: "full-time",
+  //     salary: "$98,000 / year",
+  //     dateApplied: "2025-01-19",
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "Bright Future Labs",
+  //     jobRole: "Data Scientist",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968312.png",
+  //     location: "Los Angeles, CA",
+  //     status: "pending",
+  //     type: "remote",
+  //     salary: "$115,000 / year",
+  //     dateApplied: "2025-01-21",
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "Summit Solutions",
+  //     jobRole: "Product Manager",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968321.png",
+  //     location: "Dallas, TX",
+  //     status: "active",
+  //     type: "full-time",
+  //     salary: "$90,000 / year",
+  //     dateApplied: "2025-01-23",
+  //   },
+  //   {
+  //     id: 10,
+  //     name: "BlueWave Tech",
+  //     jobRole: "Mobile App Developer",
+  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968330.png",
+  //     location: "Miami, FL",
+  //     status: "pending",
+  //     type: "part-time",
+  //     salary: "$42 / hour",
+  //     dateApplied: "2025-01-25",
+  //   },
+  // ];
 
-  const visibleJobs = showAllJobs ? jobs : jobs.slice(0, 4);
+  useEffect(()=>{
+    const fetchAppliedJobs = async () => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{withCredentials:true})
+        if(response.status === 200){
+          console.log(response.data.jobs)
+          setAppliedJobs(response.data.jobs)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+    fetchAppliedJobs();
+  },[])
+  const visibleJobs = showAllJobs ? appliedJobs : appliedJobs.slice(0, 4);
 
   return (
     <div>
@@ -206,35 +225,35 @@ const UserAppliedJobs = () => {
       <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
         {visibleJobs.map((job) => (
           <div
-            key={job.id}
+            key={job._id}
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
           >
             {/* LEFT */}
             <div className="flex items-center gap-4">
               <img
-                src={job.image}
+                src={job.image || iphonelogo}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
 
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold">{job.jobRole}</p>
+                  <p className="font-semibold">{job.jobId.role}</p>
 
                   <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
-                    {job.type}
+                    {job.jobId.jobType}
                   </span>
                 </div>
-                <p className="text-gray-600 text-xs">{job.name}</p>
+                <p className="text-gray-600 text-xs">{job.jobId.title}</p>
 
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <div className="flex items-center gap-1">
                     <MapPin className="size-4" />
-                    {job.location}
+                    {job.jobId.location}
                   </div>
                   <div className="flex items-center gap-1">
                     <Briefcase className="size-4" />
-                    {job.open_jobs} open jobs
+                    {job.jobId.vacancies} open jobs
                   </div>
                 </div>
               </div>
@@ -242,8 +261,8 @@ const UserAppliedJobs = () => {
 
             {/* RIGHT */}
             <div className="flex items-center justify-between w-110">
-              <p className="text-sm text-gray-500">{job.dateApplied}</p>
-              {job.status === "active" ? (
+              <p className="text-sm text-gray-500">{job.createdAt}</p>
+              {job.status === "APPLIED" ? (
                 <div className="flex items-center justify-center gap-1 text-green-600">
                   <Check className="size-4" />
                   <p className="text-sm ">{job.status}</p>

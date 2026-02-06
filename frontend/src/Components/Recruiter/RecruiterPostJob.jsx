@@ -1,6 +1,9 @@
+import axios from 'axios';
 import { ArrowRight, MoveRight } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const jobRoles = [
   { id: 1, name: "Software Developer" },
   { id: 2, name: "Frontend Developer" },
@@ -110,194 +113,266 @@ const jobLevels = [
 
 
 
-
 const RecruiterPostJob = () => {
-  return ( 
+
+  const [formData, setFormData] = useState({
+    title: "",
+    role: "",
+    tags: "",
+    location:"",
+    salary: {
+      min: "",
+      max: "",
+      type: "",
+      currency: "USD",
+    },
+    education: "",
+    experience: "",
+    jobType: "",
+    vacancies: "",
+    expirationDate: "",
+    jobLevel: "",
+    description: "",
+    responsibilities: "",
+  });
+
+  const handlechange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSalaryChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      salary: {
+        ...prev.salary,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleSubmit = () => {
+    const payload = {
+      ...formData,
+      tags: formData.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      responsibilities: formData.responsibilities
+        .split("\n")
+        .map((r) => r.trim())
+        .filter(Boolean),
+      vacancies: Number(formData.vacancies),
+      salary: {
+        min: Number(formData.salary.min),
+        max: Number(formData.salary.max),
+        type: formData.salary.type,
+        currency: "USD",
+      },
+    };
+
+    console.log("FINAL PAYLOAD:", payload);
+
+    const response = axios.post(DOMAIN + '/api/job/post-job', {payload} , {withCredentials:true})
+    console.log(response.data)
+  };
+
+  return (
     <div className='sm:p-2 md:pd-5 flex flex-col flex-1 gap-5 min-h-screen'>
-        <h1 className='text-2xl text-gray-800'>Post a Job</h1>
-        <div className='flex flex-col gap-2 mt-3'>
-            <h1>Job Title</h1>
-            <input 
-            placeholder='Add job tittle,role,vacancies etc'
-            className='border border-2 border-gray-200 p-3 flex flex-1 rounded-md'/>
+      <h1 className='text-2xl text-gray-800'>Post a Job</h1>
+
+      <div className='flex flex-col gap-2 mt-3'>
+        <h1>Job Title</h1>
+        <input
+          name="title"
+          onChange={handlechange}
+          value={formData.title}
+          placeholder='Add job tittle,role,vacancies etc'
+          className='border border-2 border-gray-200 p-3 flex flex-1 rounded-md'
+        />
+      </div>
+
+      <div className='flex flex-col sm:flex-row gap-5 w-full'>
+        <div className='flex md:flex-1 flex-col gap-2 mt-3'>
+          <h1>Tags</h1>
+          <input
+            name="tags"
+            onChange={handlechange}
+            value={formData.tags}
+            placeholder='Job keyword,tags etc...'
+            className='border-2 border-gray-200 p-3 flex flex-1 rounded-md outline-none'
+          />
         </div>
-        <div className='flex gap-5 w-full'>
-            <div className='flex flex-1 flex-col gap-2 mt-3'>
-                <h1>Tags</h1>
-                <input 
-                placeholder='Job keyword,tags etc...'
-                className='border-2 border-gray-200 p-3 flex flex-1 rounded-md outline-none'/>
-            </div>
-            <div className='flex flex-col gap-2 mt-3'>
-                <h1>Job Role</h1>
-                <select 
-                className='border-2 border-gray-200 p-3 flex  rounded-md outline-none'>
-                    <option value="" disabled selected >
-                        Select Job Role
-                    </option>
-                    {
-                        jobRoles.map((eachItem,index) => (
-                            <option key={index}>{eachItem.name}</option>
-                        ))
-                    }
-                </select>
-                
-            </div>
+
+        <div className='flex md:flex-1 flex-col gap-2 mt-3'>
+          <h1>Location</h1>
+          <input
+            name="location"
+            onChange={handlechange}
+            value={formData.location}
+            placeholder='Location'
+            className='border-2 border-gray-200 p-3 flex flex-1 rounded-md outline-none'
+          />
         </div>
-        <div className='mt-5'>
-            <h1 className='text-xl text-gray-700 '>Salary</h1>
-            <div className='grid sm:grid-cols-1 md:grid-cols-3 gap-3 mt-3'>
-                
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Min Salary</h1>
-                    <div className='flex border border-gray-300 rounded-md'>
-                        <input 
-                        type="text"
-                        className='flex flex-1 p-2 text-sm'
-                        placeholder='Min Salary'/>
-                        <button className='bg-gray-200 p-2'>
-                            USD
-                        </button>
-                    </div>
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Max Salary</h1>
-                    <div className='flex border border-gray-300 rounded-md'>
-                        <input 
-                        type="text"
-                        className='flex flex-1 p-2 text-sm'
-                        placeholder='Max Salary'/>
-                        <button className='bg-gray-200 p-2'>
-                            USD
-                        </button>
-                    </div>
-                </div>
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Salary Type</h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            salaryTypes.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
-            </div>
+
+        <div className='flex md:flex-1 flex-col gap-2 mt-3'>
+          <h1>Job Role</h1>
+          <select
+            name="role"
+            onChange={handlechange}
+            value={formData.role}
+            className='border-2 border-gray-200 p-3 flex rounded-md outline-none'
+          >
+            <option value="">Select Job Role</option>
+            {jobRoles.map((eachItem, index) => (
+              <option key={index} value={eachItem.name}>
+                {eachItem.name}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className='mt-5'>
-            <h1 className='text-xl text-gray-700 '>Advance Information</h1>
-            <div className='grid sm:grid-cols-1 md:grid-cols-3 gap-3 mt-3'>
-                
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Education</h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            educationLevels.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
+      </div>
 
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Experience </h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            experienceLevels.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Job Type</h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            jobTypes.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Vacancies</h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            vacancies.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Expiration Data</h1>
-                    <input 
-                    type="date"
-                    className='flex-1 border border-gray-300 rounded-md p-3 '
-                    />
-                    
-                </div>
-
-                <div className='flex flex-col gap-2'>
-                    <h1 className='text-md text-gray-600'>Job Level</h1>
-                    <select className='flex border border-gray-300 rounded-md p-3'>
-                        <option value="" disabled selected>
-                            Select 
-                        </option>
-                        {
-                            jobLevels.map((eachItem,index) => (
-                                <option value={index}>{eachItem.name}</option>   
-                            ))
-                        }
-                    </select>
-                </div>
+      <div className='mt-5'>
+        <h1 className='text-xl text-gray-700 '>Salary</h1>
+        <div className='grid sm:grid-cols-1 md:grid-cols-3 gap-3 mt-3'>
+          <div className='flex flex-col gap-2'>
+            <h1 className='text-md text-gray-600'>Min Salary</h1>
+            <div className='flex border border-gray-300 rounded-md'>
+              <input
+                name="min"
+                onChange={handleSalaryChange}
+                value={formData.salary.min}
+                type="text"
+                className='flex flex-1 p-2 text-sm'
+                placeholder='Min Salary'
+              />
+              <button className='bg-gray-200 p-2'>USD</button>
             </div>
-        </div>
-        <div className='mt-5'>
-            <h1 className='text-xl text-gray-700 '>Description & Responsibilty</h1>
-            <h1 className='text-md text-gray-600 mt-3'>Description</h1>
-            <textarea
-                rows={5}
-                placeholder='Add Your Description'
-                className='flex w-full border border-gray-300 rounded-md p-5 mt-1'
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <h1 className='text-md text-gray-600'>Max Salary</h1>
+            <div className='flex border border-gray-300 rounded-md'>
+              <input
+                name="max"
+                onChange={handleSalaryChange}
+                value={formData.salary.max}
+                type="text"
+                className='flex flex-1 p-2 text-sm'
+                placeholder='Max Salary'
+              />
+              <button className='bg-gray-200 p-2'>USD</button>
+            </div>
+          </div>
+
+          <div className='flex flex-col gap-2'>
+            <h1 className='text-md text-gray-600'>Salary Type</h1>
+            <select
+              name="type"
+              onChange={handleSalaryChange}
+              value={formData.salary.type}
+              className='flex border border-gray-300 rounded-md p-3'
             >
+              <option value="">Select</option>
+              {salaryTypes.map((eachItem, index) => (
+                <option key={index} value={eachItem.name}>
+                  {eachItem.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
 
-            </textarea>
-            <h1 className='text-md text-gray-600 mt-4'>Responsibilites</h1>
-            <textarea
-                rows={5}
-                placeholder='Add Your Job Responsibilites'
-                className='flex w-full border border-gray-300 rounded-md p-5 mt-1'
-            >
+      <div className='mt-5'>
+        <h1 className='text-xl text-gray-700 '>Advance Information</h1>
+        <div className='grid sm:grid-cols-1 md:grid-cols-3 gap-3 mt-3'>
 
-            </textarea>
+          <select name="education" onChange={handlechange} value={formData.education} 
+          className='flex border border-gray-300 rounded-md p-3'>
+            <option value="">Select</option>
+            {educationLevels.map((item, index) => (
+              <option key={index} value={item.name}>{item.name}</option>
+            ))}
+          </select>
+
+          <select name="experience" onChange={handlechange} value={formData.experience} 
+          className='flex border border-gray-300 rounded-md p-3'>
+            <option value="">Select</option>
+            {experienceLevels.map((item, index) => (
+              <option key={index} value={item.name}>{item.name}</option>
+            ))}
+          </select>
+
+          <select name="jobType" onChange={handlechange} value={formData.jobType}
+           className='flex border border-gray-300 rounded-md p-3'>
+            <option value="">Select</option>
+            {jobTypes.map((item, index) => (
+              <option key={index} value={item.name}>{item.name}</option>
+            ))}
+          </select>
+
+          <select name="vacancies" onChange={handlechange} value={formData.vacancies} 
+          className='flex border border-gray-300 rounded-md p-3'>
+            <option value="">Select</option>
+            {vacancies.map((item, index) => (
+              <option key={index} value={item.name}>{item.name}</option>
+            ))}
+          </select>
+
+          <input
+            name="expirationDate"
+            onChange={handlechange}
+            value={formData.expirationDate}
+            type="date"
+            className='flex-1 border border-gray-300 rounded-md p-3'
+          />
+
+          <select name="jobLevel" onChange={handlechange} value={formData.jobLevel} 
+          className='flex border border-gray-300 rounded-md p-3'>
+            <option value="">Select</option>
+            {jobLevels.map((item, index) => (
+              <option key={index} value={item.name}>{item.name}</option>
+            ))}
+          </select>
 
         </div>
-        <div className='flex bg-blue-700 text-white w-fit px-4 py-2 gap-2 items-center rounded-sm'>
-            <h1>Post Job</h1>
-            <ArrowRight size={20}/>
-        </div>
+      </div>
+
+      <div className='mt-5'>
+        <textarea
+          name="description"
+          onChange={handlechange}
+          value={formData.description}
+          rows={5}
+          placeholder='Add Your Description'
+          className='flex w-full border border-gray-300 rounded-md p-5 mt-1'
+        />
+
+        <textarea
+          name="responsibilities"
+          onChange={handlechange}
+          value={formData.responsibilities}
+          rows={5}
+          placeholder='Add Your Job Responsibilites'
+          className='flex w-full border border-gray-300 rounded-md p-5 mt-1'
+        />
+      </div>
+
+      <div
+        onClick={handleSubmit}
+        className='flex bg-blue-700 text-white w-fit px-4 py-2 gap-2 items-center rounded-sm cursor-pointer'
+      >
+        <h1>Post Job</h1>
+        <ArrowRight size={20} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-
-export default RecruiterPostJob
+export default RecruiterPostJob;

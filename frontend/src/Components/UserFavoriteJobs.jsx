@@ -1,252 +1,291 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import {
   Briefcase,
-  ArrowRightIcon,
   MapPin,
-  ArrowRight,
-  ArrowLeftIcon,
-  Check,
-  PencilLine,
-  CircleDashed,
   Bookmark,
   Calendar,
   DollarSign,
   CirclePlus,
+  PencilLine,
 } from "lucide-react";
+import axios from "axios";
+import iphonelogo from "../assets/iphonelogo.png";
 
-  const favoriteJobs = [
-    {
-      id: 1,
-      name: "Tech Solutions Inc.",
-      jobRole: "Frontend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png",
-      location: "San Francisco, CA",
-      status: "active",
-      type: "full-time",
-      salary: "$120,000 / year",
-      postedDate: "expired",
-    },
-    {
-      id: 2,
-      name: "Innovatech Corp.",
-      jobRole: "Full Stack Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
-      location: "New York, NY",
-      status: "pending",
-      type: "remote",
-      salary: "$95,000 / year",
-      postedDate: "2",
-    },
-    {
-      id: 3,
-      name: "Global Enterprises",
-      jobRole: "Backend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
-      location: "Chicago, IL",
-      status: "active",
-      type: "part-time",
-      salary: "$45 / hour",
-      postedDate: "5",
-    },
-    {
-      id: 4,
-      name: "Creative Minds LLC",
-      jobRole: "UI/UX Designer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968267.png",
-      location: "Austin, TX",
-      status: "pending",
-      type: "full-time",
-      salary: "$105,000 / year",
-      postedDate: "expired",
-    },
-    {
-      id: 5,
-      name: "CloudNine Systems",
-      jobRole: "DevOps Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968282.png",
-      location: "Seattle, WA",
-      status: "active",
-      type: "remote",
-      salary: "$110,000 / year",
-      postedDate: "8",
-    },
-    {
-      id: 6,
-      name: "NextGen Innovations",
-      jobRole: "QA Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968295.png",
-      location: "Boston, MA",
-      status: "pending",
-      type: "part-time",
-      salary: "$40 / hour",
-      postedDate: "2",
-    },
-    {
-      id: 7,
-      name: "Apex Technologies",
-      jobRole: "Software Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968300.png",
-      location: "Denver, CO",
-      status: "active",
-      type: "full-time",
-      salary: "$98,000 / year",
-      postedDate: "expired",
-    },
-    {
-      id: 8,
-      name: "Bright Future Labs",
-      jobRole: "Data Scientist",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968312.png",
-      location: "Los Angeles, CA",
-      status: "pending",
-      type: "remote",
-      salary: "$115,000 / year",
-      postedDate: "9",
-    },
-    {
-      id: 9,
-      name: "Summit Solutions",
-      jobRole: "Product Manager",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968321.png",
-      location: "Dallas, TX",
-      status: "active",
-      type: "full-time",
-      salary: "$90,000 / year",
-      postedDate: "expired",
-    },
-    {
-      id: 10,
-      name: "BlueWave Tech",
-      jobRole: "Mobile App Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968330.png",
-      location: "Miami, FL",
-      status: "pending",
-      type: "part-time",
-      salary: "$42 / hour",
-      postedDate: "1",
-    },
-  ];
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 const UserFavoriteJobs = () => {
+  const [favoriteJobs, setFavoriteJobs] = useState([]);
+  const [showDelete, setShowDelete] = useState(false);
+  const [curDeleteId, setCurDeleteId] = useState("");
+
+  useEffect(() => {
+    const fetchFavoriteJobs = async () => {
+      try {
+        const response = await axios.get(
+          `${DOMAIN}/api/job/get-favorite`,
+          { withCredentials: true }
+        );
+
+        if (response.status === 200) {
+          setFavoriteJobs(response.data.jobs || []);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchFavoriteJobs();
+  }, []);
+
+  const removeFavorite = async (jobId) => {
+    try {
+      const response = await axios.post(
+        `${DOMAIN}/api/job/remove-favorite`,
+        { jobId },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        setFavoriteJobs((prev) =>
+          prev.filter((fav) => fav.jobId?._id !== jobId)
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const getDaysRemaining = (date) => {
+    if (!date) return null;
+
+    const expiry = new Date(date);
+    if (isNaN(expiry.getTime())) return null;
+
+    const today = new Date();
+    return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+  };
+
   return (
     <div>
-        <div className="flex items-center justify-between p-2">
-            <p className='font-medium text-gray-700'>Favorite Jobs(567)</p>
-            <div>
-            <button
-                onClick={() => setShowAllJobs((prev) => !prev)}
-                className="p-2 text-sm flex items-center justify-center text-gray-500 gap-2"
+      {/* HEADER */}
+      <div className="flex items-center justify-between p-2">
+        <p className="font-medium text-gray-700">
+          Favorite Jobs ({favoriteJobs.length})
+        </p>
+
+        <button className="p-2 text-sm flex items-center text-gray-500 gap-2">
+          <PencilLine className="size-4" />
+          Edit Job Alert
+        </button>
+      </div>
+
+      {/* MOBILE VIEW */}
+      <div className="grid grid-cols-1 sm:hidden gap-6">
+        {favoriteJobs.map((job) => {
+          const daysRemaining = getDaysRemaining(
+            job.jobId?.expirationDate
+          );
+
+          return (
+            <div
+              key={job._id}
+              className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
             >
-                
-                <PencilLine className="size-4" />
-                Edit Job Alert
-            </button>
-            </div>
-        </div>
-        {/* MOBILE VIEW (GRID CARDS) */}
-      <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
-        {favoriteJobs.map((job) => (
-          <div
-            key={job.id}
-            className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
-          >
-            <div className="flex items-center gap-4 mb-4">
-              <img
-                src={job.image}
-                alt="logo"
-                className="h-12 w-12 rounded-md object-contain"
-              />
-              <div>
-                <p className="font-semibold">{job.jobRole}</p>
-                <p className="font-semibold text-xs">{job.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{job.type}</p>
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src={iphonelogo}
+                  alt="logo"
+                  className="h-12 w-12 rounded-md object-contain"
+                />
+
+                <div>
+                  <p className="font-semibold">
+                    {job.jobId?.role}
+                  </p>
+                  <p className="text-xs text-gray-500 capitalize">
+                    {job.jobId?.jobType}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex flex-col gap-2 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <MapPin className="size-4" />
-                {job.location}
-              </div>
-              <div className="flex items-center gap-2">
-                <Briefcase className="size-4" />
-                {job.open_jobs} open jobs
-              </div>
-            </div>
-
-            <button className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-gray-300 transition">
-              View Details
-              <ArrowRight className="size-4" />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
-      <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
-        {favoriteJobs.map((job) => (
-          <div
-            key={job.id}
-            className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
-          >
-            {/* LEFT */}
-            <div className="flex items-center gap-4">
-              <img
-                src={job.image}
-                alt="logo"
-                className="h-12 w-12 rounded-md object-contain"
-              />
-
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold">{job.jobRole}</p>
-
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
-                    {job.type}
-                  </span>
+                  <MapPin className="size-4" />
+                  {job.jobId?.location}
                 </div>
-                <p className="text-gray-600 text-xs">{job.name}</p>
 
-                <div className="flex items-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="size-4" />
-                    {job.location}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="size-4" />
+                  {job.jobId?.salary?.max || "Not disclosed"}
+                </div>
 
-                  <div className="flex items-center gap-1">
-                    <DollarSign className="size-4" />
-                    {job.salary} 
+                {daysRemaining === null ? (
+                  <p>No expiry</p>
+                ) : daysRemaining <= 0 ? (
+                  <div className="flex gap-1 items-center">
+                    <CirclePlus className="size-3 text-red-500" />
+                    <p className="text-red-500 text-xs">
+                      Job Expired
+                    </p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    
-                    {job.postedDate === "expired" ? (
-                        <div className='flex gap-1'>
-                            <CirclePlus className='size-3 text-red-500' />
-                            <p className='text-red-500 text-xs'>Job Expired</p>
-                        </div>
-                    ):(<div className='flex gap-1 items-center'>
-                        <Calendar className="size-4" />
-                        <p>{job.postedDate} Days Remaining</p>
-                        </div>)}
+                ) : (
+                  <div className="flex gap-1 items-center">
+                    <Calendar className="size-4" />
+                    <p>{daysRemaining} Days Remaining</p>
                   </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => {
+                  setCurDeleteId(job.jobId._id);
+                  setShowDelete(true);
+                }}
+                className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-red-500 rounded-md hover:bg-gray-300 transition"
+              >
+                Remove from Favorites
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* DESKTOP VIEW */}
+      <div className=" hidden md:flex flex-col gap-4 pt-3">
+        {favoriteJobs.length === 0 ? (
+          <p className="text-center text-gray-500 py-10">
+            No favorite jobs found
+          </p>
+        ) : (
+          favoriteJobs.map((job) => {
+            const daysRemaining = getDaysRemaining(
+              job.jobId?.expirationDate
+            );
+
+            return (
+              <div
+                key={job._id}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
+              >
+                {/* LEFT */}
+                <div className="flex items-center gap-4">
+                  <img
+                    src={iphonelogo}
+                    alt="logo"
+                    className="h-12 w-12 rounded-md object-contain"
+                  />
+
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold">
+                        {job.jobId?.role}
+                      </p>
+
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
+                        {job.jobId?.jobType}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="size-4" />
+                        {job.jobId?.location}
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <DollarSign className="size-4" />
+                        {job.jobId?.salary?.max || "Not disclosed"}
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {daysRemaining === null ? (
+                          <p>No expiry</p>
+                        ) : daysRemaining <= 0 ? (
+                          <div className="flex gap-1 items-center">
+                            <CirclePlus className="size-3 text-red-500" />
+                            <p className="text-red-500 text-xs">
+                              Job Expired
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex gap-1 items-center">
+                            <Calendar className="size-4" />
+                            <p>{daysRemaining} Days Remaining</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setCurDeleteId(job.jobId._id);
+                      setShowDelete(true);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <Bookmark className="size-5" fill="black" />
+                  </button>
+
+                  <button className="px-4 py-2 text-sm text-blue-500 font-medium bg-blue-100 rounded-md hover:bg-blue-600 hover:text-white transition">
+                    View Details
+                  </button>
                 </div>
               </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* DELETE MODAL */}
+      {showDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white shadow-md rounded-xl py-6 px-5 md:w-[460px] w-[370px] border border-gray-200">
+            <div className="flex items-center justify-center p-4 bg-red-100 rounded-full">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
             </div>
 
-            {/* RIGHT */}
-            <div className="flex items-center gap-2">
-                <button className="flex items-center text-md text-gray-600 cursor-pointer transition">
-                <Bookmark className='size-5' fill='black' />
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl text-center">
+              Are you sure?
+            </h2>
+
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Do you really want to continue? <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-center gap-4 mt-5">
+              <button
+                onClick={() => {
+                  setShowDelete(false);
+                  setCurDeleteId("");
+                }}
+                className="w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 text-sm hover:bg-gray-100 transition"
+              >
+                Cancel
               </button>
 
-              <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 cursor-pointer font-medium bg-blue-100 rounded-md hover:bg-blue-600 hover:text-white transition">
-                View Details
+              <button
+                onClick={() => {
+                  removeFavorite(curDeleteId);
+                  setCurDeleteId("");
+                  setShowDelete(false);
+                }}
+                className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
+              >
+                Confirm
               </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default UserFavoriteJobs
+export default UserFavoriteJobs;
