@@ -42,7 +42,7 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPage />} />
         <Route path="/job/homepage" element={<OnlineTestHomePage />} />
         <Route path='/company-jobs/:id' element={<FindCompanyJobs />} />
-        <Route path="/job/confirmtest" element= {<AppOnlineTestConfirmPage />} />
+        <Route path="/job/confirmtest" element= {<OnlineTestConfirmPage />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
