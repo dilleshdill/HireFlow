@@ -22,6 +22,7 @@ import OnlineTestHomePage from './Pages/OnlineTest/OnlineTestHomePage.jsx'
 import FindCompanyJobs from './Pages/FindCompanyJobs.jsx'
 import OnlineTestConfirmPage from './Pages/OnlineTest/OnlineTestConfirmPage.jsx'
 import OnlineTestDetailes from './Pages/OnlineTest/OnlineTestDetailes.jsx'
+import OnlineTestExam from './Pages/OnlineTest/OnlineTestExam.jsx'
 const App = () => {
   return (
     <>
@@ -45,6 +46,7 @@ const App = () => {
         <Route path='/company-jobs/:id' element={<FindCompanyJobs />} />
         <Route path="/job/confirmtest" element= {<OnlineTestConfirmPage />} />
         <Route path="/job/test/detailes" element = {<OnlineTestDetailes />} />
+        <Route path="/job/test/exam" element={<OnlineTestExam />} />  
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
