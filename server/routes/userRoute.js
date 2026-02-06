@@ -1,0 +1,18 @@
+// routes/userRoute.js
+import express from "express";
+import { AddUserProfile, UploadResume } from "../controllers/userProfileController.js";
+import upload from "../middleware/upload.js";
+import { protectUser } from "../middleware/protectUser.js";
+
+const userRoute = express.Router();
+
+userRoute.post(
+  "/upload-resume",
+  protectUser,
+  upload.single("resume"),
+  UploadResume
+);
+
+userRoute.post("/user-detailes", protectUser, AddUserProfile);
+
+export default userRoute;

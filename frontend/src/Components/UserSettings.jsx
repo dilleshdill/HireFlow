@@ -14,6 +14,8 @@ import {
   Plus,
   CirclePlus,
   Eye,
+  PrinterCheck,
+  ScanBarcodeIcon,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -106,59 +108,71 @@ const UserSettings = () => {
   const [progress, setProgress] = useState(1);
   const [showModel, setShowModel] = useState(false);
   const [userProfileData, setUserProfileData] = useState({ 
-    fullName: "",
-    email: "",
-    phone: "",
-    location: "",
-
-    
-    title: "", // e.g. MERN Developer
-    skills: [], // ["React", "Node", "MongoDB"]
+    fullName: "Hari Tarun kumar",
+    email: "tarunbommana798@gmail.com",
+    phone: "9010144168",
+    location: "Boppadam",
+    title: "MERN Stack Developer", 
+    skills: [],
     overallExperience: 0, 
     noticePeriod: 0, 
-    resumeName:"",
-    websiteUrl:"",
-    education:"",
-    experience: "",
-    nationalitie:"",
+    resumeName:"HariTarun Resume",
+    websiteUrl:"www.localhost.com",
+    education:"RGUKT SKLM",
+    experience: "5",
+    nationalitie:"India",
     resumeUrl: "",
-    dateOfBirth:"",
+    dateOfBirth:"26-06-2005",
+    instagram:"",
     linkedin: "",
-    github: "",
-    portfolio: "",
-    martinalStatus:"",
+    twitter: "",
+    facebook: "",
+    youtube:"",
+    martinalStatus:"Single",
     description:"",
-    // Preferences
-    preferredLocation: "",
-    expectedCTC: "",
   });
-  const [previewResume,setPreviewResume] = useState("")
+  const [previewResume,setPreviewResume] = useState()
 
   const fileRef = useRef(null)
 
-  const getSubmit = async () => {
+  const getSubmit = async() => {
     try {
-      const response = await axios.post(DOMAIN + "/user/user-detailes", {
+      const response = await axios.post(DOMAIN + "/api/user/user-detailes", {
         userProfileData
       },
         {withCredentials:true});
         if(response.status === 200){
-            console.log(response.data)
+            toast.success("Data Successfully Inserted")
         }
         } catch (err) {
             console.log(err)
         }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async(e) => {
     const file = e.target.files[0]
     
     if (!file){
         toast.error("Give Valid Resume")
     }
-    setPreviewResume("Your Resume")
 
-    setUserProfileData({...userProfileData,resumeUrl:file})
+    const formData = new FormData();
+    formData.append("resume", file);
+    
+    try {
+        const res = await axios.post(
+        `${DOMAIN}/api/user/upload-resume`,
+        formData,
+        {withCredentials:true}
+        );
+        if(res.status === 200){
+            setPreviewResume(file)
+            setUserProfileData({...userProfileData,resumeUrl:res.data.resumeUrl})
+        }
+    }
+    catch(e){
+        console.log(e)
+    }
 
   }
 
@@ -170,7 +184,6 @@ const UserSettings = () => {
     <div className="w-full bg-white py-5">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-xl font-normal text-gray-800">Settings</h1>
-
         <div className="max-w-5xl justify-center mx-auto p-6 mt-5">
           <div className="flex max-w-3xl mx-auto justify-around gap-7">
             {/* Step 1 */}
@@ -231,7 +244,7 @@ const UserSettings = () => {
           </div>
 
           <div className="mt-7 text-center max-w-5xl mx-auto ">
-            {/* FirstPage */}
+            
             {progress === 1 && (
               <div className="flex flex-col gap-3 w-full">
                 <h1 className="text-lg font-medium text-gray-700 text-start">
@@ -243,9 +256,20 @@ const UserSettings = () => {
                     <h1 className="text-md text-gray-600 text-start">
                       Upload Document
                     </h1>
-                    <div
+                    {
+                      previewResume?
+                      (
+                        
+                        <img src={typeof previewResume === 'string' ? previewResume: URL.
+                          createObjectURL(previewResume)} alt="user-image" 
+                          className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition" />      
+                      ) 
+                      :
+                      
+                      (
+                        <div
                       onClick={() => setShowModel(true)}
-                      className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+                      className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
                     >
                       <CloudUpload size={30} className="text-gray-400" />
                       <p className="text-gray-500">
@@ -256,6 +280,8 @@ const UserSettings = () => {
                         A Photo large then 200kb works Best.Photo Max size 5mb
                       </p>
                     </div>
+                      )
+                    }
                     
                   </div>
 
@@ -331,7 +357,11 @@ const UserSettings = () => {
                     </div>
                     <div
                       className="flex mt-3 bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
-                      onClick={getSubmit}
+                      onClick={()=>{
+                        getSubmit()
+                        setProgress(2)
+                      }
+                      }
                     >
                       <h1>Save Changes & Next</h1>
                     </div>
@@ -529,7 +559,7 @@ const UserSettings = () => {
                 </div>
               </div>
             )}
-            {/* thirdPage */}
+            
             {progress === 3 && (
               <div className="flex flex-col gap-2 mt-7 text-center max-w-5xl mx-auto ">
                 <h1 className="text-gray-500 text-lg text-start">
@@ -542,6 +572,8 @@ const UserSettings = () => {
                   </div>
                   <input
                     type="text"
+                    value={userProfileData.facebook}
+                    onChange={(e) => setUserProfileData({...userProfileData,facebook:e.target.value})}
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                   />
@@ -553,10 +585,12 @@ const UserSettings = () => {
                 <div className="flex gap-3">
                   <div className="flex border-1 border-gray-300 px-5 py-3 gap-3 w-fit">
                     <Instagram size={25} className="text-blue-700" />
-                    <p className="text-lg text-gray-700 font-serif">FaceBook</p>
+                    <p className="text-lg text-gray-700 font-serif">Instagram</p>
                   </div>
                   <input
                     type="text"
+                    value={userProfileData.instagram}
+                    onChange={(e) => setUserProfileData({...userProfileData,instagram:e.target.value})}
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                   />
@@ -567,10 +601,12 @@ const UserSettings = () => {
                 <div className="flex gap-3">
                   <div className="flex border-1 border-gray-300 px-5 py-3 gap-3 w-fit">
                     <Twitter size={25} className="text-blue-700" />
-                    <p className="text-lg text-gray-700 font-serif">FaceBook</p>
+                    <p className="text-lg text-gray-700 font-serif">Twitter</p>
                   </div>
                   <input
                     type="text"
+                    value={userProfileData.twitter}
+                    onChange={(e) => setUserProfileData({...userProfileData,twitter:e.target.value})}
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                   />
@@ -581,10 +617,12 @@ const UserSettings = () => {
                 <div className="flex gap-3">
                   <div className="flex border-1 border-gray-300 px-5 py-3 gap-3 w-fit">
                     <Youtube size={25} className="text-blue-700" />
-                    <p className="text-lg text-gray-700 font-serif">FaceBook</p>
+                    <p className="text-lg text-gray-700 font-serif">youtube</p>
                   </div>
                   <input
                     type="text"
+                    value={userProfileData.youtube}
+                    onChange={(e) => setUserProfileData({...userProfileData,youtube:e.target.value})}
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                   />
@@ -599,13 +637,18 @@ const UserSettings = () => {
                   </div>
                   <div
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
-                    onClick={() => setProgress(4)}
+                    onClick={() => 
+                    {
+                      getSubmit()
+                      setProgress(4)
+                    }}
                   >
                     <h1>Save Changes & Next </h1>
                   </div>
                 </div>
               </div>
             )}
+
             {progress === 4 && (
               <div className="flex flex-col mt-10">
                 <h1 className="text-start text-lg text-gray-500 font-medium">
@@ -613,6 +656,8 @@ const UserSettings = () => {
                 </h1>
                 <input
                   type="text"
+                  value={userProfileData.location}
+                  onChange={(e) => setUserProfileData({...userProfileData,location:e.target.value})}
                   className="border border-gray-300 rounded-md p-2 w-full mt-1"
                 />
                 <h1 className="text-start text-lg text-gray-500 font-medium mt-3">
@@ -626,6 +671,8 @@ const UserSettings = () => {
                   </select>
                   <input
                     type="text"
+                    value={userProfileData.phone}
+                    onChange={(e) => setUserProfileData({...userProfileData,phone:e.target.value})}
                     placeholder="Phone Number"
                     className="flex flex-1 text-gray-400 p-1 border border-gray-300 "
                   />
@@ -638,6 +685,8 @@ const UserSettings = () => {
                   <input
                     type="text"
                     placeholder="Email"
+                    value={userProfileData.email}
+                    onChange={(e) => setUserProfileData({...userProfileData,email:e.target.value})}
                     className="flex flex-1 outline-none text-gray-600"
                   />
                 </div>
@@ -651,7 +700,7 @@ const UserSettings = () => {
                   <div
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
                     onClick={() => {
-                      setProgress(5);
+                      getSubmit()
                     }}
                   >
                     <h1>Save Changes </h1>
@@ -721,6 +770,7 @@ const UserSettings = () => {
                 </label>
                 <input
                   type="text"
+                  value = {userProfileData.resumeName}
                   onChange={(e)=>setUserProfileData({...userProfileData,resumeName:e.target.value})}
                   className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter resume name"
