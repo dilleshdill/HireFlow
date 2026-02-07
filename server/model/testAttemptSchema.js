@@ -50,6 +50,12 @@ const testAttemptSchema = new mongoose.Schema(
       default: false
     },
 
+    currentRound:{
+        type:String,
+        enum: ["APTITUDE", "CORE", "CODING"],
+        default:'APTITUDE'
+    },
+
     status: {
       type: String,
       enum: ["STARTED", "SUBMITTED", "EVALUATED"],
@@ -60,7 +66,7 @@ const testAttemptSchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     },
-
+    
     submittedAt: Date
   
 },{ timestamps: true }

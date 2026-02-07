@@ -277,7 +277,7 @@ const UserAppliedJobs = () => {
               )}
 
               <button
-                onClick={()=>navigate(`/job/homepage/${job._id}`)}
+                onClick={()=>navigate(`/job/homepage/${job.jobId._id}`)}
               className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
                 View Details
               </button>
