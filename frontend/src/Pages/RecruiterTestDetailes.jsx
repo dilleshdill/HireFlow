@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Axis3D } from "lucide-react";
+
+
+const DOMAIN = import.meta.env.VITE_DOMAIN 
 
 const QuestionsManager = () => {
+    const navigate = useNavigate()
     const {id} = useParams()
-const jobId = id
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("APTITUDE");
-  const [editingId, setEditingId] = useState(null);
+    const jobId = id
+    const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState("APTITUDE");
+    const [editingId, setEditingId] = useState(null);
 
   const initialQuestion = {
     jobId: id,
     roundType: "APTITUDE",
-    questionText: "",
-    options: ["", ""],
-    correctAnswer: "", // Empty string initially
+    questionText: "what is the value x where x is 0",
+    options: ["0", "10/0"],
+    correctAnswer: "0", 
     marks: 1,
     difficulty: "MEDIUM",
     testCases: [{ input: "", expectedOutput: "" }],
     roundTime: 30
   };
 
-  const [newQuestion, setNewQuestion] = useState({ ...initialQuestion });
+  const [newQuestion, setNewQuestion] = useState(initialQuestion);
 
-  // Fetch questions for this job
+  
   useEffect(() => {
     if (jobId) {
       fetchQuestions();
@@ -32,9 +38,16 @@ const jobId = id
   }, [jobId]);
 
   const fetchQuestions = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-    
+        const response = await axios.get(DOMAIN + `/api/recruiter/get-questions?jobId=${jobId}`,{
+            withCredentials:true
+        })
+        if(response.status === 200){
+            setQuestions(response.data.questions)
+        } 
+      
+
     } catch (error) {
       console.log(error)
         
@@ -43,13 +56,11 @@ const jobId = id
     }
   };
 
-  // Reset form to initial state
   const resetForm = () => {
     setNewQuestion({ ...initialQuestion, roundType: activeTab });
     setEditingId(null);
   };
 
-  // Handle input changes
   const handleInputChange = (field, value) => {
     setNewQuestion(prev => ({
       ...prev,
@@ -57,7 +68,6 @@ const jobId = id
     }));
   };
 
-  // Handle MCQ options
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...newQuestion.options];
     updatedOptions[index] = value;
@@ -79,13 +89,10 @@ const jobId = id
       const updatedOptions = newQuestion.options.filter((_, i) => i !== index);
       
       let updatedCorrectAnswer = newQuestion.correctAnswer;
-      
-      // Adjust correct answer if needed
+
       if (newQuestion.correctAnswer === index.toString()) {
-        // If removing the correct answer, reset to empty
         updatedCorrectAnswer = "";
       } else if (newQuestion.correctAnswer && parseInt(newQuestion.correctAnswer) > index) {
-        // If correct answer index is after the removed index, decrement it
         updatedCorrectAnswer = (parseInt(newQuestion.correctAnswer) - 1).toString();
       }
       
@@ -97,7 +104,6 @@ const jobId = id
     }
   };
 
-  // Handle test cases for coding questions
   const handleTestCaseChange = (index, field, value) => {
     const updatedTestCases = [...newQuestion.testCases];
     updatedTestCases[index] = {
@@ -127,7 +133,6 @@ const jobId = id
     }
   };
 
-  // Set correct answer
   const setCorrectAnswer = (index) => {
     setNewQuestion(prev => ({
       ...prev,
@@ -135,7 +140,6 @@ const jobId = id
     }));
   };
 
-  // Validation
   const validateQuestion = () => {
     const errors = [];
 
@@ -144,7 +148,7 @@ const jobId = id
     }
 
     if (newQuestion.roundType === "APTITUDE" || newQuestion.roundType === "CORE") {
-      // Validate MCQ questions
+      
       const emptyOptions = newQuestion.options.filter(opt => !opt.trim());
       if (emptyOptions.length > 0) {
         errors.push(`All options must be filled. ${emptyOptions.length} empty option(s) found.`);
@@ -155,8 +159,8 @@ const jobId = id
       if (!newQuestion.correctAnswer && newQuestion.correctAnswer !== "0") {
         errors.push("Please select a correct answer");
       }
-    } else if (newQuestion.roundType === "CODING") {
-      // Validate coding questions
+    } 
+    else if (newQuestion.roundType === "CODING") {
       const emptyTestCases = newQuestion.testCases.filter(tc => !tc.input.trim() || !tc.expectedOutput.trim());
       if (emptyTestCases.length > 0) {
         errors.push(`All test cases must be filled. ${emptyTestCases.length} incomplete test case(s) found.`);
@@ -169,87 +173,108 @@ const jobId = id
     return errors;
   };
 
-  // Save/Update question
   const handleSubmit = async (e) => {
+    console.log(newQuestion)
     e.preventDefault();
     
     const errors = validateQuestion();
     if (errors.length > 0) {
-      alert("Please fix the following errors:\n\n" + errors.join("\n"));
+      toast.error("Please fix the following errors:\n\n" + errors.join("\n"));
       return;
     }
 
     try {
       setLoading(true);
-      
-      // Prepare data based on round type
-      const submissionData = {
+
+      const response = await axios.post(DOMAIN + "/api/recruiter/add-question",{
         jobId: newQuestion.jobId,
         roundType: newQuestion.roundType,
         questionText: newQuestion.questionText,
         marks: newQuestion.marks,
         difficulty: newQuestion.difficulty,
-        roundTime: newQuestion.roundTime
-      };
+        roundTime: newQuestion.roundTime,
+        options:newQuestion.options,
+        correctAnswer:newQuestion.correctAnswer,
+        testCases:newQuestion.testCases
+        },
+        {withCredentials:true}
+      )
 
-      // Add type-specific fields
-      if (newQuestion.roundType === "APTITUDE" || newQuestion.roundType === "CORE") {
-        submissionData.options = newQuestion.options;
-        submissionData.correctAnswer = newQuestion.correctAnswer; // String index
-      } else if (newQuestion.roundType === "CODING") {
-        submissionData.testCases = newQuestion.testCases;
+      if (response.status === 200){
+        resetForm();
+        fetchQuestions();
+        toast.success(editingId ? "Question updated successfully!" : "Question added successfully!");
       }
 
-    
-
-      resetForm();
-      fetchQuestions();
-      alert(editingId ? "Question updated successfully!" : "Question added successfully!");
     } catch (error) {
-      console.error("Error saving question:", error);
-      alert("Error saving question. Please try again.");
+      console.log(error)
+      toast.error("Error saving question. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Edit question
-  const handleEdit = (question) => {
+  const handleEdit = async(question) => {
+
     setNewQuestion({
       ...question,
       options: question.options || ["", ""],
       testCases: question.testCases || [{ input: "", expectedOutput: "" }],
-      correctAnswer: question.correctAnswer || "" // Keep as string
+      correctAnswer: question.correctAnswer || "" 
     });
+
+    try{
+        const response = await axios.post(DOMAIN + "/api/recruiter/update-question",{
+            questionId:question._id
+        },{
+            withCredentials:true
+        })
+        if (response.status === 200){
+            console.log(response.data)
+            toast.success("Successfully Update The Data")
+            fetchQuestions()
+            resetForm()
+        }
+    }catch(error){
+        console.log(error)
+        toast.error("something went wrong")
+    }
     setEditingId(question._id);
     setActiveTab(question.roundType);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Delete question
   const handleDelete = async (id) => {
+    
     if (window.confirm("Are you sure you want to delete this question?")) {
       try {
         setLoading(true);
-        // await axios.delete(`/api/questions/${id}`);
-        fetchQuestions();
-        alert("Question deleted successfully!");
+        const response = await axios.post(DOMAIN + `/api/recruiter/delete-question`,{
+            questionId:id
+        },{
+            withCredentials:true
+        })
+
+        if (response.status === 200){
+            fetchQuestions();
+            toast.success("Question deleted successfully!");
+        }
+        
       } catch (error) {
         console.error("Error deleting question:", error);
-        alert("Error deleting question. Please try again.");
+        toast.success("Error deleting question. Please try again.");
       } finally {
         setLoading(false);
       }
     }
   };
 
-  // Filter questions by round type
   const filteredQuestions = questions.filter(q => q.roundType === activeTab);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Assessment Questions Manager
@@ -259,8 +284,9 @@ const jobId = id
           </p>
         </div>
 
-        {/* Tabs for Round Types */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        
+        <div className="flex justify-between items-center">
+            <div className="flex flex-wrap gap-2 mb-8">
           {["APTITUDE", "CORE", "CODING"].map((type) => (
             <button
               key={type}
@@ -282,10 +308,15 @@ const jobId = id
               {type.charAt(0) + type.slice(1).toLowerCase()} Round
             </button>
           ))}
+          
+        </div>
+        <button className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 px-6 py-3 rounded-lg font-medium transition-all" 
+        onClick={()=>navigate("/recruiter-dashboard")}>
+            Back
+        </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Form */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-800">
@@ -548,6 +579,7 @@ const jobId = id
                 <button
                   type="submit"
                   disabled={loading}
+                  
                   className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
@@ -558,7 +590,7 @@ const jobId = id
                       </svg>
                       Saving...
                     </span>
-                  ) : editingId ? "Update Question" : "Add Question"}
+                  ) : editingId ? "Update Question" : "Save & Next"}
                 </button>
                 
                 {editingId && (
@@ -576,7 +608,7 @@ const jobId = id
           </div>
 
           {/* Right Column - Questions List */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-xl shadow-lg p-6 overflow-y-auto h-screen    ">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-800">
                 {activeTab.charAt(0) + activeTab.slice(1).toLowerCase()} Questions ({filteredQuestions.length})
@@ -604,7 +636,7 @@ const jobId = id
                 <p className="text-gray-400 text-sm">Start by adding your first question</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4 ">
                 {filteredQuestions.map((question, index) => (
                   <div
                     key={question._id}
