@@ -1,5 +1,7 @@
 import cloudinary from "../config/cloudinary.js";
 import { RecruiterProfile } from "../model/recruiterProfileModel.js";
+import SavedCandidates from "../model/savedCandidates.js";
+import { UserProfile } from "../model/UserProfileModel.js";
 
 export const uploadImage = async (req, res) => {
   try {
@@ -76,5 +78,114 @@ export const uploadDetailes = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+
+// save the candidates
+export const saveCandidate = async (req , res) => {
+  
+  try {
+    const recruiterId = req.user.id;
+    const {userId} = req.body;
+    console.log(userId,recruiterId)
+    if(!userId){
+      return res.status(400).json({message:"all fields are required"})
+    }
+    const existed = await SavedCandidates.findOne({recruiterId,userId})
+
+    if(existed){
+      return res.status(400).json({message:"candidate was already in saved"})
+    }
+
+    const candidate = await SavedCandidates.create({
+      recruiterId,
+      userId
+    })
+
+    return res.status(200).json({candidate,message:"saved successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// remove saved candidates
+export const removeCandidate = async (req , res) => {
+  try {
+    const recruiterId = req.user.id;
+    const {userId} = req.body;
+    
+    if(!userId){
+      return res.status(400).json({message:"all fields are required"})
+    }
+    const existed = await SavedCandidates.findOne({recruiterId,userId})
+
+    if(!existed){
+      return res.status(400).json({message:"no candidates was found"})
+    }
+
+    const candidate = await SavedCandidates.findOneAndDelete({recruiterId,userId})
+
+    return res.status(200).json({candidate,message:"candidate removed form savedCandidates"})
+
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+//fetch saved candidates 
+export const fetchSavedCandidates = async (req , res) => {
+  try {
+    const recruiterId = req.user.id
+    const savedCandidates = await SavedCandidates.find({recruiterId})
+
+    if(!saveCandidate){
+      return res.status(400).json({message:"no saved candidates"})
+    }
+
+    return res.status(200).json({savedCandidates,message:"fetch successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// get saved candidates
+export const getSavedCandidates = async (req, res) => {
+  try {
+    const recruiterId = req.user.id;
+
+    // 1️⃣ Get saved candidates with user populated
+    const saved = await SavedCandidates.find({ recruiterId })
+      .populate("userId", "-password -otp -otpExpiry")
+      .sort({ createdAt: -1 });
+
+    // 2️⃣ Extract user ids
+    const userIds = saved.map(s => s.userId._id);
+
+    // 3️⃣ Get profiles of those users
+    const profiles = await UserProfile.find({
+      userId: { $in: userIds }
+    });
+
+    // 4️⃣ Merge user + profile
+    const result = saved.map(s => {
+      const profile = profiles.find(
+        p => String(p.userId) === String(s.userId._id)
+      );
+
+      return {
+        ...s.toObject(),
+        profile: profile || null
+      };
+    });
+
+    return res.status(200).json({
+      message: "Saved candidates fetched",
+      savedCandidates: result
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
   }
 };

@@ -15,76 +15,122 @@ import {
   ArrowRightIcon,
   MapPin,
   ArrowRight,
+  DollarSignIcon,
   ArrowLeftIcon,
   Users2,
   EllipsisVerticalIcon,
 } from "lucide-react";
+import { useEffect } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
+import iphonelogo from "../../assets/iphonelogo.png";
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const SavedCandidates = () => {
 
-    const savedCandidates = [
-  {
-    id: 1,
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
-    name: "Rahul Sharma",
-    role: "Frontend Developer",
-  },
-  {
-    id: 2,
-    image: "https://randomuser.me/api/portraits/women/45.jpg",
-    name: "Ananya Reddy",
-    role: "Full Stack Developer",
-  },
-  {
-    id: 3,
-    image: "https://randomuser.me/api/portraits/men/67.jpg",
-    name: "Suresh Kumar",
-    role: "Backend Developer",
-  },
-  {
-    id: 4,
-    image: "https://randomuser.me/api/portraits/women/22.jpg",
-    name: "Priya Singh",
-    role: "MERN Stack Developer",
-  },
-  {
-    id: 5,
-    image: "https://randomuser.me/api/portraits/men/81.jpg",
-    name: "Arjun Patel",
-    role: "React Developer",
-  },
-];
+//     const savedCandidates = [
+//   {
+//     id: 1,
+//     image: "https://randomuser.me/api/portraits/men/32.jpg",
+//     name: "Rahul Sharma",
+//     role: "Frontend Developer",
+//   },
+//   {
+//     id: 2,
+//     image: "https://randomuser.me/api/portraits/women/45.jpg",
+//     name: "Ananya Reddy",
+//     role: "Full Stack Developer",
+//   },
+//   {
+//     id: 3,
+//     image: "https://randomuser.me/api/portraits/men/67.jpg",
+//     name: "Suresh Kumar",
+//     role: "Backend Developer",
+//   },
+//   {
+//     id: 4,
+//     image: "https://randomuser.me/api/portraits/women/22.jpg",
+//     name: "Priya Singh",
+//     role: "MERN Stack Developer",
+//   },
+//   {
+//     id: 5,
+//     image: "https://randomuser.me/api/portraits/men/81.jpg",
+//     name: "Arjun Patel",
+//     role: "React Developer",
+//   },
+// ];
+
+  const [savedCandidates , setSavedCandidates] = useState([])
+  const [candidates , setCandidates] = useState([])
+  const [showDelete, setShowDelete] = useState(false);
+  const [curDeleteId, setCurDeleteId] = useState("");
+  const [showAdded, setShowAdded] = useState(false);
+  const [curAddedId, setCurAddedId] = useState("");
+
+  useEffect(()=>{
+    const fetchSavedCandidates = async () => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/recruiter/getsaved-candidates',{withCredentials:true})
+        if(response.status === 200){
+          console.log(response.data.savedCandidates)
+          setSavedCandidates(response.data.savedCandidates)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+
+    fetchSavedCandidates();
+
+  },[])
+
+
+  const removeFromSaved = async (userId) => {
+    try {
+      const response = await axios.post(DOMAIN + '/api/recruiter/remove-candidate',{userId},{withCredentials:true})
+      if(response.status === 200){
+        console.log(response.data)
+        setSavedCandidates((prev) =>
+          prev.filter((saved) => saved.userId?._id !== userId)
+        );
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 
   return (
     <div>
-              {/* MOBILE VIEW (GRID CARDS) */}
+      {/* MOBILE VIEW (GRID CARDS) */}
       <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
-        {savedCandidates.map((job) => (
+        {savedCandidates.map((candidate) => (
           <div
-            key={job.id}
+            key={candidate._id}
             className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
           >
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={job.image}
+                src={candidate.image}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
               <div>
-                <p className="font-semibold">{job.jobRole}</p>
-                <p className="font-semibold text-xs">{job.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{job.type}</p>
+                <p className="font-semibold">{candidate.candidateRole}</p>
+                <p className="font-semibold text-xs">{candidate.name}</p>
+                <p className="text-xs text-gray-500 capitalize">{candidate.type}</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <MapPin className="size-4" />
-                {job.role}
+                {candidate.role}
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4" />
-                {job.name} open jobs
+                {candidate.name} open candidates
               </div>
             </div>
 
@@ -98,38 +144,49 @@ const SavedCandidates = () => {
 
       {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
       <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
-        {savedCandidates.map((job) => (
+        {savedCandidates.map((candidate) => (
           <div
-            key={job.id}
+            key={candidate._id}
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
           >
-            {/* LEFT */}
-            <div className="flex items-center gap-4">
-              <img
-                src={job.image}
-                alt="logo"
-                className="h-12 w-12 rounded-md object-contain"
-              />
+             {/* LEFT SECTION */}
+              <div className="flex  gap-4 sm:flex-1 sm:items-center">
 
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold">{job.role}</p>
-                </div>
+                {/* Logo */}
+                <img
+                  src={candidate.userLogo || iphonelogo}
+                  alt="logo"
+                  className="h-14 w-14 rounded-lg object-contain"
+                />
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="size-4" />
-                    {job.name}
+                {/* Job Info */}
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-wrap items-center">
+                    <p className="text-md font-medium">{candidate.name}</p>
+
+                  </div>
+                    <p className="text-sm text-gray-500">{candidate.profile.title}</p>
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="size-4" />
+                      <span>{candidate.profile.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <DollarSignIcon className="size-4" />
+                      <span>{candidate.profile.experience} experience</span>
+                    </div>
+
                   </div>
                 </div>
               </div>
-            </div>
 
             {/* RIGHT */}
             <div className="flex items-center justify-between ">
 
               <div className="flex gap-2 items-center">
-                <Bookmark className='size-5' />
+                <button onClick={()=>{setCurDeleteId(candidate.userId._id),setShowDelete(true)}}>
+                  <Bookmark className='size-5 cursor-pointer' fill='blac' />
+                </button>
                 <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-blue-100 rounded-md hover:bg-gray-200 transition">
                   View Profile
                   <ArrowRightIcon className='size-4' />
@@ -142,6 +199,52 @@ const SavedCandidates = () => {
           </div>
         ))}
       </div>
+
+      {/* DELETE MODAL */}
+      {showDelete && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+          <div className="bg-white shadow-md rounded-xl py-6 px-5 md:w-[460px] w-[370px] border border-gray-200">
+            <div className="flex items-center justify-center p-4 bg-red-100 rounded-full">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl text-center">
+              Are you sure?
+            </h2>
+
+            <p className="text-sm text-gray-600 mt-2 text-center">
+              Do you really want to continue? <br />
+              This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-center gap-4 mt-5">
+              <button
+                onClick={() => {
+                  setShowDelete(false);
+                  setCurDeleteId("");
+                }}
+                className="w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 text-sm hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  removeFromSaved(curDeleteId);
+                  setCurDeleteId("");
+                  setShowDelete(false);
+                }}
+                className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

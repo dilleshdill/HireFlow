@@ -1,6 +1,7 @@
 import Job from "../model/job.js"
 import { RecruiterProfile } from "../model/recruiterProfileModel.js"
 import User from "../model/user.js"
+import { UserProfile } from "../model/UserProfileModel.js"
 
 
 // post a job
@@ -141,15 +142,36 @@ export const getCompanyJobs = async (req , res) => {
 
 // get all candidates for the particular jobId
 export const getCandidatesByJobId = async (req,res) => {
+    
     try {
         const {id} = req.params;
         if(!id){
             return res.status(400).json({message:"no jobId is found"})
         }
-        const candidates = await Job.findById({_id:id}).select("applications").populate("applications.userId")
-        if(!candidates){
-            return res.status(400).json({message:"no candidates found for this jobId"})
+        const job = await Job.findById({_id:id}).select("applications").populate({
+            path:"applications.userId",
+            select:"-password -otp -otpExpiry"
+        })
+        if(!job){
+            return res.status(400).json({message:"no jobs found"})
         }
+
+        const userIds = job.applications.map(app => app.userId._id)
+
+        const profiles = await UserProfile.find({
+            userId: {$in: userIds}
+        })
+
+        const candidates = job.applications.map(app => {
+            const profile = profiles.find(
+                p => p.userId.toString() === app.userId._id.toString()
+            );
+
+            return{
+                ...app.userId.toObject(),
+                profile:profile || null
+            }
+        })
 
         return res.status(200).json({candidates,message:"candidates are fetched"})
     } catch (error) {

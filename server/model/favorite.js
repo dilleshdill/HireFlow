@@ -11,7 +11,7 @@ const favoriteSchema = mongoose.Schema({
         ref:"Job",
         required:true
     }
-},{timestamp:true})
+},{timestamps:true})
 
 const Favorite = mongoose.model("Favorite",favoriteSchema)
 export default Favorite;
