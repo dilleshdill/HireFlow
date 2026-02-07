@@ -12,7 +12,8 @@ import {
   Bell,
   Check ,CircleDashed, BriefcaseBusiness, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon,
   Users2,
-  EllipsisVerticalIcon
+  EllipsisVerticalIcon,
+  ClipboardClock
 } from "lucide-react";
 
 
@@ -20,6 +21,7 @@ import RecruiterPostJob from '../Components/Recruiter/RecruiterPostJob.jsx'
 import RecruiterSettings from "../Components/Recruiter/RecruiterSettings.jsx";
 import RecruiterPostedJobs from "../Components/Recruiter/RecruiterPostedJobs.jsx";
 import SavedCandidates from "../Components/Recruiter/SavedCandidates.jsx";
+import MyJobTests from "../Components/Recruiter/MyJobTests.jsx";
 
 const RecruiterDashboard = () => {
 
@@ -75,6 +77,12 @@ const RecruiterDashboard = () => {
       icon: <Settings />,
       label: "Settings",
       value: "settings",
+    },
+    {
+      id: 9,
+      icon: <ClipboardClock />,
+      label: "My Tests",
+      value: "my-tests",
     },
   ];
 
@@ -464,6 +472,12 @@ const RecruiterDashboard = () => {
             {selectedSidebar === "saved-candidates" && (
                 <>
                   <SavedCandidates />
+                </>
+            )}
+
+            {selectedSidebar === "my-tests" && (
+                <>
+                  <MyJobTests />
                 </>
             )}
 

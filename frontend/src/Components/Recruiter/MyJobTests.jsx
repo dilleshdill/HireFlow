@@ -25,7 +25,7 @@ import iphonelogo from "../../assets/iphonelogo.png";
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
-const RecruiterPostedJobs = () => {
+const MyJobTests = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const [jobs , setJobs] = useState([])
   const navigate = useNavigate();
@@ -188,9 +188,9 @@ const RecruiterPostedJobs = () => {
 
               <div className="flex gap-2">
                 <button
-                  onClick={()=>navigate(`/find-candidates/${job._id}`)}
+                  onClick={()=>navigate(`/questions-setup/${job._id}`)}
                  className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
-                  View Applications
+                  Add Test Details
                 </button>
                 <button className="flex items-center text-sm text-gray-500 font-medium">
                   <EllipsisVerticalIcon className="size-4" />
@@ -204,4 +204,4 @@ const RecruiterPostedJobs = () => {
   );
 };
 
-export default RecruiterPostedJobs;
+export default MyJobTests
