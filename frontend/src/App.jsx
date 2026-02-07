@@ -44,12 +44,12 @@ const App = () => {
         <Route path='/recruiter-jobpage' element={<RecruiterJobPage />} />
         <Route path="/forgot-password" element={<ForgotPage />} />
         <Route path="/reset-password" element={<ResetPage />} />
-        <Route path="/job/homepage" element={<OnlineTestHomePage />} />
+        <Route path="/job/homepage/:id" element={<OnlineTestHomePage />} />
         <Route path='/company-jobs/:id' element={<FindCompanyJobs />} />
-        <Route path="/job/confirmtest" element= {<OnlineTestConfirmPage />} />
-        <Route path="/job/test/detailes" element = {<OnlineTestDetailes />} />
-        <Route path="/job/test/exam" element={<OnlineTestExam />} />  
-        <Route path="/job/test/coading-test" element={<OnlineCoadingTest />} />
+        <Route path="/job/confirmtest/:id" element= {<OnlineTestConfirmPage />} />
+        <Route path="/job/test/detailes/:id" element = {<OnlineTestDetailes />} />
+        <Route path="/job/test/exam/:id" element={<OnlineTestExam />} />  
+        <Route path="/job/test/coading-test/:id" element={<OnlineCoadingTest />} />
         <Route path="/questions-setup/:id" element={<RecruiterTestDetailes />} />
         <Route path='*' element={<NotFound />} />
       </Routes>

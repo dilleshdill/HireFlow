@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
@@ -18,6 +19,7 @@ const UserAppliedJobs = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const [appliedJobs , setAppliedJobs] = useState([])
 
+  const navigate = useNavigate();
   // const jobs = [
   //   {
   //     id: 1,
@@ -274,7 +276,9 @@ const UserAppliedJobs = () => {
                 </div>
               )}
 
-              <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
+              <button
+                onClick={()=>navigate(`/job/homepage/${job._id}`)}
+              className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
                 View Details
               </button>
             </div>
