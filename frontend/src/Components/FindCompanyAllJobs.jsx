@@ -27,7 +27,6 @@ const FindCompanyAllJobs = () => {
   const [showAdded, setShowAdded] = useState(false);
   const [curAddedId, setCurAddedId] = useState("");
 
-    console.log("id",id)
   useEffect(()=>{
     const fetchJobs = async () => {
       try {
@@ -73,6 +72,7 @@ const FindCompanyAllJobs = () => {
             const response = await axios.get(DOMAIN + `/api/job/company-jobs/${id}`)
             if(response.status === 200){
                 console.log(response.data)
+                setJobs(response.data.jobs)
             }
         } catch (error) {
             console.log(error.message)
@@ -80,8 +80,8 @@ const FindCompanyAllJobs = () => {
     }
 
     // fetchJobs();
-    // fetchAppliedJobs();
-    // fetchFavoriteJobs();
+    fetchAppliedJobs();
+    fetchFavoriteJobs();
     companyJobs();
   },[])
 

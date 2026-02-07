@@ -20,11 +20,13 @@ import {
   EllipsisVerticalIcon,
 } from "lucide-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const RecruiterPostedJobs = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const [jobs , setJobs] = useState([])
+  const navigate = useNavigate();
 
   const developerRoles = [
     { id: 1, label: "Frontend Developer", value: "frontend_developer" },
@@ -309,7 +311,9 @@ const RecruiterPostedJobs = () => {
               )}
 
               <div className="flex gap-2">
-                <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
+                <button
+                  onClick={()=>navigate(`/find-candidates/${job._id}`)}
+                 className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
                   View Applications
                 </button>
                 <button className="flex items-center text-sm text-gray-500 font-medium">

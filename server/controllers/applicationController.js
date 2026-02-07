@@ -36,7 +36,7 @@ export const applyJob = async (req,res) =>{
             jobId:job._id
         })
 
-        job.applications.push(userId)
+        job.applications.push({userId})
         await job.save();
 
 
@@ -58,6 +58,25 @@ export const getAppliedJobs = async (req,res) => {
             return res.status(400).json({message:"no jobs are found"})
         }
         return res.status(200).json({jobs,message:"applied jobs fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
+
+// get all candidates for the particular jobId
+export const getCandidatesByJobId = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const recruiterId = req.user.id
+        if(!id){
+            return res.status(400).json({message:"no jobId is found"})
+        }
+        const candidates = await Application.findById({jobId:id,recruiterId}).populate("applications.userId")
+        if(!candidates){
+            return res.status(400).json({message:"no candidates found for this jobId"})
+        }
+
+        return res.status(200).json({candidates,message:"candidates are fetched"})
     } catch (error) {
         return res.status(500).json({message:error.message})
     }
