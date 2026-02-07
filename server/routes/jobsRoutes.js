@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectUser } from '../middleware/protectUser.js'
-import { deletejob, getAllJobs, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob } from '../controllers/jobsController.js';
+import { deletejob, getAllJobs, getCandidatesByJobId, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob } from '../controllers/jobsController.js';
 import { applyJob, getAppliedJobs } from '../controllers/applicationController.js';
 import { addToFavorite, removeFavorite, savedJobs } from '../controllers/favoriteController.js';
 
@@ -14,6 +14,7 @@ jobRoute.patch('/toggle',protectUser,toggleJob)
 jobRoute.get('/all-jobs',getAllJobs)
 jobRoute.get('/get-companies',getComapanies);
 jobRoute.get('/company-jobs/:id',getCompanyJobs)
+jobRoute.get('/get-candidates/:id',protectUser,getCandidatesByJobId)
 
 jobRoute.post('/apply',protectUser,applyJob)
 jobRoute.get('/applied-jobs',protectUser,getAppliedJobs)

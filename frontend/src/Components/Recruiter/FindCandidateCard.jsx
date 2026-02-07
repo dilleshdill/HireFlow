@@ -7,7 +7,12 @@ import {
   DollarSignIcon,
   MapPin,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindCandidateCard = () => {
 const candidates = [
   {
@@ -47,6 +52,23 @@ const candidates = [
       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Facebook_f_logo_%282019%29.svg/330px-Facebook_f_logo_%282019%29.svg.png",
   },
 ];
+
+  const {id} = useParams()
+  
+  useEffect(()=>{
+    const fetchCandidates = async () => {
+      try {
+        const response = await axios.get(DOMAIN + `/api/job/get-candidates/${id}`,{withCredentials:true})
+        if(response.status === 200){
+          console.log(response.data)
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+
+    fetchCandidates();
+  },[])
 
 
   return (
@@ -93,7 +115,7 @@ const candidates = [
               <div className="flex items-center justify-between sm:justify-end gap-4 sm:flex-shrink-0">
                 <Bookmark className="size-6 text-gray-500 cursor-pointer hover:text-blue-500" />
                 <button className="bg-blue-100 px-4 py-2 flex text-md font-medium items-center gap-2 text-blue-500 rounded-md hover:bg-blue-600 hover:text-white transition">
-                  Apply Now
+                  View Profile
                   <ArrowRight className="size-4" />
                 </button>
               </div>

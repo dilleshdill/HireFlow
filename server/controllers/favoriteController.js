@@ -11,6 +11,11 @@ export const addToFavorite = async (req , res) => {
         if(!jobId){
             return res.status(400).json({message:"jobId is not found"})
         }
+        const existed = await Favorite.findOne({userId,jobId})
+
+        if(existed){
+            return res.status(400).json({message:"job already in favorites"})
+        }
         const favorite = await Favorite.create({
             userId,
             jobId
@@ -31,7 +36,11 @@ export const removeFavorite = async (req , res) => {
         if(!jobId){
             return res.status(400).json({message:"jobId is not found"})
         }
-
+        const existed = await Favorite.findOne({userId,jobId})
+        
+        if(!existed){
+            return res.status(400).json({message:"job not in favorite"})
+        }
         const job = await Favorite.findOneAndDelete({userId,jobId})
 
         return res.status(200).json({job,message:"job removed form favorites"})

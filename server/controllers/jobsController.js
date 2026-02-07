@@ -138,3 +138,21 @@ export const getCompanyJobs = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
+// get all candidates for the particular jobId
+export const getCandidatesByJobId = async (req,res) => {
+    try {
+        const {id} = req.params;
+        if(!id){
+            return res.status(400).json({message:"no jobId is found"})
+        }
+        const candidates = await Job.findById({_id:id}).select("applications").populate("applications.userId")
+        if(!candidates){
+            return res.status(400).json({message:"no candidates found for this jobId"})
+        }
+
+        return res.status(200).json({candidates,message:"candidates are fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
