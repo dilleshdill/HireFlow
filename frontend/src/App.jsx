@@ -24,6 +24,7 @@ import OnlineTestConfirmPage from './Pages/OnlineTest/OnlineTestConfirmPage.jsx'
 import OnlineTestDetailes from './Pages/OnlineTest/OnlineTestDetailes.jsx'
 import OnlineTestExam from './Pages/OnlineTest/OnlineTestExam.jsx'
 import OnlineCoadingTest from './Pages/OnlineTest/OnlineCoadingTest.jsx'
+import RecruiterTestDetailes from './Pages/RecruiterTestDetailes.jsx'
 const App = () => {
   return (
     <>
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/job/test/detailes" element = {<OnlineTestDetailes />} />
         <Route path="/job/test/exam" element={<OnlineTestExam />} />  
         <Route path="/job/test/coading-test" element={<OnlineCoadingTest />} />
+        <Route path="/questions-setup/:id" element={<RecruiterTestDetailes />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
