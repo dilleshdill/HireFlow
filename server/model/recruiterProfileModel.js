@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RecruiterProfileSchema = new mongoose.Schema(
+const RecruiterProfileSchema = new mongoose.ScEhema(
   {
     recruiterId: {
       type: mongoose.Schema.Types.ObjectId,
