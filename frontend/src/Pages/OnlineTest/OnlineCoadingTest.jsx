@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import hireflow from "../../assets/hireflow.jpg";
 import { PiTimerBold } from "react-icons/pi";
 import Pagination from "@mui/material/Pagination";
@@ -62,7 +62,7 @@ const OnlineCoadingTest = () => {
   const [theme,setTheme] = useState("light")
   const [result, setResult] = useState([]);
   const [loading,setLoading] = useState(false)
-  const [showOutput,setShowOutput] = useState(true)
+  const [showOutput,setShowOutput] = useState(false)
 
   function handleEditorWillMount(monaco) {
     monaco.editor.defineTheme("hireflowTheme", {
@@ -107,6 +107,7 @@ const OnlineCoadingTest = () => {
         console.log(err)
       }
   }
+
 
   const currentQuestion = codingQuestion[currentIndex];
   const minutes = Math.floor(time / 60 + (time % 3600) / 60);

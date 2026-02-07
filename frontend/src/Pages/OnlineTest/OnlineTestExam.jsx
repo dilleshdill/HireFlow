@@ -272,7 +272,8 @@ const OnlineTestExam = () => {
         </h1>
 
         <div className="cursor-pointer flex flex-wrap px-15 py-5 gap-3  justify-center">
-          {questions.map((eachQuestion, index) => {
+          {
+          questions.map((eachQuestion, index) => {
             const isCurrent = index === currentIndex;
             const isAnswered = answers[index];
             const isReview = eachQuestion.markReview;
