@@ -22,12 +22,19 @@ import RecruiterSettings from "../Components/Recruiter/RecruiterSettings.jsx";
 import RecruiterPostedJobs from "../Components/Recruiter/RecruiterPostedJobs.jsx";
 import SavedCandidates from "../Components/Recruiter/SavedCandidates.jsx";
 import MyJobTests from "../Components/Recruiter/MyJobTests.jsx";
+import { useEffect } from "react";
 
 const RecruiterDashboard = () => {
 
     const [selectedSidebar , setSelectedSidebar] = useState('overview')
     const [showAllJobs, setShowAllJobs] = useState(false);
 
+  useEffect(() => {
+    const savedSidebar = localStorage.getItem("sideBar");
+    if (savedSidebar) {
+      setSelectedSidebar(savedSidebar);
+    }
+  }, []);
 
   const sidebarData = [
     {
@@ -227,7 +234,7 @@ const RecruiterDashboard = () => {
                 {sidebarData.map((item) => (
                 <div
                     key={item.id}
-                    onClick={() => setSelectedSidebar(item.value)}
+                    onClick={() => {setSelectedSidebar(item.value); localStorage.setItem("sideBar",item.value)}}
                     className={`flex items-center gap-3 cursor-pointer p-2 px-7 
                     hover:bg-gray-100
                     ${

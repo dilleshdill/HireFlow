@@ -1,4 +1,5 @@
 import cloudinary from "../config/cloudinary.js";
+import Questions from "../model/questionsSchema.js";
 import { RecruiterProfile } from "../model/recruiterProfileModel.js";
 import SavedCandidates from "../model/savedCandidates.js";
 import { UserProfile } from "../model/UserProfileModel.js";
@@ -189,3 +190,132 @@ export const getSavedCandidates = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+// add question to the particular jobId
+export const addQuestion = async (req , res) => {
+    try {
+        const {
+            jobId,
+            roundType,
+            questionText,
+            options,
+            correctAnswer,
+            marks,
+            difficulty,
+            testCases
+          } = req.body;
+
+        if(!jobId || !roundType || !questionText){
+            return res.status(400).json({message:"missing required fields"})
+        }
+
+        if(roundType !== 'CODING'){
+          if(!options || options.length < 2 || !correctAnswer){
+            return res.status(400).json({message: "MCQ requires options and correctAnswer"})
+          }
+        }
+
+        if(roundType === 'CODING'){
+          if(!testCases || testCases.length === 0){
+            return res.status(400).json({message:"coding question need test cases"})
+          }
+        }
+
+        const newQuestion = await Questions.create({
+          jobId,
+          roundType,
+          questionText,
+          options,
+          correctAnswer,
+          marks,
+          difficulty,
+          testCases
+        })
+
+        return res.status(200).json({question:newQuestion , message:"Question added successfully"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
+
+// update question by the question Id
+export const updateQuestion = async (req , res) => {
+  try {
+    const {
+            questionId,
+            questionText,
+            options,
+            correctAnswer,
+            marks,
+            difficulty,
+            testCases
+        } = req.body;
+      
+    if(!questionId){
+      return res.status(400).json({message:"missing questionId"})
+    }
+
+    const question = await Questions.findById({_id:questionId})
+
+    if(!question){
+      return res.status(400).json({message:"Question not found"})
+    }
+
+    if(questionText) question.questionText = questionText;
+    if (marks) question.marks = marks;
+    if (difficulty) question.difficulty = difficulty;
+
+    if (question.roundType !== 'CODING'){
+      if (options) question.options = options;
+      if (correctAnswer) question.correctAnswer = correctAnswer;
+    }
+
+    if (question.roundType === 'CODING'){
+      if(testCases) question.testCases = testCases;
+    }
+
+    await question.save()
+
+    return res.status(200).json({question,message:"updated successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// delete Question by the question Id
+export const deleteQuestion = async (req , res) => {
+  try {
+    const {questionId} = req.body;
+    if (!questionId){
+      return res.status(400).json({message:"no questionId found"})
+    }
+
+    const question = await Questions.findByIdAndDelete({_id:questionId})
+    
+    return res.status(200).json({question,message:"deleted successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// fetch all the question for the particular jobId
+export const getAllQuestions = async (req,res) => {
+  try {
+    const {jobId} = req.body;
+
+    if (!jobId){
+      return res.status(400).json({message:"no jobId found"})
+    }
+
+    const questions = await Questions.find({jobId})
+
+    if(!questions){
+      return res.status(400).json({message:"no questions found for this jobId"})
+    }
+
+    return res.status(200).json({questions,message:"fetched successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}

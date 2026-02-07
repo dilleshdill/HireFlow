@@ -6,11 +6,19 @@ import UserAppliedJobs from "../Components/UserAppliedJobs.jsx";
 import UserJobAlerts from "../Components/UserJobAlerts.jsx";
 import UserFavoriteJobs from "../Components/UserFavoriteJobs.jsx";
 import UserSettings from "../Components/UserSettings.jsx"
+import { useEffect } from "react";
 
 const UserDashboard = () => {
 
     const [selectedSidebar , setSelectedSidebar] = useState('overview')
     const [showAllJobs, setShowAllJobs] = useState(false);
+
+  useEffect(() => {
+    const savedSidebar = localStorage.getItem("userSideBar");
+    if (savedSidebar) {
+      setSelectedSidebar(savedSidebar);
+    }
+  }, []);
 
 
 const sidebarData = [
@@ -182,7 +190,7 @@ const jobs = [
                 {sidebarData.map((item) => (
                 <div
                     key={item.id}
-                    onClick={() => setSelectedSidebar(item.value)}
+                    onClick={() => {setSelectedSidebar(item.value); localStorage.setItem("userSideBar",item.value)}}
                     className={`flex items-center gap-3 cursor-pointer p-2 px-7 
                     hover:bg-gray-100
                     ${
