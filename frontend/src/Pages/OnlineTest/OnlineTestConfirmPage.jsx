@@ -1,13 +1,16 @@
 import React from "react";
 import hireflow from "../../assets/hireflow.jpg";
 import { Clock, ShieldCheck, Monitor } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const OnlineTestConfirmPage = () => {
+  const navigate = useNavigate()
+  const {id} = useParams()
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
 
-        {/* ================= Header ================= */}
+        
         <div className="border-b border-gray-200 px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-center gap-4">
             <img
@@ -38,10 +41,8 @@ const OnlineTestConfirmPage = () => {
           </div>
         </div>
 
-        {/* ================= Body ================= */}
         <div className="px-8 py-10 space-y-10">
 
-          {/* 1. Overview */}
           <section>
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               1.0 Assessment Overview
@@ -54,7 +55,6 @@ const OnlineTestConfirmPage = () => {
             </p>
           </section>
 
-          {/* 2. System Requirements */}
           <section>
             <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
               <Monitor size={18} />
@@ -114,13 +114,13 @@ const OnlineTestConfirmPage = () => {
 
         </div>
 
-        {/* ================= Footer CTA ================= */}
         <div className="border-t border-gray-200 bg-gray-50 px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-600">
             By proceeding, you acknowledge that you have read and agreed to the assessment terms.
           </p>
 
-          <button className="bg-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition duration-300">
+          <button className="bg-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition duration-300"
+          onClick={()=>navigate(`/job/test/detailes/${id}`)}>
             Proceed to Assessment
           </button>
         </div>

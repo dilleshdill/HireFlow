@@ -1,8 +1,11 @@
 import React from "react";
 import hireflow from "../../assets/hireflow.jpg";
 import { Clock, ShieldCheck, Monitor } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const OnlineTestDetailes = () => {
+  const navigate = useNavigate()
+  const {id} = useParams()
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -114,7 +117,8 @@ const OnlineTestDetailes = () => {
             By proceeding, you acknowledge that you have read and agreed to the assessment terms.
           </p>
 
-          <button className="bg-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition duration-300">
+          <button className="bg-black text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-gray-800 transition duration-300"
+          onClick={() => navigate(`/job/test/exam/${id}`)}>
             Take A Test
           </button>
         </div>

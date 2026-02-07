@@ -7,11 +7,15 @@ import logoimage from '../../assets/logoimage.jpg'
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { PiDotDuotone } from "react-icons/pi";
 import { SiTicktick } from "react-icons/si";
+import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 
 
 const OnlineTestHomePage = () => {
+    const {id} = useParams()
     const [jobStatus,setJobStatus] = useState("start")
+    const navigate = useNavigate()
   return (
     <div >
   <div className="min-h-screen flex max-w-7xl mx-auto gap-3">
@@ -62,7 +66,7 @@ const OnlineTestHomePage = () => {
                                 <PiDotDuotone size={20} className='fill-red-600'/>
                                 <p className='text-red-600'>Live</p>
                             </div>
-                            <button className='bg-blue-700 text-white px-9 py-2 text-lg rounded-4xl font-medium '>
+                            <button className='bg-blue-700 text-white px-9 py-2 text-lg rounded-4xl font-medium' onClick={() => navigate(`/job/confirmTest/${id}`)}>
                                 Start
                             </button>
                         </div>
