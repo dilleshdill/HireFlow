@@ -8,8 +8,11 @@ import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Editor from "@monaco-editor/react";
 import { MoonIcon, Play, Sun } from "lucide-react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { FaChevronUp } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const codingQuestion = [
   {
@@ -66,6 +69,8 @@ const OnlineCoadingTest = () => {
   const [showOutput,setShowOutput] = useState(false)
   const [showFinishModel,setFinishModel] = useState(false)
   const navigate = useNavigate()
+  const {id} = useParams()
+  const jobId = id 
 
   function handleEditorWillMount(monaco) {
     monaco.editor.defineTheme("hireflowTheme", {
@@ -110,6 +115,21 @@ const OnlineCoadingTest = () => {
         console.log(err)
       }
   }
+
+  const fetchData = async() => {
+    try{
+      const response = await axios.get(DOMAIN + `/api/test/coding?jobId=${jobId}`)
+      if (response.status === 200){
+        console.log(response.data)
+      }
+    }catch(err){
+      toast.error("something went wrong",err.msg)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  })
 
 
   const currentQuestion = codingQuestion[currentIndex];
