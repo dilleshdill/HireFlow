@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -122,8 +123,10 @@ const questions = [
 ];
 
 const OnlineTestExam = () => {
+  const {id} = useParams()
+  const jobId = id
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [questions,setQuestions] = useState([])
+  const [question,setQuestion] = useState([])
   const [answers, setAnswers] = useState({});
   const [review, setReview] = useState({});
   const currentQuestion = questions[currentIndex];
@@ -158,7 +161,12 @@ const OnlineTestExam = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(DOMAIN + '/api/')
+      const response = await axios.get(DOMAIN + `/api/job/get-questions?jobId=${jobId}`,{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.data)
+      }
     } catch (err) {
       console.log(err);
     }
