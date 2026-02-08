@@ -163,6 +163,9 @@ const OnlineTestExam = () => {
           if (questions.roundType === "CODING"){
             navigate("/feedback")
           }
+          else{
+            fetchData()
+          }
         }
         setQuestion(questions)
         fetchTime()
