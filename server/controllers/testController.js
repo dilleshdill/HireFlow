@@ -92,7 +92,7 @@ export const getAllAnswers = async (req , res) => {
             return res.status(400).json({message:"no test is found"})
         }
 
-        return res.status({answers:test.answers , message:"answers fetched"})
+        return res.status(200).json({answers:test.answers , message:"answers fetched"})
     } catch (error) {
         return res.status(500).json({message:error.message})   
     }
