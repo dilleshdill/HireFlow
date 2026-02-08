@@ -219,7 +219,7 @@ const OnlineTestExam = () => {
 
   const changeRound = async() => {
     try{
-      const response = await axios.get(DOMAIN + `/api/job/change-round?jobId=${jobId}`,{
+      const response = await axios.get(DOMAIN + `/api/test/change-round?jobId=${jobId}`,{
         withCredentials:true
       })
       if (response.status === 200){
