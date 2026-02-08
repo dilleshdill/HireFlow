@@ -334,6 +334,7 @@ export const getAllAnswers = async (req , res) => {
 
 //change round
 export const changeRound = async (req , res) => {
+
     try {
         const {jobId} = req.query;
         const userId = req.user.id;
@@ -346,8 +347,9 @@ export const changeRound = async (req , res) => {
         if(!test){
             return res.status(400).json({message:"no test is found"})
         }
-
+        
         if(test.roundType === 'APTITUDE'){
+            
             test.roundType = 'CORE';
             test.currentRound = 'CORE';
             test.startTime = Date.now()
@@ -360,9 +362,11 @@ export const changeRound = async (req , res) => {
         else{
             test.status = 'SUBMITTED'
             test.startTime = Date.now()
+            await test.save()
             return res.status(201).json({message:"test completed"})
         }
 
+        await test.save()
         return res.status(200).json({round:test.roundType , message:"switch to next round"})
     } catch (error) {
         return res.status(500).json({message:error.message})
