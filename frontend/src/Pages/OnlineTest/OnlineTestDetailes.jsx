@@ -19,6 +19,7 @@ const OnlineTestDetailes = () => {
         withCredentials:true
       })
       if (response.status === 200){
+        console.log(response.data)
         navigate(`/job/test/exam/${id}`)
       }
     }catch(error){
