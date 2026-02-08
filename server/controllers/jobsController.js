@@ -199,7 +199,6 @@ export const getJobQuestions = async (req , res) =>{
         }
 
         const curRoundType = await TestAttempt.findOne({userId})
-        console.log(curRoundType)
 
         if (!curRoundType){
             return res.status(400).json({message:"testSchema is not found"})
@@ -228,48 +227,77 @@ export const getJobQuestions = async (req , res) =>{
 }
 
 // update answer
-export const updateAnswer = async (req , res) => {
-    try {
-        const {jobId,questionId , score , markAsPreview , selectedAnswer , codeSubmission , roundType} = req.body;
-        const userId = req.userId;
+export const updateAnswer = async (req, res) => {
+  try {
+    const {
+      jobId,
+      questionId,
+      score,
+      markAsPreview,
+      selectedAnswer,
+      codeSubmission,
+      roundType
+    } = req.body;
 
-        if (!jobId || !questionId || !score || !markAsPreview || !selectedAnswer || !codeSubmission || !roundType){
-            return res.status(400).json({message:"missing all the required fields"})
-        }
+    const userId = req.user.id;
 
-        const test = await TestAttempt.findOne({jobId,userId,roundType})
-
-        if(!test){
-            return res.status(400).json({message:"no test data was found"})
-        }
-
-        const updatedData = test.answers.filter((ans) => String(ans.questionId) === String(questionId))
-        if(updatedData){
-            updatedData.markAsPreview = markAsPreview
-            updatedData.selectedAnswer = selectedAnswer
-            updatedData.codeSubmission = codeSubmission
-
-            await updatedData.save()
-            return res.status(200).json({question,message:"updated sucessfully"})
-        }
-
-        const newAnswer = {
-            questionId,
-            selectedAnswer,
-            score,
-            markAsPreview,
-            codeSubmission,
-        }
-
-        test.answers.push({newAnswer})
-
-        return res.status(200).json({answer:newAnswer , message:"updated successfully"})
-
-
-    } catch (error) {
-        return res.status(500).json({message:error.message})
+    if (
+      !jobId || !questionId || score === undefined || markAsPreview === undefined || !roundType) {
+        return res.status(400).json({
+            message: "Missing required fields"
+        });
     }
-}
+
+    const test = await TestAttempt.findOne({
+      jobId,
+      userId,
+      roundType
+    });
+
+    if (!test) {
+      return res.status(400).json({
+        message: "No test data found"
+      });
+    }
+
+    const existingAnswer = test.answers.find(
+      (ans) => String(ans.questionId) === String(questionId)
+    );
+
+    if (existingAnswer) {
+      existingAnswer.markAsPreview = markAsPreview;
+      existingAnswer.selectedAnswer = selectedAnswer;
+      existingAnswer.codeSubmission = codeSubmission;
+      existingAnswer.score = score;
+
+      await test.save();
+
+      return res.status(200).json({
+        message: "Answer updated successfully"
+      });
+    }
+
+    test.answers.push({
+      questionId,
+      selectedAnswer,
+      score,
+      markAsPreview,
+      codeSubmission,
+    });
+
+    await test.save();
+
+    return res.status(200).json({
+      message: "Answer added successfully"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
 
 // add to test schema
 export const addToTestSchema = async (req , res) => {
