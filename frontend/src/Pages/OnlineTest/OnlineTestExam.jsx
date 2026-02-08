@@ -149,9 +149,24 @@ const OnlineTestExam = () => {
     }
   };
 
-  const getNext = () => {
+  const getNext = async () => {
+    try{
+      const response = await axios.post(DOMAIN + `/api/job/updateAnswer`,{
+        answer : answers[currentIndex],
+        markReview : review[currentIndex]
+      },{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.status)
+      }
+    }catch(err){
+      console.log(err)
+      toast.error(err.msg)
+    }
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      
     }
   };
 
