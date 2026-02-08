@@ -138,6 +138,19 @@ const jobSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+
+    aptitudeTime:{
+      type:Number,
+      required:true
+    },
+    coreTime:{
+      type:Number,
+      required:true
+    },
+    codingTime:{
+      type:Number,
+      required:true
     }
   },
   { timestamps: true }

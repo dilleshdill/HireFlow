@@ -134,6 +134,9 @@ const RecruiterPostJob = () => {
     jobLevel: "",
     description: "",
     responsibilities: "",
+    aptitudeTime:0,
+    coreTime:0,
+    codingTime:0
   });
 
   const handlechange = (e) => {

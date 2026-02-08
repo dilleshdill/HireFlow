@@ -6,7 +6,7 @@ import { addToFavorite, removeFavorite, savedJobs } from '../controllers/favorit
 
 
 const jobRoute = express.Router()
-jobRoute.post('/post-job',protectUser,postJob)
+jobRoute.post('/post-job',postJob)
 jobRoute.get('/my-jobs',protectUser,getMyJobs)
 // jobRoute.put('/update/:id',protectUser,updateJob)
 jobRoute.delete('/delete/:id',protectUser,deletejob)
