@@ -254,14 +254,14 @@ export const getTime = async (req , res) => {
 
         const test = await TestAttempt.findOne({jobId,userId}).populate("jobId",curRoundTime)
 
-        console.log("test",test)
+
         
         if(!test){
             return res.status(400).json({message:"no test details found"})
         }
 
         if(roundType === 'APTITUDE'){
-            const difference = Date.now() - new Date(test.aptitudeTime).getTime();
+            const difference = Date.now() - new Date(test.startedAt).getTime();
 
             const elapsedSeconds = Math.floor(difference / 1000);
 
@@ -270,7 +270,7 @@ export const getTime = async (req , res) => {
             remainingSeconds = totalSeconds - elapsedSeconds;
         }
         else if(roundType === 'CORE'){
-            const difference = Date.now() - new Date(test.coreTime).getTime();
+            const difference = Date.now() - new Date(test.startedAt).getTime();
 
             const elapsedSeconds = Math.floor(difference / 1000);
 
@@ -279,7 +279,7 @@ export const getTime = async (req , res) => {
             remainingSeconds = totalSeconds - elapsedSeconds;
         }
         else{
-            const difference = Date.now() - new Date(test.codingTime).getTime();
+            const difference = Date.now() - new Date(test.startedAt).getTime();
 
             const elapsedSeconds = Math.floor(difference / 1000);
 
@@ -312,6 +312,7 @@ export const getTime = async (req , res) => {
             await test.save()
         }
 
+        console.log("time",remainingSeconds)
 
         return res.status(200).json({time:remainingSeconds , message:"time fetched successfully"})
 
