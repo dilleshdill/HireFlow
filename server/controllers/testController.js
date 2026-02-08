@@ -230,6 +230,7 @@ const evaluateRound = async (jobId,roundType , userId) => {
 
 // show time for the respective round
 export const getTime = async (req , res) => {
+    
     try {
         const {jobId,roundType} = req.body;
         const userId = req.user.id;
@@ -239,6 +240,7 @@ export const getTime = async (req , res) => {
         }
 
         let curRoundTime;
+        let remainingSeconds;
 
         if(roundType === 'APTITUDE'){
             curRoundTime = 'aptitudeTime'
@@ -250,19 +252,42 @@ export const getTime = async (req , res) => {
             curRoundTime = 'codingTime'
         }
 
-        const test = await TestAttempt.findOne({jobId,userId,roundType}).populate("jobId",curRoundTime)
+        const test = await TestAttempt.findOne({jobId,userId}).populate("jobId",curRoundTime)
+
+        console.log("test",test)
         
         if(!test){
             return res.status(400).json({message:"no test details found"})
         }
 
-        const difference = Date.now() - new Date(test.startedAt).getTime();
+        if(roundType === 'APTITUDE'){
+            const difference = Date.now() - new Date(test.aptitudeTime).getTime();
 
-        const elapsedSeconds = Math.floor(difference / 1000);
+            const elapsedSeconds = Math.floor(difference / 1000);
 
-        const totalSeconds = test.jobId[curRoundTime] * 60;
+            const totalSeconds = test.jobId[curRoundTime] * 60;
 
-        const remainingSeconds = totalSeconds - elapsedSeconds;
+            remainingSeconds = totalSeconds - elapsedSeconds;
+        }
+        else if(roundType === 'CORE'){
+            const difference = Date.now() - new Date(test.coreTime).getTime();
+
+            const elapsedSeconds = Math.floor(difference / 1000);
+
+            const totalSeconds = test.jobId[curRoundTime] * 60;
+
+            remainingSeconds = totalSeconds - elapsedSeconds;
+        }
+        else{
+            const difference = Date.now() - new Date(test.codingTime).getTime();
+
+            const elapsedSeconds = Math.floor(difference / 1000);
+
+            const totalSeconds = test.jobId[curRoundTime] * 60;
+
+            remainingSeconds = totalSeconds - elapsedSeconds;
+        }
+
 
         if(remainingSeconds <= 0){ 
             
