@@ -164,7 +164,7 @@ const OnlineTestExam = () => {
       console.log(err.msg)
     }
   }
-  
+
   const fetchData = async () => {
     setLoading(true)
 
@@ -182,6 +182,11 @@ const OnlineTestExam = () => {
           }
           else{
             changeRound()
+          }
+        }
+        else{
+          if (questions.roundType === "CODING"){
+            navigate(`/job/test/coading-test/${jobId}`)
           }
         }
         setQuestion(questions)
