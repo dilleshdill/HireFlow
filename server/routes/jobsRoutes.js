@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectUser } from '../middleware/protectUser.js'
-import { deletejob, getAllJobs, getCandidatesByJobId, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob,getJobQuestions,updateAnswer } from '../controllers/jobsController.js';
+import { deletejob, getAllJobs, getCandidatesByJobId, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob,getJobQuestions,updateAnswer, addToTestSchema } from '../controllers/jobsController.js';
 import { applyJob, getAppliedJobs } from '../controllers/applicationController.js';
 import { addToFavorite, removeFavorite, savedJobs } from '../controllers/favoriteController.js';
 
@@ -15,6 +15,10 @@ jobRoute.get('/all-jobs',getAllJobs)
 jobRoute.get('/get-companies',getComapanies);
 jobRoute.get('/company-jobs/:id',getCompanyJobs)
 jobRoute.get('/get-candidates/:id',protectUser,getCandidatesByJobId)
+jobRoute.get("/get-questions",protectUser,getJobQuestions)
+jobRoute.post("/update-answer",protectUser,updateAnswer)
+jobRoute.post("/create-test",protectUser,addToTestSchema)
+
 
 jobRoute.post('/apply',protectUser,applyJob)
 jobRoute.get('/applied-jobs',protectUser,getAppliedJobs)
@@ -22,8 +26,7 @@ jobRoute.get('/applied-jobs',protectUser,getAppliedJobs)
 jobRoute.post('/addto-favorite',protectUser,addToFavorite)
 jobRoute.post('/remove-favorite',protectUser,removeFavorite)
 jobRoute.get('/get-favorite',protectUser,savedJobs)
-jobRoute.get("/get-questions",protectUser,getJobQuestions)
-jobRoute.post("/update-answer",protectUser,updateAnswer)
+
 
 jobRoute.get('/:id',getJobById)
 

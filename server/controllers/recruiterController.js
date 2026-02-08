@@ -301,8 +301,10 @@ export const deleteQuestion = async (req , res) => {
 
 // fetch all the question for the particular jobId
 export const getAllQuestions = async (req,res) => {
+  console.log("enter")
   try {
     const {jobId} = req.query;
+    console.log(jobId)
 
     if (!jobId){
       return res.status(400).json({message:"no jobId found"})

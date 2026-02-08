@@ -9,6 +9,7 @@ import userRoute from './routes/userRoute.js'
 import recruiterRoute from './routes/recruiterRoute.js'
 
 import './config/cloudinary.js';
+import testRoute from './routes/testRoute.js'
 const app = express()
 
 // cors setUp
@@ -37,6 +38,7 @@ app.use('/api/auth',authRoute)
 app.use('/api/job',jobRoute)
 app.use('/api/user',userRoute)
 app.use('/api/recruiter',recruiterRoute)
+app.use('/api/test',testRoute);
 
 await connectDB();
 

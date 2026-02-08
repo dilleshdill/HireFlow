@@ -184,16 +184,22 @@ export const getCandidatesByJobId = async (req,res) => {
 
 //fetch the questions of the respectie job\
 export const getJobQuestions = async (req , res) =>{
+    
     try {
         const {jobId} = req.query;
         const userId = req.user.id;
-
-
+        
         if(!jobId){
             return res.status(400).json({message:"missing jobId"})
         }
+        const job = await Job.findById({_id:jobId})
 
-        const curRoundType = await TestAttempt.findById({userId})
+        if(!job){
+            return res.status(400).json({message:"no job is found"})
+        }
+
+        const curRoundType = await TestAttempt.findOne({userId})
+        console.log(curRoundType)
 
         if (!curRoundType){
             return res.status(400).json({message:"testSchema is not found"})
@@ -264,3 +270,42 @@ export const updateAnswer = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
+// add to test schema
+export const addToTestSchema = async (req , res) => {
+    
+    try {
+        const {jobId} = req.body;
+        const userId = req.user.id;
+
+        if (!jobId){
+            return res.status(400).json({message:"missing jobId"})
+        }
+
+        const job = await Job.findById(jobId)
+        
+        if(!job){
+            return res.status(400).json({message:"no jobId found"})
+        }
+        
+        const existed = await TestAttempt.findOne({jobId,userId})
+        if(existed){
+            return res.status(400).json({message:"test already existed"})
+        }
+
+        const newTest = await TestAttempt.create({
+            jobId,
+            userId,
+            roundType:"APTITUDE",
+            startedAt: new Date(),
+            totalScore: 0,
+            answers: []
+        });
+
+        return res.status(200).json({newTest,message:"test Added successfully"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})   
+    }
+}
+
+
