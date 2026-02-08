@@ -75,3 +75,25 @@ export const getTime = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
+
+// get all the answers for the respective job test
+export const getAllAnswers = async (req , res) => {
+    try {
+        const {jobId,roundType} = req.body;
+        const userId = req.user.id;
+
+        if (!jobId){
+            return res.status(400).json({message:"job id is missing"})
+        }
+        const test = await TestAttempt.findOne({jobId,userId,roundType})
+
+        if(!test){
+            return res.status(400).json({message:"no test is found"})
+        }
+
+        return res.status({answers:test.answers , message:"answers fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})   
+    }
+}
