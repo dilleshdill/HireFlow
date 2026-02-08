@@ -191,7 +191,6 @@ export const getSavedCandidates = async (req, res) => {
   }
 };
 
-
 // add question to the particular jobId
 export const addQuestion = async (req , res) => {
     try {

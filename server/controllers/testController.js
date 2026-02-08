@@ -251,8 +251,6 @@ export const getTime = async (req , res) => {
 
         const test = await TestAttempt.findOne({jobId,userId}).populate("jobId",curRoundTime)
 
-
-        
         if(!test){
             return res.status(400).json({message:"no test details found"})
         }
@@ -264,7 +262,7 @@ export const getTime = async (req , res) => {
         const totalSeconds = test.jobId[curRoundTime] * 60;
 
         remainingSeconds = totalSeconds - elapsedSeconds;
-
+        
 
         if(remainingSeconds <= 0){ 
             
@@ -374,6 +372,8 @@ export const changeRound = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
+
 
 
 
