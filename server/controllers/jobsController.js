@@ -230,14 +230,14 @@ export const getJobQuestions = async (req , res) =>{
 // update answer
 export const updateAnswer = async (req , res) => {
     try {
-        const {jobId,questionId , score , markAsPreview , selectedAnswer , codeSubmission} = req.body;
+        const {jobId,questionId , score , markAsPreview , selectedAnswer , codeSubmission , roundType} = req.body;
         const userId = req.userId;
 
-        if (!jobId || !questionId || !score || !markAsPreview || !selectedAnswer || !codeSubmission){
+        if (!jobId || !questionId || !score || !markAsPreview || !selectedAnswer || !codeSubmission || !roundType){
             return res.status(400).json({message:"missing all the required fields"})
         }
 
-        const test = await TestAttempt.findOne({jobId,userId})
+        const test = await TestAttempt.findOne({jobId,userId,roundType})
 
         if(!test){
             return res.status(400).json({message:"no test data was found"})
