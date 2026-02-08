@@ -129,7 +129,9 @@ const OnlineTestExam = () => {
   const [question,setQuestion] = useState([])
   const [answers, setAnswers] = useState({});
   const [review, setReview] = useState({});
-  const currentQuestion = questions[currentIndex];
+  const [loading,setLoading] = useState(false)
+  
+
   const [time, setTime] = useState(3590);
 
   const hours = Math.floor(time / 3600);
@@ -143,17 +145,37 @@ const OnlineTestExam = () => {
     });
   };
 
-  const getPrevious = () => {
+  const getPrevious = async() => {
+    try{
+      const response = await axios.post(DOMAIN + `/api/job/updateAnswer`,{
+        answer : answers?.[currentIndex] ?? null,
+        markReview : review?.[currentIndex] ?? null
+      },{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.status)
+      }
+    }catch(err){
+      console.log(err)
+      toast.error(err.msg)
+    }
     if (currentIndex > 0) {
+
       setCurrentIndex(currentIndex - 1);
     }
   };
 
   const getNext = async () => {
     try{
-      const response = await axios.post(DOMAIN + `/api/job/updateAnswer`,{
-        answer : answers[currentIndex],
-        markReview : review[currentIndex]
+      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
+        jobId,
+        roundType:question[currentIndex].roundType,
+        questionId:question[currentIndex]._id,
+        score:question[currentIndex].marks,
+        selectedAnswer : answers[currentIndex] ?? "",
+        markAsPreview : review[currentIndex] ?? "false" ,
+        codeSubmission : "code"
       },{
         withCredentials:true
       })
@@ -174,22 +196,78 @@ const OnlineTestExam = () => {
     questions[currentIndex].markReview = true;
   };
 
+  const fetchTime = async() => {
+    try{
+    const response = await axios.post(DOMAIN + "/api/test/get-time",
+      {
+        jobId,
+        roundType:question[0]?.roundType ?? "APTITUDE"
+      },{
+        withCredentials:true
+      }
+    )  
+    if(response.status === 200){
+      console.log(response.data)
+    }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   const fetchData = async () => {
+    setLoading(true)
+
     try {
       const response = await axios.get(DOMAIN + `/api/job/get-questions?jobId=${jobId}`,{
         withCredentials:true
       })
       if(response.status === 200){
-        console.log(response.data)
+        
+        console.log(response.data.questions)
+        setQuestion(response.data.questions)
+        fetchTime()
+        setLoading(false)
       }
     } catch (err) {
+      setLoading(false)
       console.log(err);
     }
   };
 
+  const fetchAllAnswers = async() => {
+    try{
+      const response = await axios.post(DOMAIN + "/api/test/get-allAnswers",{
+        jobId,
+        roundType:question[0]?.roundType ?? "APTITUDE"
+      },{
+        withCredentials:true
+      })
+
+      if (response.status === 200){
+        console.log(response.data)
+      }
+
+    }catch(err){
+      console.log(err)
+      toast.error(err.msg)
+    }
+  }
+
   useEffect(() => {
+    
     fetchData();
-  });
+    fetchAllAnswers()
+    const localIndex = localStorage.getItem("currentIndex")
+    if (localIndex){
+      setCurrentIndex(parseInt(localIndex))
+    }
+    
+    
+  },[]);
+
+  const currentQuestion = question?.[currentIndex];
+
+  
 
   return (
     <div className="flex flex-col lg:flex-row max-w-10xl ">
@@ -204,14 +282,16 @@ const OnlineTestExam = () => {
           </h1>
 
           <div className="border border-b-0 border-gray-400"></div>
-          <div className="flex flex-col min-h-[70vh] justify-between">
+          {
+            loading ? <h1>Loading .....</h1> :
+            <div className="flex flex-col min-h-[70vh] justify-between">
             <div>
               <p className="text-xl font-normal text-gray-700">
-                {currentQuestion.question}
+                {currentQuestion?.questionText ?? ""}
               </p>
 
               <div className="space-y-5 mt-6">
-                {currentQuestion.options.map((option, index) => (
+                {currentQuestion?.options?.map((option, index) => (
                   <label
                     key={index}
                     className="flex items-center gap-4 cursor-pointer transition-all duration-200"
@@ -265,6 +345,7 @@ const OnlineTestExam = () => {
               </div>
             </div>
           </div>
+          }
         </div>
       </div>
 
@@ -300,7 +381,7 @@ const OnlineTestExam = () => {
 
         <div className="cursor-pointer flex flex-wrap px-15 py-5 gap-3  justify-center">
           {
-          questions.map((eachQuestion, index) => {
+          question.map((eachQuestion, index) => {
             const isCurrent = index === currentIndex;
             const isAnswered = answers[index];
             const isReview = eachQuestion.markReview;
@@ -319,7 +400,10 @@ const OnlineTestExam = () => {
               <div
                 key={index}
                 className={`flex h-10 w-10 border items-center justify-center rounded-lg cursor-pointer ${bgColor}`}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  localStorage.setItem("currentIndex",index)
+                  setCurrentIndex(index)
+                }}
               >
                 {index + 1}
               </div>

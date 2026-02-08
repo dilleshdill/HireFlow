@@ -22,6 +22,10 @@ const OnlineTestDetailes = () => {
         console.log(response.data)
         navigate(`/job/test/exam/${id}`)
       }
+      if (response.status === 201){
+        console.log(response.data)
+        navigate(`/job/test/exam/${id}`)
+      }
     }catch(error){
       console.log(error)
     }
