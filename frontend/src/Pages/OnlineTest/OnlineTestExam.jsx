@@ -5,10 +5,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-
+import useAntiCheat from "./useAntiCheating";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
-
 
 const OnlineTestExam = () => {
   const {id} = useParams()
@@ -20,13 +19,21 @@ const OnlineTestExam = () => {
   const [loading,setLoading] = useState(false)
   const [showFinishModel,setFinishModel] = useState(false)
   const navigate = useNavigate()
-  
 
   const [time, setTime] = useState(0);
 
   const hours = Math.floor(time / 3600);
   const minutes = Math.floor((time % 3600) / 60);
   const seconds = Math.floor(time % 60);
+
+  const submitTest = (reason) => {
+    toast.error("Max Tab Switches Are Occured",reason)
+  };
+
+  useAntiCheat({
+    maxTabSwitch: 3,
+    onCheat: submitTest,
+  });
 
   const handleOptionChange = (e) => {
     setAnswers(prev => {
@@ -133,7 +140,8 @@ const OnlineTestExam = () => {
       }
     )  
     if(response.status === 200){
-      setTime(response.data.time / 1000)
+      console.log(response.data)
+      setTime(response.data.time)
     }
     }catch(err){
       console.log(err)
@@ -209,6 +217,23 @@ const OnlineTestExam = () => {
     }
   }
 
+  const changeRound = async() => {
+    try{
+      const response = await axios.post(DOMAIN + `/api/job/change-round?jobId=${jobId}`,{
+        withCredentials:true
+      })
+      if (response.status === 200){
+        fetchData()
+        setFinishModel(false)
+      }
+      if (response.status === 201){
+        navigate("/feedback")
+      }
+    }catch(err){
+      console.log(err.msg)
+    }
+  }
+
   useEffect(() => {
     
     fetchData();
@@ -221,26 +246,12 @@ const OnlineTestExam = () => {
 
   useEffect(() => {
 
-  if (time <= 0) return;
+  if (time <= 0) fetchData();
   const intervalId = setInterval(() => {
     setTime(prev => prev - 1);
   }, 1000);
   return () => clearInterval(intervalId);
   }, [time]);
-
-  const changeRound = async() => {
-    try{
-      const response = await axios.post(DOMAIN + `/api/job/changeRound?jobId=${jobId}`,{
-        withCredentials:true
-      })
-      if (response.status === 200){
-        
-        fetchData()
-      }
-    }catch(err){
-      console.log(err.msg)
-    }
-  }
 
   const currentQuestion = question?.[currentIndex];
 
