@@ -8,17 +8,19 @@ import { UserProfile } from "../model/UserProfileModel.js"
 
 // post a job
 export const postJob = async (req , res) => {
+    
     try {
-        const {payload} = req.body
-        const userId = req.user.id
+        const payload = req.body;
+        console.log(payload)
+        // const userId = req.user.id
 
-        const user = await User.findById({_id:userId})
+        const user = await User.findById({_id:payload.postedBy})
         if (!user){
             return res.status(400).json({message:"user was not found"})
         }
 
         const newJob = await Job.create({
-            postedBy:userId,
+            postedBy:payload.postedBy,
             ...payload
         })
 
@@ -335,6 +337,4 @@ export const addToTestSchema = async (req , res) => {
         return res.status(500).json({message:error.message})   
     }
 }
-
-
 
