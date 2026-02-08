@@ -122,7 +122,7 @@ export const autoEvaluate = async (req , res) => {
 const evaluateRound = async (jobId,roundType , userId) => {
     try {
 
-        const test = await TestAttempt.findOne({jobId,userId,roundType})
+        const test = await TestAttempt.findOne({jobId,userId})
 
         const questions = await Questions.find({jobId,roundType})
 
@@ -154,11 +154,11 @@ const evaluateRound = async (jobId,roundType , userId) => {
             test.aptitudeAnswers = evaluatedAnswers;
             test.status = "EVALUATED";
             test.submittedAt = new Date();
-            test.totalScore = totalScore;
+            test.totalScore += totalScore;
             test.isPassed = totalScore >= job.qualifyingScore;
 
             await test.save()
-            return res.status(200).json({testDetails: evaluatedAnswers, message:"Evalution Done"})
+            
 
         }
         else if(roundType === 'CORE'){
@@ -185,11 +185,11 @@ const evaluateRound = async (jobId,roundType , userId) => {
             test.coreAnswers = evaluatedAnswers;
             test.status = "EVALUATED";
             test.submittedAt = new Date();
-            test.totalScore = totalScore;
+            test.totalScore += totalScore;
             test.isPassed = totalScore >= job.qualifyingScore;
 
             await test.save()
-            return res.status(200).json({testDetails: evaluatedAnswers, message:"Evalution Done"})
+            
 
         }
         else{
@@ -216,15 +216,15 @@ const evaluateRound = async (jobId,roundType , userId) => {
             test.codingAnswers = evaluatedAnswers;
             test.status = "EVALUATED";
             test.submittedAt = new Date();
-            test.totalScore = totalScore;
+            test.totalScore += totalScore;
             test.isPassed = totalScore >= job.qualifyingScore;
 
             await test.save()
-            return res.status(200).json({testDetails: evaluatedAnswers, message:"Evalution Done"})
+            
 
         }
     } catch (error) {
-        return res.status(500).json({message:error.message})
+        console.log(error.message)
     }
 }
 
@@ -347,7 +347,9 @@ export const changeRound = async (req , res) => {
         if(!test){
             return res.status(400).json({message:"no test is found"})
         }
-        
+
+        await evaluateRound(jobId , test.roundType , userId)
+
         if(test.roundType === 'APTITUDE'){
             
             test.roundType = 'CORE';
