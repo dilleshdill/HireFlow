@@ -7,6 +7,7 @@ const testRoute = express.Router()
 testRoute.post('/evaluate-test',protectUser,autoEvaluate);
 testRoute.post('/get-time',protectUser,getTime);
 testRoute.post('/get-allAnswers',protectUser,getAllAnswers);
-testRoute.get('/change-round',protectUser,changeRound)
+testRoute.get('/change-round',protectUser,changeRound);
+
 
 export default testRoute
