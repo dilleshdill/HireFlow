@@ -8,140 +8,28 @@ import { useParams } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
-const questions = [
-  {
-    question: "1. What is 15% of 200?",
-    options: ["20", "25", "30", "35"],
-    correctAnswer: "30",
-    markReview: false,
-  },
-  {
-    question: "2. If 5x = 45, what is x?",
-    options: ["5", "9", "10", "8"],
-    correctAnswer: "9",
-    markReview: false,
-  },
-  {
-    question: "3. What is the square root of 144?",
-    options: ["10", "11", "12", "14"],
-    correctAnswer: "12",
-    markReview: false,
-  },
-  {
-    question: "4. A train travels 60 km in 1 hour. What is its speed?",
-    options: ["50 km/h", "60 km/h", "70 km/h", "80 km/h"],
-    correctAnswer: "60 km/h",
-    markReview: false,
-  },
-  {
-    question: "5. What is 25% of 80?",
-    options: ["10", "15", "20", "25"],
-    correctAnswer: "20",
-    markReview: false,
-  },
-  {
-    question: "6. If a = 5 and b = 3, what is a² + b²?",
-    options: ["25", "34", "30", "28"],
-    correctAnswer: "34",
-    markReview: false,
-  },
-  {
-    question: "7. What is the next number in series: 2, 4, 8, 16, ?",
-    options: ["18", "24", "32", "30"],
-    correctAnswer: "32",
-    markReview: false,
-  },
-  {
-    question:
-      "8. If 10 workers complete a job in 5 days, how many days will 5 workers take?",
-    options: ["5", "10", "15", "20"],
-    correctAnswer: "10",
-    markReview: false,
-  },
-  {
-    question: "9. What is 7 × 8?",
-    options: ["54", "56", "58", "60"],
-    correctAnswer: "56",
-    markReview: false,
-  },
-  {
-    question: "10. What is 100 ÷ 4?",
-    options: ["20", "25", "30", "40"],
-    correctAnswer: "25",
-  },
-  {
-    question: "11. What is 18% of 50?",
-    options: ["7", "8", "9", "10"],
-    correctAnswer: "9",
-  },
-  {
-    question:
-      "12. If the ratio of boys to girls is 3:2 and total is 25, how many boys?",
-    options: ["10", "12", "15", "18"],
-    correctAnswer: "15",
-  },
-  {
-    question: "13. What is the cube of 3?",
-    options: ["6", "9", "27", "18"],
-    correctAnswer: "27",
-  },
-  {
-    question: "14. What is 45 + 55?",
-    options: ["90", "95", "100", "110"],
-    correctAnswer: "100",
-  },
-  {
-    question: "15. If a car travels 150 km in 3 hours, what is speed?",
-    options: ["40 km/h", "50 km/h", "60 km/h", "70 km/h"],
-    correctAnswer: "50 km/h",
-  },
-  {
-    question: "16. What is 9²?",
-    options: ["72", "81", "90", "99"],
-    correctAnswer: "81",
-  },
-  {
-    question: "17. What is 5! (5 factorial)?",
-    options: ["60", "100", "120", "150"],
-    correctAnswer: "120",
-  },
-  {
-    question: "18. What is the simple interest on ₹1000 at 10% for 1 year?",
-    options: ["₹50", "₹100", "₹150", "₹200"],
-    correctAnswer: "₹100",
-  },
-  {
-    question: "19. What is 0.5 × 0.2?",
-    options: ["0.1", "0.2", "0.3", "0.4"],
-    correctAnswer: "0.1",
-  },
-  {
-    question: "20. If 3x + 2 = 11, what is x?",
-    options: ["2", "3", "4", "5"],
-    correctAnswer: "3",
-  },
-];
 
 const OnlineTestExam = () => {
   const {id} = useParams()
   const jobId = id
   const [currentIndex, setCurrentIndex] = useState(0);
   const [question,setQuestion] = useState([])
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState([]);
   const [review, setReview] = useState({});
   const [loading,setLoading] = useState(false)
   
 
-  const [time, setTime] = useState(3590);
+  const [time, setTime] = useState(0);
 
   const hours = Math.floor(time / 3600);
   const minutes = Math.floor((time % 3600) / 60);
   const seconds = Math.floor(time % 60);
 
   const handleOptionChange = (e) => {
-    setAnswers({
-      ...answers,
-      [currentIndex]: e.target.value,
+    setAnswers(prev => {
+      const updated = [...prev];
+      updated[currentIndex] = e.target.value;
+      return updated;
     });
   };
 
@@ -180,16 +68,17 @@ const OnlineTestExam = () => {
         withCredentials:true
       })
       if(response.status === 200){
-        console.log(response.status)
+        if (currentIndex < question.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      
+    }
       }
     }catch(err){
       console.log(err)
       toast.error(err.msg)
     }
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      
-    }
+
+    
   };
 
   const getPreview = () => {
@@ -207,7 +96,7 @@ const OnlineTestExam = () => {
       }
     )  
     if(response.status === 200){
-      console.log(response.data)
+      setTime(response.data.time / 1000)
     }
     }catch(err){
       console.log(err)
@@ -223,9 +112,11 @@ const OnlineTestExam = () => {
       })
       if(response.status === 200){
         
-        console.log(response.data.questions)
-        setQuestion(response.data.questions)
+        const questions = response.data.questions
+        console.log(questions)
+        setQuestion(questions)
         fetchTime()
+        fetchAllAnswers(questions)
         setLoading(false)
       }
     } catch (err) {
@@ -234,7 +125,10 @@ const OnlineTestExam = () => {
     }
   };
 
-  const fetchAllAnswers = async() => {
+  const fetchAllAnswers = async(questions) => {
+    if(!questions){
+      toast.error("question not there ")
+    }
     try{
       const response = await axios.post(DOMAIN + "/api/test/get-allAnswers",{
         jobId,
@@ -244,7 +138,18 @@ const OnlineTestExam = () => {
       })
 
       if (response.status === 200){
-        console.log(response.data)
+        console.log(response.data.answers)
+          response.data.answers.forEach(eachItem => {
+            const index = questions.findIndex(q => (
+              eachItem.questionId === q._id
+            ))
+          
+          setAnswers(prev => {
+  const updated = [...prev];
+  updated[index] = eachItem.selectedAnswer;
+  return updated;
+});
+        })
       }
 
     }catch(err){
@@ -256,18 +161,23 @@ const OnlineTestExam = () => {
   useEffect(() => {
     
     fetchData();
-    fetchAllAnswers()
+    
     const localIndex = localStorage.getItem("currentIndex")
     if (localIndex){
       setCurrentIndex(parseInt(localIndex))
     }
-    
-    
   },[]);
 
-  const currentQuestion = question?.[currentIndex];
+  useEffect(() => {
 
-  
+  if (time <= 0) return;
+  const intervalId = setInterval(() => {
+    setTime(prev => prev - 1);
+  }, 1000);
+  return () => clearInterval(intervalId);
+  }, [time]);
+
+  const currentQuestion = question?.[currentIndex];
 
   return (
     <div className="flex flex-col lg:flex-row max-w-10xl ">
@@ -277,9 +187,14 @@ const OnlineTestExam = () => {
         </h1>
 
         <div className="flex flex-col p-10 gap-5 ">
-          <h1 className="text-2xl font-normal mt-5">
-            Quant- Question {currentIndex + 1}
-          </h1>
+          <div className="flex justify-between items-center-safe">
+            <h1 className="text-2xl font-normal mt-5">
+              Quant- Question {currentIndex + 1}
+            </h1>
+            <button className="text-white bg-cyan-800 px-7 py-2.5 rounded-lg">
+              Finish Test
+            </button>
+          </div>
 
           <div className="border border-b-0 border-gray-400"></div>
           {
