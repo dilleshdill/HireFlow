@@ -4,6 +4,9 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
+
 const questions = [
   {
     question: "1. What is 15% of 200?",
@@ -120,6 +123,7 @@ const questions = [
 
 const OnlineTestExam = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [questions,setQuestions] = useState([])
   const [answers, setAnswers] = useState({});
   const [review, setReview] = useState({});
   const currentQuestion = questions[currentIndex];
@@ -154,7 +158,7 @@ const OnlineTestExam = () => {
 
   const fetchData = async () => {
     try {
-      // console.log("enter into this ")
+      const response = await axios.get(DOMAIN + '/api/')
     } catch (err) {
       console.log(err);
     }
