@@ -20,7 +20,47 @@ const testAttemptSchema = new mongoose.Schema(
       required: true
     },
 
-    answers: [
+    codingAnswers: [
+      {
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Question",
+          required: true
+        },
+
+        selectedAnswer: String, // for MCQ
+
+        codeSubmission: String, // for coding round
+
+        markAsPreview:{type:Boolean,default:false},
+        score: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+
+    aptitudeAnswers: [
+      {
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Question",
+          required: true
+        },
+
+        selectedAnswer: String, // for MCQ
+
+        codeSubmission: String, // for coding round
+
+        markAsPreview:{type:Boolean,default:false},
+        score: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+    
+    coreAnswers: [
       {
         questionId: {
           type: mongoose.Schema.Types.ObjectId,
@@ -44,6 +84,27 @@ const testAttemptSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+
+    score:[
+      {
+        aptitudeScore:{
+          type:Number,
+          default:0
+        }
+      },
+      {
+        coreScore:{
+          type:Number,
+          default:0
+        }
+      },
+      {
+        codingScore:{
+          type:Number,
+          default:0
+        }
+      },
+    ],
 
     isPassed: {
       type: Boolean,

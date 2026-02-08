@@ -200,7 +200,7 @@ export const getJobQuestions = async (req , res) =>{
             return res.status(400).json({message:"no job is found"})
         }
 
-        const curRoundType = await TestAttempt.findOne({userId})
+        const curRoundType = await TestAttempt.findOne({userId,jobId})
 
         if (!curRoundType){
             return res.status(400).json({message:"testSchema is not found"})
@@ -212,17 +212,17 @@ export const getJobQuestions = async (req , res) =>{
             if(curRoundType.currentRound === 'APTITUDE'){
                 curRoundType.currentRound = 'CORE'
             }
-            if(curRoundType.currentRound === 'CORE'){
+            else if(curRoundType.currentRound === 'CORE'){
                 curRoundType.currentRound = 'CODING'
             }
-            if(curRoundType.currentRound === 'CODING'){
+            else{
                 curRoundType.status = 'SUBMITTED'
             }
             await curRoundType.save()
             return res.status(400).json({message:"no question found for this jobId"})
         }
 
-        return res.status(200).json({questions,message:""})
+        return res.status(200).json({questions,message:"questions fetched"})
     } catch (error) {
         return res.status(500).json({message:error.message})
     }
@@ -253,7 +253,6 @@ export const updateAnswer = async (req, res) => {
     const test = await TestAttempt.findOne({
       jobId,
       userId,
-      roundType
     });
 
     if (!test) {
@@ -262,10 +261,25 @@ export const updateAnswer = async (req, res) => {
       });
     }
 
-    const existingAnswer = test.answers.find(
-      (ans) => String(ans.questionId) === String(questionId)
-    );
+    let existingAnswer;
 
+    if(roundType === 'APTITUDE'){
+        existingAnswer = test.aptitudeAnswers.find(
+            (ans) => String(ans.questionId) === String(questionId)
+        );
+    }
+    else if(roundType === 'CORE'){
+        existingAnswer = test.coreAnswers.find(
+            (ans) => String(ans.questionId) === String(questionId)
+        );
+    }
+    else{
+        existingAnswer = test.codingAnswers.find(
+            (ans) => String(ans.questionId) === String(questionId)
+        );
+    }
+
+    
     if (existingAnswer) {
       existingAnswer.markAsPreview = markAsPreview;
       existingAnswer.selectedAnswer = selectedAnswer;
@@ -279,13 +293,33 @@ export const updateAnswer = async (req, res) => {
       });
     }
 
-    test.answers.push({
-      questionId,
-      selectedAnswer,
-      score,
-      markAsPreview,
-      codeSubmission,
-    });
+    if(roundType === 'APTITUDE'){
+        test.aptitudeAnswers.push({
+            questionId,
+            selectedAnswer,
+            score,
+            markAsPreview,
+            codeSubmission,
+        });
+    }
+    else if(roundType === 'CORE'){
+        test.coreAnswers.push({
+            questionId,
+            selectedAnswer,
+            score,
+            markAsPreview,
+            codeSubmission,
+        });
+    }
+    else{
+        test.codingAnswers.push({
+            questionId,
+            selectedAnswer,
+            score,
+            markAsPreview,
+            codeSubmission,
+        });
+    }
 
     await test.save();
 
