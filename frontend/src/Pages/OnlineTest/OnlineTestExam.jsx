@@ -4,7 +4,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -15,8 +16,10 @@ const OnlineTestExam = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [question,setQuestion] = useState([])
   const [answers, setAnswers] = useState([]);
-  const [review, setReview] = useState({});
+  const [review, setReview] = useState([]);
   const [loading,setLoading] = useState(false)
+  const [showFinishModel,setFinishModel] = useState(false)
+  const navigate = useNavigate()
   
 
   const [time, setTime] = useState(0);
@@ -35,27 +38,6 @@ const OnlineTestExam = () => {
 
   const getPrevious = async() => {
     try{
-      const response = await axios.post(DOMAIN + `/api/job/updateAnswer`,{
-        answer : answers?.[currentIndex] ?? null,
-        markReview : review?.[currentIndex] ?? null
-      },{
-        withCredentials:true
-      })
-      if(response.status === 200){
-        console.log(response.status)
-      }
-    }catch(err){
-      console.log(err)
-      toast.error(err.msg)
-    }
-    if (currentIndex > 0) {
-
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const getNext = async () => {
-    try{
       const response = await axios.post(DOMAIN + "/api/job/update-answer",{
         jobId,
         roundType:question[currentIndex].roundType,
@@ -68,9 +50,36 @@ const OnlineTestExam = () => {
         withCredentials:true
       })
       if(response.status === 200){
-        if (currentIndex < question.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+        if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      localStorage.setItem("currentIndex",currentIndex -1 )
       
+    }
+      }
+    }catch(err){
+      console.log(err)
+      toast.error(err.msg)
+    }
+
+  };
+
+  const getNext = async () => {
+    try{
+      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
+        jobId,
+        roundType:question[currentIndex].roundType,
+        questionId:question[currentIndex]._id,
+        score:question[currentIndex].marks,
+        selectedAnswer : answers[currentIndex] ?? "",
+        markAsPreview :  false ,
+        codeSubmission : "code"
+      },{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        if (currentIndex < question.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+          localStorage.setItem("currentIndex",currentIndex +1 )
     }
       }
     }catch(err){
@@ -81,8 +90,36 @@ const OnlineTestExam = () => {
     
   };
 
-  const getPreview = () => {
-    questions[currentIndex].markReview = true;
+  const getPreview = async () => {
+
+    setReview(prev => {
+      const updated = [...prev];
+      updated[currentIndex] = true;
+      return updated;
+    });
+
+    try{
+      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
+        jobId,
+        roundType:question[currentIndex].roundType,
+        questionId:question[currentIndex]._id,
+        score:question[currentIndex].marks,
+        selectedAnswer : answers?.[currentIndex]  ?? " ",
+        markAsPreview : answers[currentIndex]?.markAsPreview ?? "true" ,
+        codeSubmission : "code"
+      },{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        if(currentIndex < question.length - 1){
+            setCurrentIndex(currentIndex +1)
+            localStorage.setItem("currentIndex",currentIndex +1 )
+        }
+      }
+    }catch(err){
+      console.log(err)
+      toast.error(err.msg)
+    }
   };
 
   const fetchTime = async() => {
@@ -113,7 +150,12 @@ const OnlineTestExam = () => {
       if(response.status === 200){
         
         const questions = response.data.questions
-        console.log(questions)
+
+        if (questions.length === 0 ){
+          if (questions.roundType === "CODING"){
+            navigate("/feedback")
+          }
+        }
         setQuestion(questions)
         fetchTime()
         fetchAllAnswers(questions)
@@ -138,18 +180,27 @@ const OnlineTestExam = () => {
       })
 
       if (response.status === 200){
-        console.log(response.data.answers)
+        
           response.data.answers.forEach(eachItem => {
             const index = questions.findIndex(q => (
               eachItem.questionId === q._id
             ))
           
           setAnswers(prev => {
-  const updated = [...prev];
-  updated[index] = eachItem.selectedAnswer;
-  return updated;
-});
+            const updated = [...prev];
+            updated[index] = eachItem.selectedAnswer;
+            return updated;
+          });
+
+          if(eachItem.markAsPreview) {
+            setReview(prev => {
+              const updated = [...prev];
+              updated[index] = true;
+              return updated;
+            });
+          }
         })
+
       }
 
     }catch(err){
@@ -177,6 +228,20 @@ const OnlineTestExam = () => {
   return () => clearInterval(intervalId);
   }, [time]);
 
+  const changeRound = async() => {
+    try{
+      const response = await axios.post(DOMAIN + `/api/job/changeRound?jobId=${jobId}`,{
+        withCredentials:true
+      })
+      if (response.status === 200){
+        
+        fetchData()
+      }
+    }catch(err){
+      console.log(err.msg)
+    }
+  }
+
   const currentQuestion = question?.[currentIndex];
 
   return (
@@ -191,7 +256,7 @@ const OnlineTestExam = () => {
             <h1 className="text-2xl font-normal mt-5">
               Quant- Question {currentIndex + 1}
             </h1>
-            <button className="text-white bg-cyan-800 px-7 py-2.5 rounded-lg">
+            <button className="text-white bg-cyan-800 px-7 py-2.5 rounded-lg" onClick={() => setFinishModel(true)}>
               Finish Test
             </button>
           </div>
@@ -299,7 +364,7 @@ const OnlineTestExam = () => {
           question.map((eachQuestion, index) => {
             const isCurrent = index === currentIndex;
             const isAnswered = answers[index];
-            const isReview = eachQuestion.markReview;
+            const isReview = review[index] ;
 
             let bgColor = "bg-white text-gray-500 border-gray-400";
 
@@ -358,6 +423,33 @@ const OnlineTestExam = () => {
           </div>
         </div>
       </div>
+
+      {
+        showFinishModel && 
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 ">
+          <div className="flex flex-col items-center bg-white shadow-md rounded-xl py-6 px-5 h-fit md:w-[460px] w-[370px] border border-gray-200">
+            <div className="flex items-center justify-center p-4 bg-red-100 rounded-full">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl">Are you sure?</h2>
+            <p className="text-sm text-gray-600 mt-2 text-center">
+                Do you really want to continue? This action<br />cannot be undone.
+            </p>
+            <div className="flex items-center justify-center gap-4 mt-5 w-full">
+                <button type="button" className="w-full md:w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 font-medium text-sm hover:bg-gray-100 active:scale-95 transition" 
+                onClick={() => setFinishModel(false)}>
+                    Cancel
+                </button>
+                <button type="button" className="w-full md:w-36 h-10 rounded-md text-white bg-red-600 font-medium text-sm hover:bg-red-700 active:scale-95 transition" 
+                onClick={changeRound}>
+                    Confirm
+                </button>
+            </div>
+        </div>
+        </div>
+      }
     </div>
   );
 };
