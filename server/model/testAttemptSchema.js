@@ -59,7 +59,7 @@ const testAttemptSchema = new mongoose.Schema(
         }
       }
     ],
-    
+
     coreAnswers: [
       {
         questionId: {
@@ -124,6 +124,11 @@ const testAttemptSchema = new mongoose.Schema(
     },
 
     startedAt: {
+      type: Date,
+      default: Date.now
+    },
+
+    startTime:{
       type: Date,
       default: Date.now
     },

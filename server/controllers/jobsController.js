@@ -211,12 +211,15 @@ export const getJobQuestions = async (req , res) =>{
         if (!questions){
             if(curRoundType.currentRound === 'APTITUDE'){
                 curRoundType.currentRound = 'CORE'
+                curRoundType.startTime = Date.now()
             }
             else if(curRoundType.currentRound === 'CORE'){
                 curRoundType.currentRound = 'CODING'
+                curRoundType.startTime = Date.now()
             }
             else{
                 curRoundType.status = 'SUBMITTED'
+                curRoundType.startTime = Date.now()
             }
             await curRoundType.save()
             return res.status(400).json({message:"no question found for this jobId"})
@@ -362,6 +365,7 @@ export const addToTestSchema = async (req , res) => {
             userId,
             roundType:"APTITUDE",
             startedAt: new Date(),
+            startTime : new Date(),
             totalScore: 0,
             answers: []
         });

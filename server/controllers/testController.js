@@ -239,18 +239,15 @@ export const getTime = async (req , res) => {
             return res.status(400).json({message:"missing fields"})
         }
 
-        let curRoundTime;
         let remainingSeconds;
 
-        if(roundType === 'APTITUDE'){
-            curRoundTime = 'aptitudeTime'
-        }
-        else if(roundType === 'CORE'){
-            curRoundTime = 'coreTime'
-        }
-        else{
-            curRoundTime = 'codingTime'
-        }
+        const roundTimeMap = {
+            APTITUDE: "aptitudeTime",
+            CORE: "coreTime",
+            CODING: "codingTime",
+        };
+
+        const curRoundTime = roundTimeMap[roundType];
 
         const test = await TestAttempt.findOne({jobId,userId}).populate("jobId",curRoundTime)
 
@@ -260,33 +257,13 @@ export const getTime = async (req , res) => {
             return res.status(400).json({message:"no test details found"})
         }
 
-        if(roundType === 'APTITUDE'){
-            const difference = Date.now() - new Date(test.startedAt).getTime();
+        const difference = Date.now() - test.startTime.getTime();
 
-            const elapsedSeconds = Math.floor(difference / 1000);
+        const elapsedSeconds = Math.floor(difference / 1000);
 
-            const totalSeconds = test.jobId[curRoundTime] * 60;
+        const totalSeconds = test.jobId[curRoundTime] * 60;
 
-            remainingSeconds = totalSeconds - elapsedSeconds;
-        }
-        else if(roundType === 'CORE'){
-            const difference = Date.now() - new Date(test.startedAt).getTime();
-
-            const elapsedSeconds = Math.floor(difference / 1000);
-
-            const totalSeconds = test.jobId[curRoundTime] * 60;
-
-            remainingSeconds = totalSeconds - elapsedSeconds;
-        }
-        else{
-            const difference = Date.now() - new Date(test.startedAt).getTime();
-
-            const elapsedSeconds = Math.floor(difference / 1000);
-
-            const totalSeconds = test.jobId[curRoundTime] * 60;
-
-            remainingSeconds = totalSeconds - elapsedSeconds;
-        }
+        remainingSeconds = totalSeconds - elapsedSeconds;
 
 
         if(remainingSeconds <= 0){ 
@@ -299,14 +276,17 @@ export const getTime = async (req , res) => {
             if(roundType === 'APTITUDE'){
                 test.roundType = 'CORE'
                 test.currentRound = 'CORE'
+                test.startTime = Date.now()
                 
             }
             else if(roundType === 'CORE'){
                 test.roundType = 'CODING'
                 test.currentRound = 'CODING'
+                test.startTime = Date.now()
             }
             else{
                 test.status = 'SUBMITTED'
+                test.startTime = Date.now()
                 return res.status(201).json({message:"test completed"})
             }
             await test.save()
@@ -370,13 +350,16 @@ export const changeRound = async (req , res) => {
         if(test.roundType === 'APTITUDE'){
             test.roundType = 'CORE';
             test.currentRound = 'CORE';
+            test.startTime = Date.now()
         }
         else if(test.roundType === 'CORE'){
             test.roundType = 'CODING';
             test.currentRound = 'CODING'
+            test.startTime = Date.now()
         }
         else{
             test.status = 'SUBMITTED'
+            test.startTime = Date.now()
             return res.status(201).json({message:"test completed"})
         }
 
