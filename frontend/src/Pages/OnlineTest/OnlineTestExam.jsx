@@ -148,6 +148,23 @@ const OnlineTestExam = () => {
     }
   }
 
+  const changeRound = async() => {
+    try{
+      const response = await axios.get(DOMAIN + `/api/test/change-round?jobId=${jobId}`,{
+        withCredentials:true
+      })
+      if (response.status === 200){
+        fetchData()
+        setFinishModel(false)
+      }
+      if (response.status === 201){
+        navigate("/feedback")
+      }
+    }catch(err){
+      console.log(err.msg)
+    }
+  }
+  
   const fetchData = async () => {
     setLoading(true)
 
@@ -164,7 +181,7 @@ const OnlineTestExam = () => {
             navigate("/feedback")
           }
           else{
-            fetchData()
+            changeRound()
           }
         }
         setQuestion(questions)
@@ -220,22 +237,7 @@ const OnlineTestExam = () => {
     }
   }
 
-  const changeRound = async() => {
-    try{
-      const response = await axios.get(DOMAIN + `/api/test/change-round?jobId=${jobId}`,{
-        withCredentials:true
-      })
-      if (response.status === 200){
-        fetchData()
-        setFinishModel(false)
-      }
-      if (response.status === 201){
-        navigate("/feedback")
-      }
-    }catch(err){
-      console.log(err.msg)
-    }
-  }
+  
 
   useEffect(() => {
     
