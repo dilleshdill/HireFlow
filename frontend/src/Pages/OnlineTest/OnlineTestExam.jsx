@@ -177,18 +177,13 @@ const OnlineTestExam = () => {
         const questions = response.data.questions
 
         if (questions.length === 0 ){
-          if (questions.roundType === "CODING"){
-            navigate("/feedback")
-          }
-          else{
             changeRound()
-          }
         }
-        else{
-          if (questions.roundType === "CODING"){
+        
+        if (questions[0].roundType === "CODING"){
             navigate(`/job/test/coading-test/${jobId}`)
-          }
         }
+        
         setQuestion(questions)
         fetchTime()
         fetchAllAnswers(questions)
