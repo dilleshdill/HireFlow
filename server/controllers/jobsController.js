@@ -290,7 +290,7 @@ export const addToTestSchema = async (req , res) => {
         
         const existed = await TestAttempt.findOne({jobId,userId})
         if(existed){
-            return res.status(400).json({message:"test already existed"})
+            return res.status(201).json({test:existed,message:"test already existed so navigate to test"})
         }
 
         const newTest = await TestAttempt.create({
