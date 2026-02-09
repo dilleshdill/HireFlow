@@ -127,7 +127,7 @@ const OnlineCodingTest = () => {
   };
 
   const getSubmit = async() => {
-    const response = await
+    const response = await axios.post(DOMAIN + '/api/')
   }
 
   const fetchTime = async () => {

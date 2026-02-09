@@ -21,7 +21,7 @@ export const runCode = (language, code, input = "") => {
     const child = spawn(command, [filePath], {
       timeout: 5000
     });
-
+    
     let output = "";
     let error = "";
 
