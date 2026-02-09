@@ -151,7 +151,7 @@ const evaluateRound = async (jobId,roundType , userId) => {
 
 
             test.aptitudeAnswers = evaluatedAnswers;
-            test.status = "EVALUATED";
+            // test.status = "EVALUATED";
             test.submittedAt = new Date();
             test.totalScore += totalScore;
             test.isPassed = totalScore >= job.qualifyingScore;
@@ -182,7 +182,7 @@ const evaluateRound = async (jobId,roundType , userId) => {
 
 
             test.coreAnswers = evaluatedAnswers;
-            test.status = "EVALUATED";
+            // test.status = "EVALUATED";
             test.submittedAt = new Date();
             test.totalScore += totalScore;
             test.isPassed = totalScore >= job.qualifyingScore;
@@ -240,19 +240,26 @@ export const getTime = async (req , res) => {
 
         let remainingSeconds;
 
+        const normalizedRound = roundType.toUpperCase();
+
         const roundTimeMap = {
             APTITUDE: "aptitudeTime",
             CORE: "coreTime",
-            CODING: "codingTime",
+            CODING: "codingTime"
         };
 
-        const curRoundTime = roundTimeMap[roundType];
+        const curRoundTime = roundTimeMap[normalizedRound];
 
-        const test = await TestAttempt.findOne({jobId,userId}).populate("jobId",curRoundTime)
+
+        const test = await TestAttempt.findOne({jobId,userId}).populate("jobId")
+
+
 
         if(!test){
             return res.status(400).json({message:"no test details found"})
         }
+
+        // console.log("test",test)
 
         const difference = Date.now() - test.startTime.getTime();
 
@@ -395,6 +402,45 @@ export const exceuteCode = async(req,res) => {
   }
 }
 
+
+// check the all the test cases 
+export const checkAllTestcases = async (req , res) => {
+    try {
+        const {questionId , language , code} = req.body;
+
+        if (!questionId || !language || !code) {
+            return res.status(400).json({
+                message: "questionId, language and code are required"
+            });
+        }
+
+        const question = await Questions.findById(questionId)
+
+        if(!question){
+            return res.status(400).json({message:"no question was found"})
+        }
+
+        if(!question.testCases || !question.testCases.length === 0){
+            return res.status(400).json({
+                message: "No test cases found for this question"
+            });
+        }
+
+        const result = [];
+        let passedCount = 0;
+
+        for (const testCase of question.testCases){
+            try {
+                
+            } catch (error) {
+                
+            }
+        }
+
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
 
 
 

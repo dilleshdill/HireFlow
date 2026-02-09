@@ -48,7 +48,7 @@ export const getAllJobs = async (req,res) => {
 // get job by id
 export const getJobById = async (req,res) => {
     try {
-        const {jobId} = req.params.id
+        const {jobId} = req.query;
         
         const job = await Job.find(jobId)
         if(!job){
