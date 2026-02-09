@@ -1,8 +1,7 @@
 import Job from "../model/job.js";
 import Questions from "../model/questionsSchema.js";
 import TestAttempt from "../model/testAttemptSchema.js";
-
-
+import { runCode } from "../services/codeRunner.service.js";
 
 // auto evaluate the score
 export const autoEvaluate = async (req , res) => {
@@ -375,6 +374,26 @@ export const changeRound = async (req , res) => {
 
 
 
+
+export const exceuteCode = async(req,res) => {
+    try {
+    const { language, code, input } = req.body;
+    console.log("language",language)
+    console.log("code",code)
+    console.log("input",input)
+    
+    if (!language || !code) {
+      return res.status(400).json({ message: "language and code are required" });
+    }
+
+    const result = await runCode(language, code, input || "");
+    console.log(result)
+    res.status(200).json({ message: result });
+
+  } catch (err) {
+    res.status(400).json({ message: err.toString() });
+  }
+}
 
 
 
