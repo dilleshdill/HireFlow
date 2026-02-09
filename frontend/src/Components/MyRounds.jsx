@@ -188,21 +188,7 @@ const MyRounds = () => {
       </div>
 
 
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-gray-600">
-            Displaying {myRounds.length} interview rounds • Updated today
-          </p>
-          <div className="mt-4 sm:mt-0 space-x-3">
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded transition-colors">
-              Refresh Data
-            </button>
-            <button className="px-4 py-2 text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 border border-gray-800 rounded transition-colors">
-              Add New Round
-            </button>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };
