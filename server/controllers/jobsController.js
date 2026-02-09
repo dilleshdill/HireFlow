@@ -50,7 +50,7 @@ export const getJobById = async (req,res) => {
     try {
         const {jobId} = req.query;
         console.log("jobid",jobId)
-        const job = await Job.findById({_id:jobId})
+        const job = await Job.findById({_id:jobId}).populate('postedBy','name ')
         console.log('job',job)
         if(!job){
             return res.status(400).json({message:"no jobs is found"})
