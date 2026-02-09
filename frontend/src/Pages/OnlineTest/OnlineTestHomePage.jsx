@@ -20,7 +20,7 @@ const OnlineTestHomePage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(DOMAIN + `/api/job/${id}`,
+      const response = await axios.get(DOMAIN + `/api/job/job-detailes?jobId=${id}`,
         {
           withCredentials: true,
         },
