@@ -380,8 +380,13 @@ export const addToTestSchema = async (req , res) => {
 export const getUserTests = async(req,res) => {
     try{
         const {id} = req.user
+<<<<<<< HEAD
         
         const jobs = await TestAttempt.findById({id})
+=======
+
+        const jobs = await TestAttempt.findById({jobId:id})
+>>>>>>> 3aa33e6825f8fcfabf4d884713fd1f5123bcf486
         if(!jobs){
             return res.status(202).json({msg:"No Tests Found"})
         }
