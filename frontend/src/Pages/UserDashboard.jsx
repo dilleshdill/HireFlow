@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Navbar from "../Components/Navbar.jsx";
-import { Layers, Briefcase, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon } from "lucide-react";
+import { Layers, Briefcase, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon, Book } from "lucide-react";
 import iphonelogo from '../assets/iphonelogo.png';
 import UserAppliedJobs from "../Components/UserAppliedJobs.jsx";
 import UserJobAlerts from "../Components/UserJobAlerts.jsx";
 import UserFavoriteJobs from "../Components/UserFavoriteJobs.jsx";
 import UserSettings from "../Components/UserSettings.jsx"
+import MyRounds from "../Components/MyRounds.jsx";
 import { useEffect } from "react";
 
 const UserDashboard = () => {
@@ -51,6 +52,12 @@ const sidebarData = [
     icon: <Settings />,
     label: "Settings",
     value: "settings",
+  },
+  {
+    id: 5,
+    icon: <Book />,
+    label: "My Rounds",
+    value: "My Rounds",
   },
 ];
 
@@ -441,6 +448,12 @@ const jobs = [
             {selectedSidebar === "settings" && (
                 <UserSettings />
             )}
+            
+            {
+                selectedSidebar === "My Rounds" && (
+                    <MyRounds />
+                )
+            }
 
         </div>
 

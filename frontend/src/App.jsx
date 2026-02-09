@@ -26,7 +26,7 @@ import OnlineTestExam from './Pages/OnlineTest/OnlineTestExam.jsx'
 import OnlineCoadingTest from './Pages/OnlineTest/OnlineCoadingTest.jsx'
 import RecruiterTestDetailes from './Pages/RecruiterTestDetailes.jsx'
 import FeedBackPage from './Pages/FeedBackPage.jsx'
-import MyRounds from './Pages/MyRounds.jsx'
+import MyRounds from './Components/MyRounds.jsx'
 const App = () => {
   return (
     <>

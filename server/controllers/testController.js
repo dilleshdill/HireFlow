@@ -512,7 +512,7 @@ export const submitCodingAnswer = async (req, res) => {
 export const getTestDetails = async (req , res) => {
     try {
         const {jobId} = req.query;
-
+        
         if(!jobId){
             return res.status(400).json({message:"missing jobId"})
         }
