@@ -59,6 +59,26 @@ const OnlineTestDetailes = () => {
     }
   }
 
+  const getRoundTime = (roundType, job) => {
+  switch (roundType) {
+    case "APTITUDE":
+      return job?.aptitudeTime || 0;
+    case "CORE":
+      return job?.coreTime || 0;
+    case "CODING":
+      return job?.codingTime || 0;
+    default:
+      return 0;
+  }
+};
+
+  const totalTime = Object.entries(rounds).reduce(
+  (sum, [roundType, items]) =>
+    sum + getRoundTime(roundType, items[0]?.jobId),
+  0
+);
+console.log(totalTime)
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -86,9 +106,17 @@ const OnlineTestDetailes = () => {
               <p className="text-xs text-gray-500 uppercase tracking-wide">
                 Assessment Duration
               </p>
-              <p className="text-lg font-semibold text-gray-800">
-                60 Minutes
-              </p>
+              
+                
+                  <p className="text-lg font-semibold text-gray-800 gap-3">
+
+                    {
+                      totalTime 
+                    }
+                    <span className="ml-2 text-gray-500">minutes</span>
+                    </p>
+                
+              
             </div>
           </div>
         </div>
@@ -115,18 +143,49 @@ const OnlineTestDetailes = () => {
               3.0 Compliance & Test Conduct Guidelines
             </h2>
 
-            {Object.entries(rounds).map(([roundType, items]) => (
-              <div key={roundType} style={{ marginBottom: "20px" }}>
-                <h3>{roundType} Round</h3>
+            {Object.entries(rounds).map(([roundType, items]) => {
+  const job = items[0]?.jobId;
 
-                {items.map((item, index) => (
-                  <div key={item.id} style={{ paddingLeft: "10px" }}>
-                    <p>Attempt: {index + 1}</p>
-                    <p>Score: {item.score} / {item.total}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
+  const time =
+    roundType === "APTITUDE"
+      ? job?.aptitudeTime
+      : roundType === "CORE"
+      ? job?.coreTime
+      : roundType === "CODING"
+      ? job?.codingTime
+      : null;
+
+  return (
+    <div
+      key={roundType}
+      style={{
+        border: "1px solid #e0e0e0",
+        borderRadius: "12px",
+        padding: "16px",
+        marginBottom: "16px",
+        background: "#ffffff",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+      }}
+    >
+      <h3 style={{ marginBottom: "8px" }}>
+        {roundType} Round
+      </h3>
+
+      <div
+        style={{
+          display: "inline-block",
+          background: "#f5f7fa",
+          padding: "8px 14px",
+          borderRadius: "8px",
+          fontWeight: 600
+        }}
+      >
+        ⏱ Time Limit: {time} minutes
+      </div>
+    </div>
+  );
+})}
+          
           </section>
 
           <div className="bg-red-50 border border-red-300 text-red-700 p-5 rounded-lg text-sm">
