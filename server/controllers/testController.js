@@ -483,12 +483,12 @@ export const checkAllTestcases = async (req , res) => {
 export const getTestDetails = async (req , res) => {
     try {
         const {jobId} = req.query;
-        
+
         if(!jobId){
             return res.status(400).json({message:"missing jobId"})
         }
 
-        const testDetails = await Questions.find({jobId}).populate('jobId','aptitudeTime coreTime codingTime')
+        const testDetails = await Questions.find({jobId}).select('roundType').populate('jobId','aptitudeTime coreTime codingTime')
 
         if(!testDetails){
             return res.status(400).json({message:"no testDetails"})
