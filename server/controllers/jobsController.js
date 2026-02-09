@@ -381,8 +381,8 @@ export const getUserTests = async(req,res) => {
     try{
         const {id} = req.user
 
-        const jobs = await TestAttempt.findById({jobId:id})
-
+        const jobs = await TestAttempt.find({ jobId: id });
+        
         if(!jobs){
             return res.status(202).json({msg:"No Tests Found"})
         }
