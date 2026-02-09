@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import hireflow from "../../assets/hireflow.jpg";
 import { Clock, ShieldCheck, Monitor } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ const DOMAIN = import.meta.env.VITE_DOMAIN
 const OnlineTestDetailes = () => {
   const navigate = useNavigate()
   const {id} = useParams()
+  const [rounds,setRounds] = useState({})
 
   const fetchData = async() => {
     try{
@@ -16,7 +17,17 @@ const OnlineTestDetailes = () => {
           withCredentials:true
         })
         if(response.status === 200){
-          
+          const groupedByRoundType = response.data.testDetails.reduce((acc, item) => {
+          const key = item.roundType;
+
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+
+          acc[key].push(item);
+          return acc;
+        }, {});
+        setRounds(groupedByRoundType)
         }
     }catch(err){
       console.log(err)
@@ -25,7 +36,7 @@ const OnlineTestDetailes = () => {
 
   useEffect(() => {
     fetchData()
-  })
+  },[])
 
 
   const getNavigate = async() => {
@@ -97,39 +108,6 @@ const OnlineTestDetailes = () => {
             </p>
           </section>
 
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <Monitor size={18} />
-              2.0 System & Browser Requirements
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-8 text-sm text-gray-600">
-
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">
-                  2.1 Supported Operating Systems
-                </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Windows 7 or later</li>
-                  <li>macOS 10.6 or later</li>
-                  <li>Any stable Linux distribution</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium text-gray-700 mb-2">
-                  2.2 Supported Browsers (Latest Version Only)
-                </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Google Chrome / Chromium</li>
-                  <li>Mozilla Firefox</li>
-                  <li>Microsoft Edge</li>
-                  <li>Apple Safari</li>
-                </ul>
-              </div>
-
-            </div>
-          </section>
 
           <section>
             <h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -137,13 +115,18 @@ const OnlineTestDetailes = () => {
               3.0 Compliance & Test Conduct Guidelines
             </h2>
 
-            <div className="text-gray-600 text-sm space-y-3 leading-relaxed">
-              <p>3.1 All browser extensions and add-ons must be disabled prior to starting the assessment.</p>
-              <p>3.2 The assessment must be accessed in Incognito / Private browsing mode.</p>
-              <p>3.3 Candidates are prohibited from switching tabs, opening external resources, or using unauthorized tools.</p>
-              <p>3.4 Ensure a stable internet connection throughout the test duration.</p>
-              <p>3.5 Any suspicious activity may result in immediate termination of the assessment.</p>
-            </div>
+            {Object.entries(rounds).map(([roundType, items]) => (
+              <div key={roundType} style={{ marginBottom: "20px" }}>
+                <h3>{roundType} Round</h3>
+
+                {items.map((item, index) => (
+                  <div key={item.id} style={{ paddingLeft: "10px" }}>
+                    <p>Attempt: {index + 1}</p>
+                    <p>Score: {item.score} / {item.total}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
           </section>
 
           <div className="bg-red-50 border border-red-300 text-red-700 p-5 rounded-lg text-sm">

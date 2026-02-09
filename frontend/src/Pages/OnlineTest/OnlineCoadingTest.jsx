@@ -135,6 +135,7 @@ const OnlineCodingTest = () => {
   const getSubmit = async() => {
     try{
       const response = await axios.post(DOMAIN + '/api/test/run-alltestcases',{
+        jobId,
       code,
       questionId:questions[currentIndex]?._id,
       language: selectedLanguage,
@@ -143,7 +144,7 @@ const OnlineCodingTest = () => {
       withCredentials:true
     })
     if (response.status === 200){
-      console.log(response.data)
+      
       navigate("/feedback")
     }
     }catch(err){
