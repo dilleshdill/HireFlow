@@ -20,6 +20,12 @@ const languages = [
   { id: 5, name: "C", value: "c" },
 ];
 
+const Constraints = [
+  "1 <= N <= 10^5",
+  "-10^9 <= arr[i] <= 10^9",
+  "-10^14 <= K <= 10^14",
+];
+
 const OnlineCodingTest = () => {
   const [time, setTime] = useState(3590);
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -127,7 +133,22 @@ const OnlineCodingTest = () => {
   };
 
   const getSubmit = async() => {
-    const response = await axios.post(DOMAIN + '/api/')
+    try{
+      const response = await axios.post(DOMAIN + '/api/test/run-alltestcases',{
+      code,
+          input: testCases,
+          language: selectedLanguage,
+
+    },{
+      withCredentials:true
+    })
+    if (response.status === 200){
+      console.log(response.data)
+      navigate("/feedback")
+    }
+    }catch(err){
+      console.log(err)
+    }
   }
 
   const fetchTime = async () => {
@@ -157,7 +178,7 @@ const OnlineCodingTest = () => {
     const intervalId = setInterval(() => {
       setTime((prevTime) => {
         if (prevTime <= 1) {
-          
+          getSubmit()
           clearInterval(intervalId);
           ;
         }
@@ -309,6 +330,14 @@ const OnlineCodingTest = () => {
               <div className="bg-gray-100 w-full h-fit px-5 py-3 whitespace-pre-line font-mono text-sm">
                 {currentTestCase.expectedOutput || "No output provided"}
               </div>
+
+              <h1 className="text-gray-900 font-sans mt-4">Constraints:</h1>
+              <div>
+            {Constraints?.map((eachItem) => (
+              <h1 className="bg-gray-100 w-full h-fit px-5 py-3 whitespace-pre-line font-mono text-sm">{eachItem}</h1>
+            ))}
+          </div>
+               
             </>
           )}
           
