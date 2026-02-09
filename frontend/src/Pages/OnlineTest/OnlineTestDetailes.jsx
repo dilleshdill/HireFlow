@@ -15,8 +15,8 @@ const OnlineTestDetailes = () => {
         const response = await axios.get(DOMAIN + `/api/test/test-details?jobId=${id}`,{
           withCredentials:true
         })
-        if (response.status === 200){
-          console.log(response.data)
+        if(response.status === 200){
+          
         }
     }catch(err){
       console.log(err)

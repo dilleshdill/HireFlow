@@ -399,7 +399,7 @@ const OnlineCodingTest = () => {
                 <Play size={15} className={loading ? "animate-pulse" : ""} />
                 {loading ? "Running..." : "Run Code"}
               </button>
-              <button className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+              <button className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700" onClick={getSubmit}>
                 Submit Code
               </button>
             </div>
