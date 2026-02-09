@@ -48,9 +48,10 @@ export const getAllJobs = async (req,res) => {
 // get job by id
 export const getJobById = async (req,res) => {
     try {
-        const {jobId} = req.params.id
-        
-        const job = await Job.findById(jobId)
+        const {jobId} = req.query;
+        console.log("jobid",jobId)
+        const job = await Job.findById({_id:jobId})
+        console.log('job',job)
         if(!job){
             return res.status(400).json({message:"no jobs is found"})
         }

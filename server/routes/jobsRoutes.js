@@ -28,6 +28,6 @@ jobRoute.post('/remove-favorite',protectUser,removeFavorite)
 jobRoute.get('/get-favorite',protectUser,savedJobs)
 
 
-jobRoute.get('/:id',getJobById)
+jobRoute.get('/job-detailes',getJobById)
 
 export default jobRoute;
