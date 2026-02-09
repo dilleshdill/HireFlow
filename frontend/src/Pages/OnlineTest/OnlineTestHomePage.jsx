@@ -28,15 +28,28 @@ const OnlineTestHomePage = () => {
 
       if (response.status === 200) {
         console.log(response.data);
+        const currentDate = new Date();
+        const expirationDate = new Date(response.data.expirationData)
+        if(currentDate > expirationDate){
+            setJobStatus("completed")
+        }
+        else{
+            setJobStatus("start")
+        }
+        setJob(response.data.job)
       }
     } catch (err) {
       console.log(err.msg);
     }
   };
 
+
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  
 
   return (
     <div>
@@ -53,7 +66,7 @@ const OnlineTestHomePage = () => {
               <img src={hireflow} className="h-25 w-25 rounded-xl" />
               <div>
                 <h1 className="text-3xl font-medium text-gray-900">
-                  Deloite National Test
+                  {job.title}
                 </h1>
                 <p className="text-lg text-gray-600">Hireflow campus</p>
               </div>
@@ -69,7 +82,7 @@ const OnlineTestHomePage = () => {
                 </h1>
                 <h1 className="flex text-gray-500">
                   Enrolled :{" "}
-                  <span className="flex text-gray-700 font-normal">15471</span>
+                  <span className="flex text-gray-700 font-normal">{job?.applications?.length}</span>
                 </h1>
               </div>
               <div>
@@ -114,10 +127,10 @@ const OnlineTestHomePage = () => {
               </h1>
               <div className="flex gap-10">
                 <p className="text-gray-500">
-                  From : <span className="text-gray-700">Jan 19,7 pm</span>
+                  From : <span className="text-gray-700">{new Date(job?.createdAt).toDateString()}</span>
                 </p>
                 <p className="text-gray-500">
-                  To : <span className="text-gray-700">Jan 27,9:30 pm</span>
+                  To : <span className="text-gray-700">{new Date(job?.expirationDate).toDateString()}</span>
                 </p>
               </div>
             </div>
@@ -127,28 +140,21 @@ const OnlineTestHomePage = () => {
               Contest Description
             </h1>
             <h1 className="flex text-gray-600 font-semibold mt-3">
-              Deloitte NLA Engineering Mock Assessment -
-              B.E./B.Tech/M.E/M.Tech/MCA
+              {job.description}
             </h1>
             <ul className="list-disc pl-5">
-              <li className="text-gray-600 font-semibold">
-                Language Skills (English)
-              </li>
-              <li className="text-gray-600 font-semibold">
-                General Aptitude (Logical Reasoning and Quantitative Ability)
-              </li>
-              <li className="text-gray-600 font-semibold">
-                Technical Skills (MCQ)
-              </li>
-              <li className="text-gray-600 font-semibold">
-                Technical Skills (Coding)
-              </li>
+              {
+                job?.responsibilities?.map(eachItem => (
+                    <li className="text-gray-600 font-semibold">
+                        {eachItem}
+                    </li>
+                ))
+              }
+              
             </ul>
+            
             <h1 className="flex text-gray-600 font-semibold">
-              Total Questions - 64 Questions
-            </h1>
-            <h1 className="flex text-gray-600 font-semibold">
-              Duration - 90 Minutes
+              Duration - {job?.aptitudeTime + job?.codingTime + job?.coreTime} Minutes
             </h1>
 
             <h1 className="flex text-gray-700 font-medium text-lg mt-5 mb-4">
@@ -156,11 +162,7 @@ const OnlineTestHomePage = () => {
             </h1>
             <ul className="list-disc pl-5">
               <li className="text-gray-500 font-semibold">
-                The assessment consists of 64 Questions that needs to be
-                completed within 90 minutes.
-              </li>
-              <li className="text-gray-500 font-semibold">
-                Maximum time limit is 90 minutes.
+                Maximum time limit is {job?.aptitudeTime + job?.codingTime + job?.coreTime} minutes.
               </li>
               <li className="text-gray-500 font-semibold">
                 Please ensure you click the 'Submit' button after completing the
@@ -168,13 +170,17 @@ const OnlineTestHomePage = () => {
               </li>
             </ul>
           </div>
-          <div className="flex flex-col bg-white rounded-xl shadow-2xl p-5 gap-3">
+          <div className="flex flex-col bg-white rounded-xl shadow-2xl p-5 gap-2">
             <h1 className="flex text-gray-700 font-medium text-2xl">
               Eligiblity
             </h1>
             <h1 className="flex text-gray-600 font-semibold mt-2">
               All students, currently enrolled on campus, are eligible.
             </h1>
+            <h1 className="flex text-gray-600 font-semibold mt-2">
+              Experience : {job?.experience}
+            </h1>
+
           </div>
         </div>
         <div className="flex flex-col h-fit max-w-xl gap-5">

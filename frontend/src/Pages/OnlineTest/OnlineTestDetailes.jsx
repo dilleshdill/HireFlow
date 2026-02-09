@@ -10,9 +10,9 @@ const OnlineTestDetailes = () => {
   const navigate = useNavigate()
   const {id} = useParams()
 
-  const fetchData = async(req,res) => {
+  const fetchData = async() => {
     try{
-        const response = await axios.get(DOMAIN + `/api/job/detailes?jobId={id}`,{
+        const response = await axios.get(DOMAIN + `/api/test/test-details?jobId=${id}`,{
           withCredentials:true
         })
         if (response.status === 200){
