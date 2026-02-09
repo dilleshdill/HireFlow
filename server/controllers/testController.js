@@ -380,8 +380,6 @@ export const changeRound = async (req , res) => {
 }
 
 
-
-
 export const exceuteCode = async(req,res) => {
     try {
     const { language, code, input } = req.body;
@@ -426,16 +424,54 @@ export const checkAllTestcases = async (req , res) => {
             });
         }
 
-        const result = [];
+        const results = [];
         let passedCount = 0;
 
         for (const testCase of question.testCases){
             try {
-                
+                const output = await runCode(language , code , testCase.input)
+                const passed = output.trim() === testCase.expectedOutput.trim();
+
+                if (passed) passedCount ++;
+
+                results.push({
+                    input:testCase.input,
+                    exceuteCode: testCase.expectedOutput,
+                    actualOutput:output,
+                    passed
+                })
             } catch (error) {
-                
+                results.push({
+                    input:testCase.input,
+                    exceuteCode : testCase.expectedOutput,
+                    actualOutput : null,
+                    passed : false,
+                    error : err.toString()
+                })
             }
         }
+
+        const score = (passedCount / question.testCases.length) * question.marks;
+
+        const answer = test.codingAnswers.find(
+            a => a.questionId.toString() === questionId
+        );
+
+        if (!answer){
+            test.codingAnswers.push({
+                questionId,
+                codeSubmission: code,
+                score
+
+            })
+        }else{
+            answer.codeSubmission = code,
+            answer.score = score
+        }
+
+        await test.save()
+
+        return res.status(200).json({message:"code submitted successfully" , score})
 
     } catch (error) {
         return res.status(500).json({message:error.message})
@@ -443,7 +479,27 @@ export const checkAllTestcases = async (req , res) => {
 }
 
 
+// get testDetails
+export const getTestDetails = async (req , res) => {
+    try {
+        const {jobId} = req.query;
+        
+        if(!jobId){
+            return res.status(400).json({message:"missing jobId"})
+        }
 
+        const testDetails = await Questions.find({jobId}).populate('jobId','aptitudeTime coreTime codingTime')
+
+        if(!testDetails){
+            return res.status(400).json({message:"no testDetails"})
+        }
+
+        return res.status(200).json({testDetails , message:"testDetails fetched"})
+
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
 
 
 
