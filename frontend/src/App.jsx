@@ -26,6 +26,7 @@ import OnlineTestExam from './Pages/OnlineTest/OnlineTestExam.jsx'
 import OnlineCoadingTest from './Pages/OnlineTest/OnlineCoadingTest.jsx'
 import RecruiterTestDetailes from './Pages/RecruiterTestDetailes.jsx'
 import FeedBackPage from './Pages/FeedBackPage.jsx'
+import MyRounds from './Pages/MyRounds.jsx'
 const App = () => {
   return (
     <>
@@ -53,6 +54,7 @@ const App = () => {
         <Route path="/job/test/coading-test/:id" element={<OnlineCoadingTest />} />
         <Route path="/questions-setup/:id" element={<RecruiterTestDetailes />} />
         <Route path="/feedback" element={<FeedBackPage />} />
+        <Route path="/my-founds" element={<MyRounds />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>

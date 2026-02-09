@@ -136,8 +136,8 @@ const OnlineCodingTest = () => {
     try{
       const response = await axios.post(DOMAIN + '/api/test/run-alltestcases',{
       code,
-          input: testCases,
-          language: selectedLanguage,
+      questionId:questions[currentIndex]?._id,
+      language: selectedLanguage,
 
     },{
       withCredentials:true
@@ -218,7 +218,6 @@ const OnlineCodingTest = () => {
   }, [code, currentIndex, selectedLanguage]);
 
   useEffect(() => {
-    // Adjust editor height based on output visibility
     setEditorHeight(showOutput ? "60%" : "100%");
   }, [showOutput]);
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import hireflow from "../../assets/hireflow.jpg";
 import { Clock, ShieldCheck, Monitor } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,6 +9,23 @@ const DOMAIN = import.meta.env.VITE_DOMAIN
 const OnlineTestDetailes = () => {
   const navigate = useNavigate()
   const {id} = useParams()
+
+  const fetchData = async(req,res) => {
+    try{
+        const response = await axios.get(DOMAIN + `/api/job/detailes?jobId={id}`,{
+          withCredentials:true
+        })
+        if (response.status === 200){
+          console.log(response.data)
+        }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  })
 
 
   const getNavigate = async() => {
@@ -30,6 +47,7 @@ const OnlineTestDetailes = () => {
       console.log(error)
     }
   }
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
