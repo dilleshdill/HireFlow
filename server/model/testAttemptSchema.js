@@ -85,26 +85,12 @@ const testAttemptSchema = new mongoose.Schema(
       default: 0
     },
 
-    score:[
-      {
-        aptitudeScore:{
-          type:Number,
-          default:0
-        }
-      },
-      {
-        coreScore:{
-          type:Number,
-          default:0
-        }
-      },
-      {
-        codingScore:{
-          type:Number,
-          default:0
-        }
-      },
-    ],
+    roundScores: {
+      aptitude: { type: Number, default: 0 },
+      core: { type: Number, default: 0 },
+      coding: { type: Number, default: 0 }
+    },
+
 
     isPassed: {
       type: Boolean,

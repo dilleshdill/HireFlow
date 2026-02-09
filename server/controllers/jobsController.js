@@ -377,3 +377,17 @@ export const addToTestSchema = async (req , res) => {
     }
 }
 
+export const getUserTests = async(req,res) => {
+    try{
+        const {id} = req.user
+
+        const jobs = await TestAttempt.findById({id})
+        if(!jobs){
+            return res.status(202).json({msg:"No Tests Found"})
+        }
+        return res.status(200).json({msg:"jobs successfully fetched",jobs:jobs})
+    }catch(err){
+        res.status(500).json({msg:err.msg})
+    }
+}
+

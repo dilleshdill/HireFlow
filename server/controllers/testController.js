@@ -1,7 +1,7 @@
 import Job from "../model/job.js";
 import Questions from "../model/questionsSchema.js";
 import TestAttempt from "../model/testAttemptSchema.js";
-import { runCode } from "../services/codeRunner.service.js";
+import { runAllTestCases, runCode } from "../services/codeRunner.service.js";
 
 // auto evaluate the score
 export const autoEvaluate = async (req , res) => {
@@ -402,81 +402,110 @@ export const exceuteCode = async(req,res) => {
 
 
 // check the all the test cases 
-export const checkAllTestcases = async (req , res) => {
-    try {
-        const {questionId , language , code} = req.body;
+export const submitCodingAnswer = async (req, res) => {
+  try {
+    const { jobId, questionId, language, code } = req.body;
+    const userId = req.user.id;
+    console.log(jobId , questionId , language , code)
 
-        if (!questionId || !language || !code) {
-            return res.status(400).json({
-                message: "questionId, language and code are required"
-            });
-        }
-
-        const question = await Questions.findById(questionId)
-
-        if(!question){
-            return res.status(400).json({message:"no question was found"})
-        }
-
-        if(!question.testCases || !question.testCases.length === 0){
-            return res.status(400).json({
-                message: "No test cases found for this question"
-            });
-        }
-
-        const results = [];
-        let passedCount = 0;
-
-        for (const testCase of question.testCases){
-            try {
-                const output = await runCode(language , code , testCase.input)
-                const passed = output.trim() === testCase.expectedOutput.trim();
-
-                if (passed) passedCount ++;
-
-                results.push({
-                    input:testCase.input,
-                    exceuteCode: testCase.expectedOutput,
-                    actualOutput:output,
-                    passed
-                })
-            } catch (error) {
-                results.push({
-                    input:testCase.input,
-                    exceuteCode : testCase.expectedOutput,
-                    actualOutput : null,
-                    passed : false,
-                    error : err.toString()
-                })
-            }
-        }
-
-        const score = (passedCount / question.testCases.length) * question.marks;
-
-        const answer = test.codingAnswers.find(
-            a => a.questionId.toString() === questionId
-        );
-
-        if (!answer){
-            test.codingAnswers.push({
-                questionId,
-                codeSubmission: code,
-                score
-
-            })
-        }else{
-            answer.codeSubmission = code,
-            answer.score = score
-        }
-
-        await test.save()
-
-        return res.status(200).json({message:"code submitted successfully" , score})
-
-    } catch (error) {
-        return res.status(500).json({message:error.message})
+    if (!jobId || !questionId || !language || !code) {
+      return res.status(400).json({
+        message: "jobId, questionId, language and code are required"
+      });
     }
-}
+
+    const question = await Questions.findById(questionId);
+
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    if (!question.testCases || question.testCases.length === 0) {
+      return res.status(400).json({
+        message: "No test cases found for this question"
+      });
+    }
+
+    const test = await TestAttempt.findOne({ jobId, userId });
+
+    if (!test) {
+      return res.status(404).json({ message: "Test attempt not found" });
+    }
+
+    // 🔒 Prevent submission if not in coding round
+    if (test.currentRound !== "CODING") {
+      return res.status(400).json({
+        message: "Not in coding round"
+      });
+    }
+
+    // 🔒 Prevent resubmission after evaluation
+    if (test.status !== "STARTED") {
+      return res.status(400).json({
+        message: "Test already completed"
+      });
+    }
+
+    let passedCount = 0;
+
+    for (const testCase of question.testCases) {
+      try {
+        const output = await runAllTestCases(language, code, testCase.input);
+
+        if (output.trim() === testCase.expectedOutput.trim()) {
+          passedCount++;
+        }
+
+      } catch (err) {
+        console.log("Execution error:", err);
+      }
+    }
+
+    const score =
+      (passedCount / question.testCases.length) * question.marks;
+
+    // 🔥 Find or update coding answer
+    let answer = test.codingAnswers.find(
+      a => a.questionId.toString() === questionId
+    );
+
+    if (!answer) {
+      test.codingAnswers.push({
+        questionId,
+        codeSubmission: code,
+        score
+      });
+    } else {
+      answer.codeSubmission = code;
+      answer.score = score;
+    }
+
+    // 🔥 Recalculate coding round total safely
+    test.roundScores.coding = test.codingAnswers.reduce(
+      (acc, ans) => acc + ans.score,
+      0
+    );
+
+    // 🔥 Recalculate overall total
+    test.totalScore =
+      test.roundScores.aptitude +
+      test.roundScores.core +
+      test.roundScores.coding;
+
+    await test.save();
+
+    return res.status(200).json({
+      message: "Code submitted successfully",
+      score,
+      codingTotal: test.roundScores.coding,
+      totalScore: test.totalScore
+    });
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 // get testDetails

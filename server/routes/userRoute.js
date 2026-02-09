@@ -13,6 +13,8 @@ userRoute.post(
   UploadResume
 );
 
+
+
 userRoute.post("/user-detailes", protectUser, AddUserProfile);
 
 export default userRoute;
