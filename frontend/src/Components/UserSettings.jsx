@@ -840,9 +840,6 @@ const UserSettings = () => {
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <div
                 className="flex bg-blue-700 w-full sm:w-fit px-5 py-3 text-white gap-2 items-center justify-center rounded-md cursor-pointer hover:bg-blue-700 transition"
-                onClick={() => {
-                  setProgress(5);
-                }}
               >
                 <h1 onClick={getChangePassword}>Save Changes</h1>
               </div>
