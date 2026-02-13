@@ -535,7 +535,8 @@ export const getTestDetails = async (req , res) => {
 export const getAllTestsHistory = async (req , res) => {
     try {
         const userId = req.user.id
-        const history = await TestAttempt.find({userId})
+        const history = await TestAttempt.find({userId}).populate('jobId')
+        console.log("history",history)
         if(!history){
             return res.status(400).json({message:"no history found"})
         }

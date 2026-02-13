@@ -234,6 +234,7 @@ export const getJobQuestions = async (req , res) =>{
 
 // update answer
 export const updateAnswer = async (req, res) => {
+    console.log("enter")
   try {
     const {
       jobId,
@@ -361,10 +362,22 @@ export const addToTestSchema = async (req , res) => {
             return res.status(201).json({test:existed,message:"test already existed so navigate to test"})
         }
 
+        const questions = await Questions.find({jobId})
+        console.log("questions",questions)
+        let score = 0;
+
+        questions.forEach((q) => {
+        score += q.marks || 0;
+        });
+
+        console.log("score",score);
+
+
         const newTest = await TestAttempt.create({
             jobId,
             userId,
             roundType:"APTITUDE",
+            jobScore:score,
             startedAt: new Date(),
             startTime : new Date(),
             totalScore: 0,
