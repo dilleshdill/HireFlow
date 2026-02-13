@@ -432,14 +432,14 @@ export const submitCodingAnswer = async (req, res) => {
       return res.status(404).json({ message: "Test attempt not found" });
     }
 
-    // 🔒 Prevent submission if not in coding round
+    //  Prevent submission if not in coding round
     if (test.currentRound !== "CODING") {
       return res.status(400).json({
         message: "Not in coding round"
       });
     }
 
-    // 🔒 Prevent resubmission after evaluation
+    //  Prevent resubmission after evaluation
     if (test.status !== "STARTED") {
       return res.status(400).json({
         message: "Test already completed"
@@ -464,7 +464,11 @@ export const submitCodingAnswer = async (req, res) => {
     const score =
       (passedCount / question.testCases.length) * question.marks;
 
-    // 🔥 Find or update coding answer
+    console.log("score , totalScore",score,question.marks)
+    if(score !== question.marks){
+        return res.status(409).json({score , message:"Not Passed all the testcases"})
+    }
+    // Find or update coding answer
     let answer = test.codingAnswers.find(
       a => a.questionId.toString() === questionId
     );
@@ -480,13 +484,13 @@ export const submitCodingAnswer = async (req, res) => {
       answer.score = score;
     }
 
-    // 🔥 Recalculate coding round total safely
+    // Recalculate coding round total safely
     test.roundScores.coding = test.codingAnswers.reduce(
       (acc, ans) => acc + ans.score,
       0
     );
 
-    // 🔥 Recalculate overall total
+    // Recalculate overall total
     test.totalScore =
       test.roundScores.aptitude +
       test.roundScores.core +

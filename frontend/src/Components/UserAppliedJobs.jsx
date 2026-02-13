@@ -21,7 +21,7 @@ const UserAppliedJobs = () => {
   const [appliedJobs , setAppliedJobs] = useState([])
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const limit = 2;
+  const limit = 5;
 
   const navigate = useNavigate();
 

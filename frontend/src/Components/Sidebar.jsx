@@ -8,6 +8,7 @@ import {
   Book,
   SearchCheck
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
 
@@ -22,6 +23,7 @@ const Sidebar = () => {
   ];
 
   const [selectedSidebar, setSelectedSidebar] = useState("overview");
+  const navigate = useNavigate();
 
   // Restore from localStorage
   useEffect(() => {
@@ -34,6 +36,7 @@ const Sidebar = () => {
   const handleClick = (value) => {
     setSelectedSidebar(value);
     localStorage.setItem("userSideBar", value);
+    navigate('/user-dashboard');
   };
 
   return (
