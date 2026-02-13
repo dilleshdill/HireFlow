@@ -84,6 +84,7 @@ const OnlineTestExam = () => {
         withCredentials:true
       })
       if(response.status === 200){
+        console.log(response.data)
         if (currentIndex < question.length - 1) {
           setCurrentIndex(currentIndex + 1);
           localStorage.setItem("currentIndex",currentIndex +1 )

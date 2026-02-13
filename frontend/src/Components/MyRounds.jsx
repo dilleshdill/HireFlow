@@ -52,9 +52,9 @@ const myRounds = [
 ];
 
 const statusStyles = {
-  Cleared: "bg-green-50 text-green-700 border border-green-200",
-  Pending: "bg-gray-50 text-gray-700 border border-gray-300",
-  Rejected: "bg-red-50 text-red-700 border border-red-200",
+  EVALUATED: "bg-green-50 text-green-700 border border-green-200",
+  SUBMITTED: "bg-gray-50 text-gray-700 border border-gray-300",
+  PENDING: "bg-red-50 text-red-700 border border-red-200",
 };
 
 
@@ -123,7 +123,7 @@ const MyRounds = () => {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {myRounds.map((round) => (
+        {results.map((round) => (
           <div
             key={round.id}
             className="border border-gray-200 rounded-lg hover:border-gray-300 transition-colors bg-white"
@@ -152,13 +152,13 @@ const MyRounds = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Date</span>
-                  <span className="text-sm font-medium text-gray-900">{round.date}</span>
+                  <span className="text-sm font-medium text-gray-900">{new Date(round.submittedAt).toLocaleDateString()}</span>
                 </div>
                 
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Score</span>
                   <span className={`text-sm font-medium ${round.score !== "-" ? "text-gray-900" : "text-gray-500"}`}>
-                    {round.score}
+                    {round.totalScore}
                   </span>
                 </div>
 
