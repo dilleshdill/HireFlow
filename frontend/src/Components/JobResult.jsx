@@ -73,9 +73,11 @@ const testResults = [
   }
 ];
 
+
+
 export const JobResult = () => {
   const [selectedResult, setSelectedResult] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState('grid'); 
 
   const getScoreColor = (score) => {
     const numericScore = parseFloat(score);

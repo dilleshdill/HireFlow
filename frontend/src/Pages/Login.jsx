@@ -50,9 +50,16 @@ const Login = () => {
         console.log(response.data)
 
         if (response.status === 201){
-            navigate('/email-verification')
+            navigate('/email-verification',{
+                state:role
+            })
         }
-        navigate('/')
+        if (role === "USER"){
+            navigate("/user-dashboard")
+        }
+        else if(role === "RECRUITER"){
+            navigate("/recruiter-dashboard")
+        }
     } catch (error) {
         console.log(error.response?.data || error.message)
     }

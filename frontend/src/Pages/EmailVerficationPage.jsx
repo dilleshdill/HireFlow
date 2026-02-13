@@ -1,11 +1,14 @@
 import React, { useRef ,useState} from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const EmailVerficationPage = () => {
     const [otp,setOtp] = useState(["","","",""])
+    const location = useLocation()
+    const {role} = location.data
+    
     const inputRef = useRef([])
     const navigate = useNavigate()
 
@@ -50,8 +53,12 @@ const EmailVerficationPage = () => {
             },{withCredentials:true})
             if(response.status === 200){
                 console.log(response.data)
-                navigate('/')
-                
+                if (role === "USER"){
+                  navigate("/user-dashboard")
+                }       
+                else if (role === "RECRUITER"){
+                  navigate("/recruiter-dashboard")
+                }         
             }
         }catch(err){
             console.log("something went wrong",err)
