@@ -13,7 +13,7 @@ import {
   MapPin,
   BriefcaseBusiness,
   ShieldCheck,
-  Globe
+  Globe,
 } from "lucide-react";
 import { Facebook, Twitter, MessageCircle, Youtube } from "lucide-react";
 import RelatedJobs from "../Components/RelatedJobs.jsx";
@@ -168,7 +168,7 @@ const RecruterCompanyPage = () => {
                     <p className="text-gray-500 ">Organization Type</p>
                     <p className="">Private Company</p>
                   </div>
-                  
+
                   <div className="flex flex-col gap-1">
                     <Wallet size={30} className="text-blue-400" />
                     <p className="text-gray-500">Team Size</p>
@@ -184,13 +184,12 @@ const RecruterCompanyPage = () => {
                     <p className="text-gray-500 font-bold">Industry Type</p>
                     <p className="">Techonology</p>
                   </div>
-                  
                 </div>
               </div>
               <div className="flex flex-col gap-2 border-2 border-gray-300 p-5">
                 <h1 className="text-xl font-light">Contact Information</h1>
                 <div className="flex gap-3 items-center mt-2">
-                  <Globe size={25} className="text-blue-400"/>
+                  <Globe size={25} className="text-blue-400" />
                   <div className="flex flex-col gap-1">
                     <p className="text-md text-gray-400 font-light">Website</p>
                     <p className="text-md text-black font-normal">
@@ -198,9 +197,9 @@ const RecruterCompanyPage = () => {
                     </p>
                   </div>
                 </div>
-                <hr className="border-t-1 border-gray-300"/>
+                <hr className="border-t-1 border-gray-300" />
                 <div className="flex gap-3 items-center">
-                  <Phone size={25} className="text-blue-400"/>
+                  <Phone size={25} className="text-blue-400" />
                   <div className="flex flex-col gap-1">
                     <p className="text-md text-gray-400 font-light">Phone</p>
                     <p className="text-md text-black font-normal">
@@ -208,20 +207,19 @@ const RecruterCompanyPage = () => {
                     </p>
                   </div>
                 </div>
-                <hr className="border-t-1 border-gray-300"/>
+                <hr className="border-t-1 border-gray-300" />
                 <div className="flex gap-3 items-center">
-                  <Mail size={25} className="text-blue-400"/>
+                  <Mail size={25} className="text-blue-400" />
                   <div className="flex flex-col gap-1">
-                    <p className="text-md text-gray-400 font-light">Email Address</p>
+                    <p className="text-md text-gray-400 font-light">
+                      Email Address
+                    </p>
                     <p className="text-md text-black font-normal">
                       tarunbommana798@gmail.com
                     </p>
                   </div>
                 </div>
-                <hr className="border-t-1 border-gray-300"/>
-                
-                
-                
+                <hr className="border-t-1 border-gray-300" />
               </div>
               <div className="flex flex-col gap-2 border-2 border-gray-300 p-5">
                 <h1>Follow us on</h1>
