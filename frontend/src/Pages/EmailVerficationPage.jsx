@@ -7,7 +7,9 @@ const DOMAIN = import.meta.env.VITE_DOMAIN
 const EmailVerficationPage = () => {
     const [otp,setOtp] = useState(["","","",""])
     const location = useLocation()
-    const {role} = location.data
+    const role = location.state?.role
+    
+    console.log("role",role)
     
     const inputRef = useRef([])
     const navigate = useNavigate()

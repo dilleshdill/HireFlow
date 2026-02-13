@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema({
     },
     otp:Number,
     otpExpiry:Number,
-    isActive : {type: Boolean , default:true}
+    isActive : {type: Boolean , default:false}
 },{ timestamps: true })
 
 const User = mongoose.model("User",userSchema);

@@ -29,6 +29,7 @@ import FeedBackPage from './Pages/FeedBackPage.jsx'
 import MyRounds from './Components/MyRounds.jsx'
 
 import CompanyProfile from './Pages/CompanyProfile.jsx'
+import Loader from './Components/Loader.jsx'
 const App = () => {
   return (
     <>
@@ -58,6 +59,7 @@ const App = () => {
         <Route path="/feedback" element={<FeedBackPage />} />
         <Route path="/my-founds" element={<MyRounds />} />
         <Route path='/company-profile/:id' element={<CompanyProfile />} />
+        <Route path='/loader' element={<Loader />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
