@@ -41,8 +41,7 @@ const Responsibilites = [
 
 const RecruterCompanyPage = () => {
   return (
-    <>
-      <NavBar />
+    <div>
       <div className="w-full bg-gray-200 pt-3 pb-3">
         <div className="flex max-w-7xl mx-auto justify-between px-4">
           <h1 className="text-lg">Company Detailes</h1>
@@ -247,7 +246,7 @@ const RecruterCompanyPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
