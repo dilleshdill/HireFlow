@@ -12,7 +12,8 @@ import {
 import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const UserAppliedJobs = () => {
@@ -20,118 +21,6 @@ const UserAppliedJobs = () => {
   const [appliedJobs , setAppliedJobs] = useState([])
 
   const navigate = useNavigate();
-  // const jobs = [
-  //   {
-  //     id: 1,
-  //     name: "Tech Solutions Inc.",
-  //     jobRole: "Frontend Developer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png",
-  //     location: "San Francisco, CA",
-  //     status: "active",
-  //     type: "full-time",
-  //     salary: "$120,000 / year",
-  //     dateApplied: "2025-01-05",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Innovatech Corp.",
-  //     jobRole: "Full Stack Engineer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
-  //     location: "New York, NY",
-  //     status: "pending",
-  //     type: "remote",
-  //     salary: "$95,000 / year",
-  //     dateApplied: "2025-01-08",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Global Enterprises",
-  //     jobRole: "Backend Developer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
-  //     location: "Chicago, IL",
-  //     status: "active",
-  //     type: "part-time",
-  //     salary: "$45 / hour",
-  //     dateApplied: "2025-01-10",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Creative Minds LLC",
-  //     jobRole: "UI/UX Designer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968267.png",
-  //     location: "Austin, TX",
-  //     status: "pending",
-  //     type: "full-time",
-  //     salary: "$105,000 / year",
-  //     dateApplied: "2025-01-12",
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "CloudNine Systems",
-  //     jobRole: "DevOps Engineer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968282.png",
-  //     location: "Seattle, WA",
-  //     status: "active",
-  //     type: "remote",
-  //     salary: "$110,000 / year",
-  //     dateApplied: "2025-01-15",
-  //   },
-  //   {
-  //     id: 6,
-  //     name: "NextGen Innovations",
-  //     jobRole: "QA Engineer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968295.png",
-  //     location: "Boston, MA",
-  //     status: "pending",
-  //     type: "part-time",
-  //     salary: "$40 / hour",
-  //     dateApplied: "2025-01-17",
-  //   },
-  //   {
-  //     id: 7,
-  //     name: "Apex Technologies",
-  //     jobRole: "Software Engineer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968300.png",
-  //     location: "Denver, CO",
-  //     status: "active",
-  //     type: "full-time",
-  //     salary: "$98,000 / year",
-  //     dateApplied: "2025-01-19",
-  //   },
-  //   {
-  //     id: 8,
-  //     name: "Bright Future Labs",
-  //     jobRole: "Data Scientist",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968312.png",
-  //     location: "Los Angeles, CA",
-  //     status: "pending",
-  //     type: "remote",
-  //     salary: "$115,000 / year",
-  //     dateApplied: "2025-01-21",
-  //   },
-  //   {
-  //     id: 9,
-  //     name: "Summit Solutions",
-  //     jobRole: "Product Manager",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968321.png",
-  //     location: "Dallas, TX",
-  //     status: "active",
-  //     type: "full-time",
-  //     salary: "$90,000 / year",
-  //     dateApplied: "2025-01-23",
-  //   },
-  //   {
-  //     id: 10,
-  //     name: "BlueWave Tech",
-  //     jobRole: "Mobile App Developer",
-  //     image: "https://cdn-icons-png.flaticon.com/512/5968/5968330.png",
-  //     location: "Miami, FL",
-  //     status: "pending",
-  //     type: "part-time",
-  //     salary: "$42 / hour",
-  //     dateApplied: "2025-01-25",
-  //   },
-  // ];
 
   useEffect(()=>{
     const fetchAppliedJobs = async () => {
@@ -287,68 +176,18 @@ const UserAppliedJobs = () => {
         ))}
       </div>
 
-      <div className="flex items-center justify-between w-full max-w-80 text-gray-500 font-medium">
-        <button
-          type="button"
-          aria-label="prev"
-          className="rounded-full bg-slate-200/50"
-        >
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.499 12.85a.9.9 0 0 1 .57.205l.067.06a.9.9 0 0 1 .06 1.206l-.06.066-5.585 5.586-.028.027.028.027 5.585 5.587a.9.9 0 0 1 .06 1.207l-.06.066a.9.9 0 0 1-1.207.06l-.066-.06-6.25-6.25a1 1 0 0 1-.158-.212l-.038-.08a.9.9 0 0 1-.03-.606l.03-.083a1 1 0 0 1 .137-.226l.06-.066 6.25-6.25a.9.9 0 0 1 .635-.263Z"
-              fill="#475569"
-              stroke="#475569"
-              strokeWidth=".078"
+      <div className="flex items-center justify-center mt-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={5}
+              variant="outlined"
+              color="primary"
+              size="medium"
+              shape="rounded"
+              onChange={(event, value) => setPage(value)}
             />
-          </svg>
-        </button>
-
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <button className="h-10 w-10 flex items-center justify-center aspect-square">
-            1
-          </button>
-          <button className="h-10 w-10 flex items-center justify-center aspect-square">
-            2
-          </button>
-          <button className="h-10 w-10 flex items-center justify-center aspect-square text-indigo-500 border border-indigo-200 rounded-full">
-            3
-          </button>
-          <button className="h-10 w-10 flex items-center justify-center aspect-square">
-            4
-          </button>
-          <button className="h-10 w-10 flex items-center justify-center aspect-square">
-            5
-          </button>
+          </Stack>
         </div>
-
-        <button
-          type="button"
-          aria-label="next"
-          className="rounded-full bg-slate-200/50"
-        >
-          <svg
-            className="rotate-180"
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.499 12.85a.9.9 0 0 1 .57.205l.067.06a.9.9 0 0 1 .06 1.206l-.06.066-5.585 5.586-.028.027.028.027 5.585 5.587a.9.9 0 0 1 .06 1.207l-.06.066a.9.9 0 0 1-1.207.06l-.066-.06-6.25-6.25a1 1 0 0 1-.158-.212l-.038-.08a.9.9 0 0 1-.03-.606l.03-.083a1 1 0 0 1 .137-.226l.06-.066 6.25-6.25a.9.9 0 0 1 .635-.263Z"
-              fill="#475569"
-              stroke="#475569"
-              strokeWidth=".078"
-            />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 };
