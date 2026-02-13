@@ -14,13 +14,17 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
+<<<<<<< HEAD
+import { useNavigate } from "react-router-dom";
+=======
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+>>>>>>> 2c7ec48a9858cb37bb03b5af12ef05f0d9527410
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindJobCard = () => {
-
+  const navigate = useNavigate()
   const [jobs , setJobs] = useState([])
   const [appliedJobs , setAppliedJobs] = useState([])
   const [favoriteJobs , setFavoriteJobs] = useState([])
@@ -143,7 +147,7 @@ const FindJobCard = () => {
           setFavoriteJobs(response.data.jobs)
         }
       } catch (error) {
-        
+        console.log(error)
       }
     }
 
@@ -260,6 +264,11 @@ const filteredJobs = jobs.filter((job) => {
 
   
   return (
+<<<<<<< HEAD
+    <div className="w-full bg-gray-50 py-4">
+      {jobs.map((job) => (
+        <div key={job._id} className="w-full bg-white p-4" onClick={()=>navigate(`/company-profile/${job._id}`)}>
+=======
     <div className="w-full  py-4 ">
 
       <div className="w-full bg-gray-100">
@@ -452,6 +461,7 @@ const filteredJobs = jobs.filter((job) => {
         <div>
           {filteredJobs.map((job) => (
         <div key={job._id} className="w-full bg-white p-2">
+>>>>>>> 2c7ec48a9858cb37bb03b5af12ef05f0d9527410
           <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
 
             {/* MAIN FLEX */}
