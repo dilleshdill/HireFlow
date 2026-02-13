@@ -19,13 +19,21 @@ const DOMAIN = import.meta.env.VITE_DOMAIN
 const UserAppliedJobs = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const [appliedJobs , setAppliedJobs] = useState([])
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const limit = 5;
 
   const navigate = useNavigate();
 
   useEffect(()=>{
     const fetchAppliedJobs = async () => {
       try {
-        const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{withCredentials:true})
+        const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{
+          params:{
+            page,
+            limit
+          }
+          ,withCredentials:true})
         if(response.status === 200){
           console.log(response.data.jobs)
           setAppliedJobs(response.data.jobs)
