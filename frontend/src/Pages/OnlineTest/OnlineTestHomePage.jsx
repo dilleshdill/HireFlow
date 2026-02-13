@@ -20,7 +20,7 @@ const OnlineTestHomePage = () => {
 
   const fetchRecommendJob = async(title) => {
     try{
-      const response = await axios.post(DOMAIN + '/api/job/recommended',
+      const response = await axios.post(DOMAIN + '/api/job/recommended-list',
         title,
         {
           withCredentials:true

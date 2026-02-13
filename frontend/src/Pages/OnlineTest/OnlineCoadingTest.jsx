@@ -42,6 +42,9 @@ const OnlineCodingTest = () => {
   const [currentTestCaseIndex, setCurrentTestCaseIndex] = useState(0);
   const [length, setLength] = useState(1);
   const [editorHeight, setEditorHeight] = useState("100%");
+  const [showSubmittedOutput,setSubmittedOutput] = useState(false)
+  const [showErrorOutput,setErrorOutput] = useState(false)
+ 
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -119,7 +122,7 @@ const OnlineCodingTest = () => {
         setQuestions(fetchedQuestions);
         setLength(fetchedQuestions.length);
         
-        const storedIndex = parseInt(localStorage.getItem("currentCodingIndex") || "0");
+        const storedIndex = parseInt(sessionStorage.getItem("currentCodingIndex") || "0");
         const validIndex = Math.min(storedIndex, fetchedQuestions.length - 1);
         setCurrentIndex(validIndex);
         
@@ -145,10 +148,15 @@ const OnlineCodingTest = () => {
       withCredentials:true
     })
     if (response.status === 200){
-      
-      navigate("/feedback")
+      if(response.data.score === response.data.codingTotal){
+        setSubmittedOutput(true)
+      }
+      else{
+        setErrorOutput(true)
+      }
     }
     }catch(err){
+
       console.log(err)
     }
   }
@@ -227,7 +235,7 @@ const OnlineCodingTest = () => {
     if (currentIndex > 0) {
       const newIndex = currentIndex - 1;
       setCurrentIndex(newIndex);
-      localStorage.setItem("currentCodingIndex", newIndex.toString());
+      sessionStorage.setItem("currentCodingIndex", newIndex.toString());
     }
   };
 
@@ -235,7 +243,7 @@ const OnlineCodingTest = () => {
     if (currentIndex < length - 1) {
       const newIndex = currentIndex + 1;
       setCurrentIndex(newIndex);
-      localStorage.setItem("currentCodingIndex", newIndex.toString());
+      sessionStorage.setItem("currentCodingIndex", newIndex.toString());
     }
   };
 
@@ -243,7 +251,7 @@ const OnlineCodingTest = () => {
     const newIndex = value - 1;
     setCurrentIndex(newIndex);
     setCurrentTestCaseIndex(0);
-    localStorage.setItem("currentCodingIndex", newIndex.toString());
+    sessionStorage.setItem("currentCodingIndex", newIndex.toString());
   };
 
   const currentQuestion = questions[currentIndex] || {};
@@ -480,19 +488,19 @@ const OnlineCodingTest = () => {
                     <div className="flex flex-wrap items-center gap-3">
                       <h2 className="text-gray-700 font-medium">Test Cases:</h2>
                       <div className="flex flex-wrap gap-2">
-                        {testCases.map((_, index) => (
+                       
                           <button
-                            key={index}
+                            key={currentTestCaseIndex}
                             className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
-                              currentTestCaseIndex === index
+                              currentTestCaseIndex === currentTestCaseIndex
                                 ? 'bg-indigo-600 text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                             }`}
-                            onClick={() => setCurrentTestCaseIndex(index)}
+                            onClick={() => setCurrentTestCaseIndex(currentTestCase)}
                           >
-                            Case {index + 1}
+                            Case {currentTestCaseIndex + 1}
                           </button>
-                        ))}
+                        
                       </div>
                     </div>
                   )}
@@ -585,6 +593,178 @@ const OnlineCodingTest = () => {
           </div>
         </div>
       )}
+
+      {/* Success Modal */}
+{showSubmittedOutput && (
+  <div 
+    className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+    onClick={() => setSubmittedOutput(false)}
+  >
+    <div 
+      className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform transition-all animate-slideUp"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex flex-col items-center text-center">
+        {/* Animated Success Icon */}
+        <div className="relative mb-6">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-pulse">
+            <svg 
+              className="w-10 h-10 text-green-500 animate-check" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              strokeWidth="3"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M5 13l4 4L19 7"
+                className="animate-draw"
+              />
+            </svg>
+          </div>
+          {/* Sparkle effects */}
+          <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-300 rounded-full animate-bounce opacity-75"></div>
+          <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-green-300 rounded-full animate-ping opacity-50"></div>
+        </div>
+        
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">Success!</h3>
+        <p className="text-gray-600 mb-8 text-lg">Your changes have been saved successfully.</p>
+        
+        <button
+          onClick={() => setSubmittedOutput(false)}
+          className="group relative w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl overflow-hidden"
+        >
+          <span className="relative z-10">Done</span>
+          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+        </button>
+        
+        {/* Close button */}
+        <button 
+          onClick={() => setSubmittedOutput(false)}
+          className="mt-4 text-gray-400 hover:text-gray-600 text-sm transition-colors"
+        >
+          Click anywhere to close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Error Modal */}
+{showErrorOutput && (
+  <div 
+    className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+    onClick={() => setErrorOutput(false)}
+  >
+    <div 
+      className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform transition-all animate-slideUp"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex flex-col items-center text-center">
+        {/* Animated Error Icon */}
+        <div className="relative mb-6">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center animate-shake">
+            <svg 
+              className="w-10 h-10 text-red-500" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              strokeWidth="3"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
+          {/* Warning dots */}
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-ping"></div>
+          <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-orange-400 rounded-full animate-ping delay-100"></div>
+        </div>
+        
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">Oops!</h3>
+        <p className="text-gray-600 mb-8 text-lg">Something went wrong. Please try again.</p>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <button
+            onClick={() => setErrorOutput(false)}
+            className="group relative flex-1 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-semibold py-3 px-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl overflow-hidden"
+          >
+            <span className="relative z-10">Try Again</span>
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          </button>
+          
+          <button
+            onClick={() => setErrorOutput(false)}
+            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Cancel
+          </button>
+        </div>
+        
+        {/* Close button */}
+        <button 
+          onClick={() => setErrorOutput(false)}
+          className="mt-4 text-gray-400 hover:text-gray-600 text-sm transition-colors"
+        >
+          Click anywhere to close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Add these animations to your global CSS or style tag */}
+<style jsx>{`
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+  }
+  
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 100;
+      stroke-dasharray: 100;
+    }
+    to {
+      stroke-dashoffset: 0;
+      stroke-dasharray: 100;
+    }
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  .animate-draw {
+    stroke-dashoffset: 100;
+    stroke-dasharray: 100;
+    animation: draw 0.6s ease-out forwards;
+  }
+  
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+`}</style>
+
     </div>
   );
 };

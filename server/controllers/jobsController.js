@@ -64,7 +64,6 @@ export const getAllJobs = async (req, res) => {
   }
 };
 
-
 // get job by id
 export const getJobById = async (req,res) => {
     try {
@@ -418,6 +417,17 @@ export const getUserTests = async(req,res) => {
             return res.status(202).json({msg:"No Tests Found"})
         }
         return res.status(200).json({msg:"jobs successfully fetched",jobs:jobs})
+    }catch(err){
+        res.status(500).json({msg:err.msg})
+    }
+}
+
+export const recommendedList = async(req,res) => {
+    try{
+        const {id} = req.user
+        const {title} = req.body
+        res.status(200).json({msg:"success"})
+
     }catch(err){
         res.status(500).json({msg:err.msg})
     }

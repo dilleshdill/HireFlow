@@ -59,7 +59,7 @@ const OnlineTestExam = () => {
       if(response.status === 200){
         if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      localStorage.setItem("currentIndex",currentIndex -1 )
+      sessionStorage.setItem("currentIndex",currentIndex -1 )
       
     }
       }
@@ -71,6 +71,10 @@ const OnlineTestExam = () => {
   };
 
   const getNext = async () => {
+    if(currentIndex === question.length -1) {
+      setFinishModel(true)
+      return 
+    }
     try{
       const response = await axios.post(DOMAIN + "/api/job/update-answer",{
         jobId,
@@ -87,7 +91,7 @@ const OnlineTestExam = () => {
         console.log(response.data)
         if (currentIndex < question.length - 1) {
           setCurrentIndex(currentIndex + 1);
-          localStorage.setItem("currentIndex",currentIndex +1 )
+          sessionStorage.setItem("currentIndex",currentIndex +1 )
     }
       }
     }catch(err){
@@ -121,7 +125,7 @@ const OnlineTestExam = () => {
       if(response.status === 200){
         if(currentIndex < question.length - 1){
             setCurrentIndex(currentIndex +1)
-            localStorage.setItem("currentIndex",currentIndex +1 )
+            sessionStorage.setItem("currentIndex",currentIndex +1 )
         }
       }
     }catch(err){
@@ -244,7 +248,7 @@ const OnlineTestExam = () => {
     
     fetchData();
     
-    const localIndex = localStorage.getItem("currentIndex")
+    const localIndex = sessionStorage.getItem("currentIndex")
     if (localIndex){
       setCurrentIndex(parseInt(localIndex))
     }
@@ -398,7 +402,7 @@ const OnlineTestExam = () => {
                 key={index}
                 className={`flex h-10 w-10 border items-center justify-center rounded-lg cursor-pointer ${bgColor}`}
                 onClick={() => {
-                  localStorage.setItem("currentIndex",index)
+                  sessionStorage.setItem("currentIndex",index)
                   setCurrentIndex(index)
                 }}
               >

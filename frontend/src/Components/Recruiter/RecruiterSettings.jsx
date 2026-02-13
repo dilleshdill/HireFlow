@@ -104,10 +104,8 @@ const phoneCodes = [
 
 const RecruiterSettings = () => {
   const [progress, setProgress] = useState(1);
-
   const fileRef = useRef(null);
   const bannerFileRef = useRef(null);
-
   const [previewImage1, setPreviewImage1] = useState("");
   const [previewImage2, setPreviewImage2] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
