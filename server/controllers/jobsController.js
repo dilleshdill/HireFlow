@@ -4,6 +4,7 @@ import { RecruiterProfile } from "../model/recruiterProfileModel.js"
 import TestAttempt from "../model/testAttemptSchema.js"
 import User from "../model/user.js"
 import { UserProfile } from "../model/UserProfileModel.js"
+import ai from "../config/ai.js";
 
 
 // post a job
@@ -68,9 +69,9 @@ export const getAllJobs = async (req, res) => {
 export const getJobById = async (req,res) => {
     try {
         const {jobId} = req.query;
-        console.log("jobid",jobId)
+
         const job = await Job.findById({_id:jobId}).populate('postedBy','name ')
-        console.log('job',job)
+
         if(!job){
             return res.status(400).json({message:"no jobs is found"})
         }
@@ -422,16 +423,59 @@ export const getUserTests = async(req,res) => {
     }
 }
 
-export const recommendedList = async(req,res) => {
-    try{
-        const {id} = req.user
-        const {title} = req.body
-        res.status(200).json({msg:"success"})
+export const recommendedList = async (req, res) => {
+  console.log("enter in to the recommended list");
 
-    }catch(err){
-        res.status(500).json({msg:err.msg})
-    }
-}
+  try {
+    const userId = req.user.id;
+    const { title } = req.body;
 
+    const response = await ai.chat.completions.create({
+      model: "gpt-4o-mini",
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a job recommendation engine. Suggest related job titles",
+        },
+        {
+          role: "user",
+          content: `
+              Job Title: ${title}
+              Skills: React, Node.js, MongoDB, Express
+              
+              Return JSON:
+              {
+                "relatedJobs": [
+                  {
+                    "title": "",
+                    "matchReason": ""
+                  }
+                ]
+              }
+          `,
+        },
+      ],
+    });
 
+    const related = JSON.parse(response.choices[0].message.content);
+
+    console.log("recommend details", related);
+
+    // ✅ SEND RESPONSE ONLY HERE
+    return res.status(200).json({
+      success: true,
+      relatedJobs: related.relatedJobs,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to generate recommendations",
+    });
+  }
+};
 

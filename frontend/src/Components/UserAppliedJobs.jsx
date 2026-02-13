@@ -14,6 +14,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Loader from "./Loader";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const UserAppliedJobs = () => {
@@ -22,12 +23,14 @@ const UserAppliedJobs = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const limit = 5;
+  const [loading , setLoading] = useState(false)
 
   const navigate = useNavigate();
 
   useEffect(()=>{
     const fetchAppliedJobs = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{
           params:{
             page,
@@ -40,16 +43,22 @@ const UserAppliedJobs = () => {
         }
       } catch (error) {
         console.log(error.message)
+      }finally{
+        setLoading(false)
       }
     }
     fetchAppliedJobs();
   },[page])
   
   const visibleJobs = showAllJobs ? appliedJobs : appliedJobs.slice(0, 4);
+    const loaderComponent = loading ? <Loader /> : null;
+
+
 
   return (
     <div>
       <div className="flex items-center justify-between p-2">
+        
         <p>Applied(567)</p>
         <div>
           <button
@@ -70,6 +79,7 @@ const UserAppliedJobs = () => {
           </button>
         </div>
       </div>
+      {loaderComponent}
 
       <div className="hidden sm:flex items-center justify-between pr-10 pl-1 bg-gray-200 text-gray-500 text-sm p-2 rounded-md">
         <div className="pl-5">
@@ -81,7 +91,7 @@ const UserAppliedJobs = () => {
           <p>Action</p>
         </div>
       </div>
-
+      
       {/* MOBILE VIEW (GRID CARDS) */}
       <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
         {visibleJobs.map((job) => (

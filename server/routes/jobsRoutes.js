@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectUser } from '../middleware/protectUser.js'
-import { deletejob, getAllJobs, getCandidatesByJobId, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob,getJobQuestions,updateAnswer, addToTestSchema } from '../controllers/jobsController.js';
+import { deletejob, getAllJobs, getCandidatesByJobId, getComapanies, getCompanyJobs, getJobById, getMyJobs, postJob, toggleJob,getJobQuestions,updateAnswer, addToTestSchema, recommendedList } from '../controllers/jobsController.js';
 import { applyJob, getAppliedJobs } from '../controllers/applicationController.js';
 import { addToFavorite, removeFavorite, savedJobs } from '../controllers/favoriteController.js';
 
@@ -18,6 +18,7 @@ jobRoute.get('/get-candidates/:id',protectUser,getCandidatesByJobId)
 jobRoute.get("/get-questions",protectUser,getJobQuestions)
 jobRoute.post("/update-answer",protectUser,updateAnswer)
 jobRoute.post("/create-test",protectUser,addToTestSchema)
+jobRoute.post("/recommended-list",protectUser,recommendedList)
 
 
 jobRoute.post('/apply',protectUser,applyJob)

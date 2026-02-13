@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Loader from "./Loader";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 const FindJobCard = () => {
@@ -40,6 +41,7 @@ const FindJobCard = () => {
   const [education, setEducation] = useState([]);
   const [jobLevel, setJobLevel] = useState("");
   const [search, setSearch] = useState("");
+  const [loading , setLoading] = useState(false)
 
   const handleCheckboxChange = (state, setState, value) => {
     if (state.includes(value)) {
@@ -102,6 +104,7 @@ const FindJobCard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
+        setLoading(true)
         const response = await axios.get(DOMAIN + "/api/job/all-jobs", {
           params: {
             page,
@@ -116,6 +119,8 @@ const FindJobCard = () => {
         }
       } catch (error) {
         console.log(error.message);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -270,8 +275,11 @@ const FindJobCard = () => {
     return true;
   });
 
+  const loaderComponent = loading ? <Loader /> : null;
+
   return (
     <div className="w-full  py-4 ">
+      {loaderComponent}
       <div className="w-full bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-4">
           {/* Header */}
@@ -611,6 +619,8 @@ const FindJobCard = () => {
             </div>
           ))}
         </div>
+
+        
 
         {/* DELETE MODAL */}
         {showDelete && (

@@ -49,17 +49,25 @@ const Login = () => {
 
         console.log(response.data)
 
-        if (response.status === 201){
+        if (response.status === 201 || response.status === 403 ){
             navigate('/email-verification',{
-                state:role
+                state:{role}
             })
         }
-        if (role === "USER"){
-            navigate("/user-dashboard")
+        if (response.status === 200){
+            if (role === "USER"){
+                navigate("/user-dashboard")
+            }
+            else if(role === "RECRUITER"){
+                navigate("/recruiter-dashboard")
+            }
         }
-        else if(role === "RECRUITER"){
-            navigate("/recruiter-dashboard")
-        }
+        // if (role === "USER"){
+        //     navigate("/user-dashboard")
+        // }
+        // else if(role === "RECRUITER"){
+        //     navigate("/recruiter-dashboard")
+        // }
     } catch (error) {
         console.log(error.response?.data || error.message)
     }

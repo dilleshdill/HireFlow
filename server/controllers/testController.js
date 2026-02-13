@@ -3,6 +3,7 @@ import Questions from "../model/questionsSchema.js";
 import TestAttempt from "../model/testAttemptSchema.js";
 import { runAllTestCases, runCode } from "../services/codeRunner.service.js";
 
+
 // auto evaluate the score
 export const autoEvaluate = async (req , res) => {
     try {
@@ -379,7 +380,6 @@ export const changeRound = async (req , res) => {
     }
 }
 
-
 export const exceuteCode = async(req,res) => {
     try {
     const { language, code, input } = req.body;
@@ -399,7 +399,6 @@ export const exceuteCode = async(req,res) => {
     res.status(400).json({ message: err.toString() });
   }
 }
-
 
 // check the all the test cases 
 export const submitCodingAnswer = async (req, res) => {
@@ -510,8 +509,6 @@ export const submitCodingAnswer = async (req, res) => {
   }
 };
 
-
-
 // get testDetails
 export const getTestDetails = async (req , res) => {
     try {
@@ -533,7 +530,6 @@ export const getTestDetails = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
-
 
 // get userTest history
 export const getAllTestsHistory = async (req , res) => {
@@ -571,4 +567,5 @@ export const getTestById = async (req , res) => {
         return res.status(500).json({message:error.message})
     }
 }
+
 

@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
 import generateUserToken from "../utils/generateUserToken.js";
 
+
 const sendOtpEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -119,6 +120,7 @@ const verifyOtp = async (email, otp) => {
 
     user.otp = null
     user.otpExpiry = null
+    user.isActive = true
     await user.save()
 
 }
@@ -216,6 +218,7 @@ export const login = async (req , res) => {
         message: "Please verify your account first"
       });
     }
+    
 
     const ispasswordCorrect = await bcrypt.compare(password,user.password)
     if(!ispasswordCorrect){
