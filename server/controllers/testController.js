@@ -531,5 +531,39 @@ export const getTestDetails = async (req , res) => {
 }
 
 
+// get userTest history
+export const getAllTestsHistory = async (req , res) => {
+    try {
+        const userId = req.user.id
+        const history = await TestAttempt.find({userId})
+        if(!history){
+            return res.status(400).json({message:"no history found"})
+        }
 
+        return res.status(200).json({testHistory:history , message:"history fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
+
+// get particular testDetails 
+export const getTestById = async (req , res) => {
+    try {
+        const {jobId} = req.query;
+        const userId = req.user.id
+
+        if(!jobId) {
+            return res.status(500).json({message:"no jobId found"})
+        }
+
+        const test = await TestAttempt.findOne({jobId,userId})
+        if(!test){
+            return res.status(400).json({message:"no test details found"})
+        }
+
+        return res.status(200).json({test,message:"test details fetched"})
+    } catch (error) {
+        return res.status(500).json({message:error.message})
+    }
+}
 
