@@ -201,7 +201,6 @@ export const getCandidatesByJobId = async (req,res) => {
     }
 }
 
-
 //fetch the questions of the respectie job\
 export const getJobQuestions = async (req , res) =>{
     
@@ -356,7 +355,6 @@ export const updateAnswer = async (req, res) => {
   }
 };
 
-
 // add to test schema
 export const addToTestSchema = async (req , res) => {
     
@@ -421,4 +419,6 @@ export const getUserTests = async(req,res) => {
         res.status(500).json({msg:err.msg})
     }
 }
+
+
 

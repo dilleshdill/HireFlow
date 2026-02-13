@@ -18,6 +18,23 @@ const OnlineTestHomePage = () => {
   const navigate = useNavigate();
   const [job, setJob] = useState({});
 
+  const fetchRecommendJob = async(title) => {
+    try{
+      const response = await axios.post(DOMAIN + '/api/job/recommended',
+        title,
+        {
+          withCredentials:true
+        }
+      )
+      
+      if(response.status === 200){
+        console.log(response.data)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   const fetchData = async () => {
     try {
       const response = await axios.get(DOMAIN + `/api/job/job-detailes?jobId=${id}`,
@@ -37,6 +54,7 @@ const OnlineTestHomePage = () => {
             setJobStatus("start")
         }
         setJob(response.data.job)
+        fetchRecommendJob(response.data.job.title)
       }
     } catch (err) {
       console.log(err.msg);
