@@ -39,10 +39,9 @@ export const uploadImage = async (req, res) => {
 export const uploadDetailes = async (req, res) => {
   try {
     const data = req.body.userProfileData; 
+    const userId = req.user.id;
     console.log(data)
-    const existingProfile = await RecruiterProfile.findOne({
-      userId: req.user.id,
-    });
+    const existingProfile = await RecruiterProfile.findOne({recruiterId:userId});
 
     const updateFields = {};
 
@@ -67,18 +66,21 @@ export const uploadDetailes = async (req, res) => {
 
     if (existingProfile) {
       await RecruiterProfile.updateOne(
-        { userId: req.user.id },
+        { recruiterId: userId },
         updateFields
       );
-      return res.json({ message: "Profile Updated" });
+      return res.status(200).json({ message: "Profile Updated" });
     }
 
-    await RecruiterProfile.create(updateFields);
-    res.json({ message: "Profile Created" });
+    await RecruiterProfile.create({
+      recruiterId:userId,
+      updateFields
+    });
+    return res.status(200).json({ message: "Profile Created" });
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 

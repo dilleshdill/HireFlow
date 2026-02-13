@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../Components/Navbar.jsx";
-import { Layers, Briefcase, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon, Book, SearchCheck } from "lucide-react";
+import { Layers, Briefcase,ChevronUp, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon, Book, SearchCheck } from "lucide-react";
 import iphonelogo from '../assets/iphonelogo.png';
 import UserAppliedJobs from "../Components/UserAppliedJobs.jsx";
 import UserJobAlerts from "../Components/UserJobAlerts.jsx";

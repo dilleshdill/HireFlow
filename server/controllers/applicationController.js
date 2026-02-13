@@ -50,6 +50,11 @@ export const applyJob = async (req,res) =>{
 // get applied jobs
 export const getAppliedJobs = async (req,res) => {
     try {
+        const page = Number(req.query.page) || 1
+        const limit = Number(req.query.limit) || 5
+        const skip = (page - 1)*limit
+
+        const totalJobs = await Application.countDocuments({userId})
         const userId = req.user.id
         const jobs = await Application.find({ userId })
             .populate("jobId", "title jobType vacancies location role");
