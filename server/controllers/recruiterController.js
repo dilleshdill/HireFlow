@@ -82,6 +82,22 @@ export const uploadDetailes = async (req, res) => {
   }
 };
 
+// get the profile
+export const getRecruiterProfile = async(req , res) => {
+  try{
+    const recruiterId = req.user.id
+    console.log(recruiterId)
+    const recruiter = await RecruiterProfile.findOne({recruiterId}).populate("recruiterId","name email")
+    console.log(recruiter)
+    if (!recruiter) {
+      return res.status(400).json({message:"recruiter profile not found"})
+    }
+    return res.status(200).json({recruiterProfile:recruiter , message:"success"})
+  }catch(err){
+    console.log(err)
+    return res.status(500).json({message:err.message})
+  }
+}
 
 // save the candidates
 export const saveCandidate = async (req , res) => {
@@ -320,3 +336,5 @@ export const getAllQuestions = async (req,res) => {
     return res.status(500).json({message:error.message})
   }
 }
+
+

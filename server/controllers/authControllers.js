@@ -246,3 +246,33 @@ export const login = async (req , res) => {
     });
   }
 }
+
+export const getChangeUserPassword = async(req,res) => {
+  try{
+    const {id} = req.user
+    const {currentPassword,newPassword,confirmNewPassword} = req.body
+
+    console.log(currentPassword,newPassword,confirmNewPassword)
+
+    const user = await User.findById(id)
+    console.log(user)
+
+    if(!user){
+      return res.status(204).json({msg:"User Not Found"})
+    }
+
+    const isHash = await bcrypt.compare(currentPassword,user.password)
+    
+    if(!isHash){
+      return res.status(204).json({msg:"current Password Not Match"})
+    }
+
+    user.password =  newPassword
+    await user.save()
+
+    res.status(200).json({msg:"Password Successfully Updated"})
+
+  }catch(err){
+    res.status(500).json({msg:err.msg})
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MoveRight,
   UserRoundPen,
@@ -9,12 +9,13 @@ import {
   Youtube,
   Instagram,
   Mail,
-  Eye
+  Eye,
+  EyeOff
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const DOMAIN = import.meta.env.VITE_DOMAIN 
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const organizations = [
   { organization: "HR Recruitment Services" },
@@ -104,254 +105,316 @@ const phoneCodes = [
 const RecruiterSettings = () => {
   const [progress, setProgress] = useState(1);
 
-    const fileRef = useRef(null)
-    const bannerFileRef = useRef(null)
+  const fileRef = useRef(null);
+  const bannerFileRef = useRef(null);
 
-    const [previewImage1,setPreviewImage1] = useState("")
-    const [previewImage2,setPreviewImage2] = useState("")
+  const [previewImage1, setPreviewImage1] = useState("");
+  const [previewImage2, setPreviewImage2] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [showCurrentPassword, setshowCurrentPassword] = useState(true);
+  const [newPassword, setNewPasword] = useState("");
+  const [showNewPassword, setshowNewPassword] = useState(true);
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showConfirmPassword, setshowConfirmPassword] = useState(true);
 
-    const [userProfileData, setUserProfileData] = useState({ 
-        fullName: "Hari Tarun kumar",
-        email: "tarunbommana798@gmail.com",
-        phoneNo: "9010144168",
-        location: "Boppadam",
-        companyName:"Google",
-        aboutUs:"Welcome to the page",
-        organizationType:"software",
-        industryTypes:"software",
-        logoImageUrl:"",
-        bannerImageUrl:"",
-        teamSizes:"5",
-        yearofEstablishment:"26-05-2004",
-        companyWebsite:"http://localhost:5000",
-        vision:"Welcome to the page",
-        instagram:"",
-        linkedin: "",
-        twitter: "",
-        facebook: "",
-        youtube:"",
-    });
+  const [userProfileData, setUserProfileData] = useState({
+    fullName: "Hari Tarun kumar",
+    email: "tarunbommana798@gmail.com",
+    phoneNo: "9010144168",
+    location: "Boppadam",
+    companyName: "Google",
+    aboutUs: "Welcome to the page",
+    organizationType: "software",
+    industryTypes: "software",
+    logoImageUrl: "",
+    bannerImageUrl: "",
+    teamSizes: "5",
+    yearofEstablishment: "26-05-2004",
+    companyWebsite: "http://localhost:5000",
+    vision: "Welcome to the page",
+    instagram: "",
+    linkedin: "",
+    twitter: "",
+    facebook: "",
+    youtube: "",
+  });
 
-    const getFile = () => {
-      fileRef.current.click()
-    }
+  const getFile = () => {
+    fileRef.current.click();
+  };
 
-    const getBannerFile = () => {
-      bannerFileRef.current.click()
-    }
+  const getBannerFile = () => {
+    bannerFileRef.current.click();
+  };
 
-    const getSubmit = async() => {
-      try {
-        const response = await axios.post(DOMAIN + "/api/recruiter/recruiter-detailes", {
-          userProfileData
+  const getSubmit = async () => {
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/recruiter/recruiter-detailes",
+        {
+          userProfileData,
         },
-          {withCredentials:true});
-          if(response.status === 200){
-              toast.success("Data Successfully Inserted")
-          }
-          } catch (err) {
-              console.log(err)
-          }
-    };
-
-    const handleChange = async(e) => {
-      const file = e.target.files[0]
-      if(!file){
-        toast.error("Give Valid File")
+        { withCredentials: true },
+      );
+      if (response.status === 200) {
+        toast.success("Data Successfully Inserted");
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-      const formData = new FormData();
-      formData.append("resume", file);
-      
-      try {
-          const res = await axios.post(`${DOMAIN}/api/recruiter/upload-image`, formData , {withCredentials:true});
-          if(res.status === 200){
-              console.log(res.data)
-              setPreviewImage1(res.data.resumeUrl)
-              setUserProfileData({...userProfileData,logoImageUrl:res.data.resumeUrl})
-          }
-      }
-      catch(e){
-          console.log(e)
-      }
-
+  const handleChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      toast.error("Give Valid File");
     }
 
-    const bannerHandleChange = async(e) => {
-      toast.success("enter into bannerHandleChange")
-      const file = e.target.files[0]
-      if(!file){
-        toast.error("Give Valid File")
-      }
+    const formData = new FormData();
+    formData.append("resume", file);
 
-      const formData = new FormData();
-      formData.append("resume", file);
-      
-      try {
-          const res = await axios.post(`${DOMAIN}/api/recruiter/upload-image`, formData , {withCredentials:true});
-          if(res.status === 200){
-              console.log(res.data.resumeUrl)
-              setPreviewImage2(res.data.resumeUrl)
-              setUserProfileData({...userProfileData,logoImageUrl:res.data.resumeUrl})
-          }
+    try {
+      const res = await axios.post(
+        `${DOMAIN}/api/recruiter/upload-image`,
+        formData,
+        { withCredentials: true },
+      );
+      if (res.status === 200) {
+        console.log(res.data);
+        setPreviewImage1(res.data.resumeUrl);
+        setUserProfileData({
+          ...userProfileData,
+          logoImageUrl: res.data.resumeUrl,
+        });
       }
-      catch(e){
-          console.log(e)
-      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const bannerHandleChange = async (e) => {
+    toast.success("enter into bannerHandleChange");
+    const file = e.target.files[0];
+    if (!file) {
+      toast.error("Give Valid File");
     }
 
-    return (
-      <div className="w-full bg-white py-5">
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-5xl justify-center mx-auto p-6">
-            <div className="flex max-w-3xl mx-auto justify-around gap-7">
-              {/* Step 1 */}
-              <div
-                onClick={() => setProgress(1)}
-                className="flex flex-col items-center w-full"
-              >
-                <div
-                  className={`flex gap-1 items-center ${progress === 1 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
-                >
-                  <UserRoundPen size={22} />
-                  <h1 className="text-lg">Company Info</h1>
-                </div>
-                <div
-                  className={`h-0.5 w-full ${progress === 1 && "bg-blue-500"}`}
-                ></div>
-              </div>
+    const formData = new FormData();
+    formData.append("resume", file);
 
-              {/* Step 2 */}
-              <div
-                onClick={() => setProgress(2)}
-                className="flex flex-col items-center w-full"
-              >
-                <div
-                  className={`flex gap-1 items-center ${progress === 2 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
-                >
-                  <UserRoundPen size={22} />
-                  <h1 className="text-lg">Founding Info</h1>
-                </div>
-                <div
-                  className={`h-0.5 w-full ${progress === 2 && "bg-blue-500"}`}
-                ></div>
-              </div>
+    try {
+      const res = await axios.post(
+        `${DOMAIN}/api/recruiter/upload-image`,
+        formData,
+        { withCredentials: true },
+      );
+      if (res.status === 200) {
+        console.log(res.data.resumeUrl);
+        setPreviewImage2(res.data.resumeUrl);
+        setUserProfileData({
+          ...userProfileData,
+          logoImageUrl: res.data.resumeUrl,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-              {/* Step 3 */}
-              <div
-                onClick={() => setProgress(3)}
-                className="flex flex-col items-center w-full"
-              >
-                <div
-                  className={`flex gap-1 items-center ${progress === 3 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
-                >
-                  <UserRoundPen size={22} />
-                  <h1 className="text-lg">Social Media Info</h1>
-                </div>
-                <div
-                  className={`h-0.5 w-full ${progress === 3 && "bg-blue-500"}`}
-                ></div>
-              </div>
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(DOMAIN + "/api/recruiter/get-profile", {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        console.log(response.data.recruiterProfile);
+        setUserProfileData(response.data.recruiterProfile);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-              {/* Step 4 */}
+  const getChangePassword= async() => {
+    if (newPassword != confirmNewPassword){
+      return toast.error("NewPassword Not Match With ConfirmPassword")
+    }
+    try{
+      const response = await axios.post(DOMAIN + '/api/auth/change-password',{
+        currentPassword,
+        newPassword,
+        confirmNewPassword
+      },{
+        withCredentials:true
+      })
+      if (response.status === 204){ 
+        return toast.error("Enter Correct Old Password")
+      }
+      if (response.status === 200){
+        toast.success("Pasword Updated Successfully")
+      }
+
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  return (
+    <div className="w-full bg-white py-5">
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl justify-center mx-auto p-6">
+          <div className="flex max-w-3xl mx-auto justify-around gap-7">
+            {/* Step 1 */}
+            <div
+              onClick={() => setProgress(1)}
+              className="flex flex-col items-center w-full"
+            >
               <div
-                onClick={() => setProgress(4)}
-                className="flex flex-col items-center w-full"
+                className={`flex gap-1 items-center ${progress === 1 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
               >
-                <div
-                  className={`flex gap-1 items-center ${progress === 4 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
-                >
-                  <UserRoundPen size={22} />
-                  <h1 className="text-lg">Contact Info</h1>
-                </div>
-                <div
-                  className={`h-0.5 w-full ${progress === 4 && "bg-blue-500"}`}
-                ></div>
+                <UserRoundPen size={22} />
+                <h1 className="text-lg">Company Info</h1>
               </div>
+              <div
+                className={`h-0.5 w-full ${progress === 1 && "bg-blue-500"}`}
+              ></div>
             </div>
 
-            <div className="mt-7 text-center max-w-5xl mx-auto ">
-              
-              {progress === 1 && (
-                <div className="flex flex-col gap-3 w-full">
-                  <h1 className="text-lg font-medium text-gray-700 text-start">
-                    Logo & Banner Images
-                  </h1>
+            {/* Step 2 */}
+            <div
+              onClick={() => setProgress(2)}
+              className="flex flex-col items-center w-full"
+            >
+              <div
+                className={`flex gap-1 items-center ${progress === 2 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
+              >
+                <UserRoundPen size={22} />
+                <h1 className="text-lg">Founding Info</h1>
+              </div>
+              <div
+                className={`h-0.5 w-full ${progress === 2 && "bg-blue-500"}`}
+              ></div>
+            </div>
 
-                  <div className="flex gap-5 ">
-                    <div className="flex flex-col gap-2">
-                      <h1 className="text-md text-gray-600 text-start">
-                        Upload Document
-                      </h1>
-                      {
-                        previewImage1 ?
-                        (
-                          <img src={typeof previewImage1 === 'string' ? previewImage1: URL.
-                            createObjectURL(previewImage1)} alt="user-image" 
-                            className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition" />      
-                        ) 
-                        : (
-                          <div className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition"
-                          onClick={getFile}>
+            {/* Step 3 */}
+            <div
+              onClick={() => setProgress(3)}
+              className="flex flex-col items-center w-full"
+            >
+              <div
+                className={`flex gap-1 items-center ${progress === 3 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
+              >
+                <UserRoundPen size={22} />
+                <h1 className="text-lg">Social Media Info</h1>
+              </div>
+              <div
+                className={`h-0.5 w-full ${progress === 3 && "bg-blue-500"}`}
+              ></div>
+            </div>
+
+            {/* Step 4 */}
+            <div
+              onClick={() => setProgress(4)}
+              className="flex flex-col items-center w-full"
+            >
+              <div
+                className={`flex gap-1 items-center ${progress === 4 ? "text-blue-500 font-semibold" : "text-gray-400"}`}
+              >
+                <UserRoundPen size={22} />
+                <h1 className="text-lg">Contact Info</h1>
+              </div>
+              <div
+                className={`h-0.5 w-full ${progress === 4 && "bg-blue-500"}`}
+              ></div>
+            </div>
+          </div>
+
+          <div className="mt-7 text-center max-w-5xl mx-auto ">
+            {progress === 1 && (
+              <div className="flex flex-col gap-3 w-full">
+                <h1 className="text-lg font-medium text-gray-700 text-start">
+                  Logo & Banner Images
+                </h1>
+
+                <div className="flex gap-5 ">
+                  <div className="flex flex-col gap-2">
+                    <h1 className="text-md text-gray-600 text-start">
+                      Upload Document
+                    </h1>
+                    {userProfileData?.imageUrl ? (
+                      <img
+                        src={
+                          typeof userProfileData?.imageUrl === "string"
+                            ? userProfileData?.imageUrl
+                            : URL.createObjectURL(userProfileData?.imageUrl)
+                        }
+                        alt="user-image"
+                        className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+                      />
+                    ) : (
+                      <div
+                        className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+                        onClick={getFile}
+                      >
                         <CloudUpload size={30} className="text-gray-400" />
                         <p className="text-gray-500">
-                          <span className="text-black">Browse Photo</span> or Drop
-                          here
+                          <span className="text-black">Browse Photo</span> or
+                          Drop here
                         </p>
                         <p className="text-gray-400">
                           A Photo large then 200kb works Best.Photo Max size 5mb
                         </p>
                       </div>
-                        )
-                      }
-                      <input 
+                    )}
+                    <input
                       type="file"
                       ref={fileRef}
-                      
                       onChange={(e) => handleChange(e)}
-                      className="hidden"/>
-                    </div>
+                      className="hidden"
+                    />
+                  </div>
 
                   <div className="flex flex-col gap-2 flex-1">
                     <h1 className="text-md text-gray-600 text-start ">
                       Banner Image
                     </h1>
-                    {
-                      previewImage2 ?
-                        (
-                          <div
-                              onClick={getFile}
-                              className="border-2 border-dashed border-gray-300 rounded-md h-48 w-full overflow-hidden cursor-pointer"
-                            >
-                              <img
-                                src={previewImage2}
-                                alt="banner"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>      
-                        ) :
-                        (
-                          <div className="bg-gray-100 rounded-md h-48 flex flex-col flex-1 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
-                            onClick={getBannerFile}>
-                              <CloudUpload size={30} className="text-gray-400" />
-                              <p className="text-gray-500">
-                                <span className="text-black">Browse Photo</span> or Drop
-                                here
-                              </p>
-                              <p className="text-gray-400 w-96">
-                                A Banner images optical dimension 1200*1700 is
-                                supported. Formate Jpg,png. Max Photos size 5mg
-                              </p>
-                          </div>
-                        )
+                    {userProfileData?.imageUrl ? (
+                      <div
+                        onClick={getFile}
+                        className="border-2 border-dashed border-gray-300 rounded-md h-48 w-full overflow-hidden cursor-pointer"
+                      >
+                        <img
+                          src={userProfileData?.imageUrl}
+                          alt="banner"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className="bg-gray-100 rounded-md h-48 flex flex-col flex-1 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
+                        onClick={getBannerFile}
+                      >
+                        <CloudUpload size={30} className="text-gray-400" />
+                        <p className="text-gray-500">
+                          <span className="text-black">Browse Photo</span> or
+                          Drop here
+                        </p>
+                        <p className="text-gray-400 w-96">
+                          A Banner images optical dimension 1200*1700 is
+                          supported. Formate Jpg,png. Max Photos size 5mg
+                        </p>
+                      </div>
+                    )}
 
-                    }
-                    
-                    <input 
-                    type="file"
-                    ref = {bannerFileRef}
-                    onChange={(e) => bannerHandleChange(e)}
-                    className="hidden"/>
+                    <input
+                      type="file"
+                      ref={bannerFileRef}
+                      onChange={(e) => bannerHandleChange(e)}
+                      className="hidden"
+                    />
                   </div>
                 </div>
                 <div className="border-t-2 mt-1 border-gray-200 w-full h-2"></div>
@@ -360,7 +423,12 @@ const RecruiterSettings = () => {
                   type="text"
                   className="border border-gray-300 rounded-md p-2 w-full"
                   value={userProfileData.companyName}
-                  onChange={(e) => setUserProfileData({...userProfileData,companyName:e.target.value})}
+                  onChange={(e) =>
+                    setUserProfileData({
+                      ...userProfileData,
+                      companyName: e.target.value,
+                    })
+                  }
                 />
                 <h1 className="text-start">About Us</h1>
                 <textarea
@@ -368,15 +436,19 @@ const RecruiterSettings = () => {
                   placeholder="Write down About your company here,Let the candidate know who we are."
                   className="border border-gray-300 text-gray-500 ounded-md p-2 w-full"
                   value={userProfileData.aboutUs}
-                  onChange={(e) => setUserProfileData({...userProfileData,aboutUs:e.target.value})}
+                  onChange={(e) =>
+                    setUserProfileData({
+                      ...userProfileData,
+                      aboutUs: e.target.value,
+                    })
+                  }
                 />
                 <div
                   className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
                   onClick={() => {
-                    getSubmit()
-                    setProgress(2)
+                    getSubmit();
+                    setProgress(2);
                   }}
-                  
                 >
                   <h1>Save Changes & Next </h1>
                 </div>
@@ -394,7 +466,12 @@ const RecruiterSettings = () => {
                       className="text-gray-400 border border-gray-300 p-3"
                       placeholder="select"
                       value={userProfileData.organizationType}
-                      onChange={(e) => setUserProfileData({...userProfileData,organizationType:e.target.value})}
+                      onChange={(e) =>
+                        setUserProfileData({
+                          ...userProfileData,
+                          organizationType: e.target.value,
+                        })
+                      }
                     >
                       {organizations.map((item, index) => (
                         <option value={index}>{item.organization}</option>
@@ -409,7 +486,12 @@ const RecruiterSettings = () => {
                       className="text-gray-400 border border-gray-300 p-3"
                       placeholder="select"
                       value={userProfileData.industryTypes}
-                      onChange={(e) => setUserProfileData({...userProfileData,industryTypes:e.target.value})}
+                      onChange={(e) =>
+                        setUserProfileData({
+                          ...userProfileData,
+                          industryTypes: e.target.value,
+                        })
+                      }
                     >
                       {industryTypes.map((item, index) => (
                         <option value={index}>{item.name}</option>
@@ -423,8 +505,13 @@ const RecruiterSettings = () => {
                     <select
                       className="text-gray-400 border border-gray-300 p-3"
                       placeholder="select"
-                      value={userProfileData.teamSizes}
-                      onChange={(e) => setUserProfileData({...userProfileData,teamSizes:e.target.value})}
+                      value={userProfileData.teamsize}
+                      onChange={(e) =>
+                        setUserProfileData({
+                          ...userProfileData,
+                          teamsize: e.target.value,
+                        })
+                      }
                     >
                       {teamSizes.map((item, index) => (
                         <option value={index}>{item.name}</option>
@@ -440,7 +527,12 @@ const RecruiterSettings = () => {
                       className="text-gray-400 border border-gray-300 p-3"
                       type="date"
                       value={userProfileData.yearofEstablishment}
-                      onChange={(e) => setUserProfileData({...userProfileData,yearofEstablishment:e.target.value})}
+                      onChange={(e) =>
+                        setUserProfileData({
+                          ...userProfileData,
+                          yearofEstablishment: e.target.value,
+                        })
+                      }
                     />
                   </div>
 
@@ -450,23 +542,34 @@ const RecruiterSettings = () => {
                     </h1>
                     <div className="flex text-gray-400 border border-gray-300 p-3 gap-2 items-center">
                       <Link size={19} className="text-blue-700" />
-                      <input type="text" placeholder="Website Url.." 
-                      value={userProfileData.companyWebsite}
-                      onChange={(e) => setUserProfileData({...userProfileData,companyWebsite:e.target.value})}/>
+                      <input
+                        type="text"
+                        placeholder="Website Url.."
+                        value={userProfileData.companyWebSite}
+                        onChange={(e) =>
+                          setUserProfileData({
+                            ...userProfileData,
+                            companyWebSite: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col mt-10 gap-2">
-                  <h1 className="text-gray-500 text-lg text-start">
-                    Vision
-                  </h1>
+                  <h1 className="text-gray-500 text-lg text-start">Vision</h1>
                   <textarea
                     rows={4}
                     className="border border-gray-300 p-3"
                     placeholder="Tell us About Your Company Vision..."
                     value={userProfileData.vision}
-                    onChange={(e) => setUserProfileData({...userProfileData,vision:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        vision: e.target.value,
+                      })
+                    }
                   ></textarea>
                 </div>
                 <div className="flex gap-3 mt-8">
@@ -479,15 +582,16 @@ const RecruiterSettings = () => {
                   <div
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
                     onClick={() => {
-                      getSubmit()
-                      setProgress(3)}}
+                      getSubmit();
+                      setProgress(3);
+                    }}
                   >
                     <h1>Save Changes </h1>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {progress === 3 && (
               <div className="flex flex-col gap-2 mt-7 text-center max-w-5xl mx-auto ">
                 <h1 className="text-gray-500 text-lg text-start">
@@ -503,7 +607,12 @@ const RecruiterSettings = () => {
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                     value={userProfileData.facebook}
-                    onChange={(e) => setUserProfileData({...userProfileData,facebook:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        facebook: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -513,14 +622,21 @@ const RecruiterSettings = () => {
                 <div className="flex gap-3">
                   <div className="flex border-1 border-gray-300 px-5 py-3 gap-3 w-fit">
                     <Instagram size={25} className="text-blue-700" />
-                    <p className="text-lg text-gray-700 font-serif">instagram</p>
+                    <p className="text-lg text-gray-700 font-serif">
+                      instagram
+                    </p>
                   </div>
                   <input
                     type="text"
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                     value={userProfileData.instagram}
-                    onChange={(e) => setUserProfileData({...userProfileData,instagram:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        instagram: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <h1 className="text-gray-500 text-lg text-start mt-3">
@@ -536,7 +652,12 @@ const RecruiterSettings = () => {
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                     value={userProfileData.twitter}
-                    onChange={(e) => setUserProfileData({...userProfileData,twitter:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        twitter: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <h1 className="text-gray-500 text-lg text-start mt-3">
@@ -552,7 +673,12 @@ const RecruiterSettings = () => {
                     className="flex flex-1 border-1 border-gray-300  text-gray-500 px-5 py-3 gap-3 "
                     placeholder="Profile link/url..."
                     value={userProfileData.youtube}
-                    onChange={(e) => setUserProfileData({...userProfileData,youtube:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        youtube: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -565,11 +691,10 @@ const RecruiterSettings = () => {
                   </div>
                   <div
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
-                    onClick={() => 
-                      {
-                        getSubmit()
-                        setProgress(4)
-                      }}
+                    onClick={() => {
+                      getSubmit();
+                      setProgress(4);
+                    }}
                   >
                     <h1>Save Changes & Next </h1>
                   </div>
@@ -586,7 +711,12 @@ const RecruiterSettings = () => {
                   type="text"
                   className="border border-gray-300 rounded-md p-2 w-full mt-1"
                   value={userProfileData.location}
-                  onChange={(e) => setUserProfileData({...userProfileData,location:e.target.value})}
+                  onChange={(e) =>
+                    setUserProfileData({
+                      ...userProfileData,
+                      location: e.target.value,
+                    })
+                  }
                 />
                 <h1 className="text-start text-lg text-gray-500 font-medium mt-3">
                   Phone{" "}
@@ -602,7 +732,12 @@ const RecruiterSettings = () => {
                     placeholder="Phone Number"
                     className="flex flex-1 text-gray-400 p-1 border border-gray-300 "
                     value={userProfileData.phoneNo}
-                    onChange={(e) => setUserProfileData({...userProfileData,phoneNo:e.target.value})}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        phoneNo: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <h1 className="text-start text-lg text-gray-500 font-medium mt-5">
@@ -614,16 +749,20 @@ const RecruiterSettings = () => {
                     type="text"
                     placeholder="Email"
                     className="flex flex-1 outline-none text-gray-600"
-                    value={userProfileData.email}
-                    onChange={(e) => setUserProfileData({...userProfileData,email:e.target.value})}
+                    value={userProfileData.recruiterId.email}
+                    onChange={(e) =>
+                      setUserProfileData({
+                        ...userProfileData,
+                        email: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="flex gap-3 mt-8">
-                  
                   <div
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
                     onClick={() => {
-                      getSubmit()
+                      getSubmit();
                       setProgress(5);
                     }}
                   >
@@ -634,40 +773,74 @@ const RecruiterSettings = () => {
                   Change Password
                 </h1>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-                  <div className="mt-2">
-                    <h1 className="text-start text-gray-600">
-                      Current Password
-                    </h1>
-                    <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
-                      <input type="text" placeholder="Password " />
-                      <Eye />
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <h1 className="text-start text-gray-600">New Password</h1>
-                    <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
-                      <input type="text" placeholder="Password " />
-                      <Eye />
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <h1 className="text-start text-gray-600">
-                      Confirm Password
-                    </h1>
-                    <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
-                      <input type="text" placeholder="Password " />
-                      <Eye />
-                    </div>
-                  </div>
-                  <div
-                    className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
-                    onClick={() => {
-                      setProgress(5);
-                    }}
-                  >
-                    <h1>Change Password </h1>
-                  </div>
+              <div className="mt-2">
+                <h1 className="text-start text-gray-600">
+                  Current Password
+                </h1>
+                <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
+                  <input 
+                    type={showCurrentPassword ? "text" : "password"} 
+                    placeholder="Password" 
+                    className="outline-none w-full"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  {
+                    showCurrentPassword ?
+                    <Eye className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowCurrentPassword(!showCurrentPassword)}/>
+                    :
+                    <EyeOff className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowCurrentPassword(!showCurrentPassword)}/>
+                  }
                 </div>
+              </div>
+              <div className="mt-2">
+                <h1 className="text-start text-gray-600">New Password</h1>
+                <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
+                  <input 
+                    type={showNewPassword ? "text" : "password"} 
+                    placeholder="Password" 
+                    className="outline-none w-full"
+                    value={newPassword}
+                    onChange={(e) => setNewPasword(e.target.value)}
+                  />
+                  {
+                    showNewPassword ?
+                    <Eye className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowNewPassword(!showNewPassword)}/>
+                    :
+                    <EyeOff className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowNewPassword(!showNewPassword)}/>
+                  }
+                </div>
+              </div>
+              <div className="mt-2">
+                <h1 className="text-start text-gray-600">
+                  Confirm Password
+                </h1>
+                <div className="flex border border-gray-300 mt-1 px-2 py-3 justify-between">
+                  <input 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    placeholder="Password" 
+                    className="outline-none w-full"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  />
+                  {
+                    showConfirmPassword ?
+                    <Eye className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowConfirmPassword(!showConfirmPassword)}/>
+                    :
+                    <EyeOff className="text-gray-400 flex-shrink-0 cursor-pointer" onClick={() => setshowConfirmPassword(!showConfirmPassword)}/>
+                  }
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <div
+                className="flex bg-blue-700 w-full sm:w-fit px-5 py-3 text-white gap-2 items-center justify-center rounded-md cursor-pointer hover:bg-blue-700 transition"
+                
+              >
+                <h1 onClick={getChangePassword}>Save Changes</h1>
+              </div>
+            </div>
               </div>
             )}
 

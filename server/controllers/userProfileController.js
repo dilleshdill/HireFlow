@@ -88,8 +88,9 @@ export const AddUserProfile = async (req, res) => {
 export const getUserProfile = async(req,res) => {
   try{
     const {id} = req.user
-
-    const user = await UserProfile.findById(id)
+    console.log(id)
+    const user = await UserProfile.findOne({userId:id}).populate("userId","name email")
+    console.log(user)
     if(!user){
       return res.status(400).json({msg:"User not Found"})
     }
