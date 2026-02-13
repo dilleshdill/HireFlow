@@ -83,3 +83,20 @@ export const AddUserProfile = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+export const getUserProfile = async(req,res) => {
+  try{
+    const {id} = req.user
+
+    const user = await UserProfile.findById(id)
+    if(!user){
+      return res.status(400).json({msg:"User not Found"})
+    }
+
+    res.status(200).json({userData:user})
+
+  }catch(err){
+    res.status(500).json({msg:"internal server error"})
+  }
+}

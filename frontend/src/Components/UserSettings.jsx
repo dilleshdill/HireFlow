@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MoveRight,
   UserRoundPen,
@@ -104,6 +104,8 @@ const maritalStatus = [
   { id: 5, name: "Separated" },
 ];
 
+
+
 const UserSettings = () => {
   const [progress, setProgress] = useState(1);
   const [showModel, setShowModel] = useState(false);
@@ -179,6 +181,23 @@ const UserSettings = () => {
   const handleBoxClick = () => {
     fileRef.current.click()
   }
+
+  const fetchData = async() => {
+    try{
+      const response = await axios.get(DOMAIN + "/api/user/get-profile",{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.data)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  })
 
   return (
     <div className="w-full bg-white py-5">
