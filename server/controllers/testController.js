@@ -2,6 +2,7 @@ import Job from "../model/job.js";
 import Questions from "../model/questionsSchema.js";
 import TestAttempt from "../model/testAttemptSchema.js";
 import { runAllTestCases, runCode } from "../services/codeRunner.service.js";
+import ai from "../config/ai.js";
 
 
 // auto evaluate the score
@@ -569,3 +570,39 @@ export const getTestById = async (req , res) => {
 }
 
 
+export const getChatAi = async(req,res) => {
+    try{
+        const {input} = req.body
+        console.log(input)
+
+        const response = await ai.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    {
+      role: "system",
+      content: `
+You are a professional live support assistant.
+Reply like a real human chat agent.
+Be helpful, clear, and short.
+If user asks technical doubt, explain simply.
+Do not return JSON.
+Keep reply conversational.
+      `,
+    },
+    {
+      role: "user",
+      content: input, // message from frontend
+    },
+  ],
+});
+
+console.log(response.choices[0].message)
+const reply = response.choices[0].message.content;
+console.log(reply)
+    res.status(200).json({msg:reply})
+
+    }catch(err){
+        console.log(err)
+        res.status(500).json({msg:err.msg})
+    }
+}

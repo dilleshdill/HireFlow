@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectUser } from '../middleware/protectUser.js';
-import { autoEvaluate, changeRound, submitCodingAnswer, exceuteCode, getAllAnswers, getTestDetails, getTime, getAllTestsHistory, getTestById } from '../controllers/testController.js';
+import { autoEvaluate, changeRound, submitCodingAnswer, exceuteCode, getAllAnswers, getTestDetails, getTime, getAllTestsHistory, getTestById, getChatAi } from '../controllers/testController.js';
 
 const testRoute = express.Router()
 
@@ -14,5 +14,6 @@ testRoute.post('/run-alltestcases',protectUser,submitCodingAnswer);
 testRoute.get("/get-rounds",protectUser,getTestDetails);
 testRoute.get("/get-history",protectUser,getAllTestsHistory);
 testRoute.get("get-testbyid",protectUser,getTestById);
+testRoute.post("/send-message",getChatAi)
 
-export default testRoute
+export default testRoute    
