@@ -267,7 +267,8 @@ export const getChangeUserPassword = async(req,res) => {
       return res.status(204).json({msg:"current Password Not Match"})
     }
 
-    user.password =  newPassword
+    const hashedPassword = await bcrypt.hash(newPassword,10)
+    user.password = hashedPassword
     await user.save()
 
     res.status(200).json({msg:"Password Successfully Updated"})

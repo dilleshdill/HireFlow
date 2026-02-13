@@ -749,7 +749,7 @@ const RecruiterSettings = () => {
                     type="text"
                     placeholder="Email"
                     className="flex flex-1 outline-none text-gray-600"
-                    value={userProfileData.recruiterId.email}
+                    value={userProfileData?.recruiterId?.email}
                     onChange={(e) =>
                       setUserProfileData({
                         ...userProfileData,
@@ -763,7 +763,7 @@ const RecruiterSettings = () => {
                     className="flex bg-blue-700 w-fit px-5 py-3 text-white gap-2 items-center rounded-md cursor-pointer hover:bg-blue-700 transition"
                     onClick={() => {
                       getSubmit();
-                      setProgress(5);
+                      
                     }}
                   >
                     <h1>Save Changes </h1>
