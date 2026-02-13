@@ -147,6 +147,7 @@ const UserAppliedJobs = () => {
     }
     fetchAppliedJobs();
   },[])
+  
   const visibleJobs = showAllJobs ? appliedJobs : appliedJobs.slice(0, 4);
 
   return (

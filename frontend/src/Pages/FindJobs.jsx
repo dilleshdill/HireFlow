@@ -6,7 +6,7 @@ import FindJobCard from '../Components/FindJobCard.jsx'
 const FindJobs = () => {
   return (
     <div>
-        <Navbar />
+        {/* <Navbar /> */}
         <UserJobFilters />
         <FindJobCard />
         <div className='h-[80vh] flex items-center justify-center'>

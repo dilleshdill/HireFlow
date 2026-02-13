@@ -1,6 +1,6 @@
 // routes/userRoute.js
 import express from "express";
-import { AddUserProfile, UploadResume } from "../controllers/userProfileController.js";
+import { AddUserProfile, UploadResume , getUserProfile } from "../controllers/userProfileController.js";
 import upload from "../middleware/upload.js";
 import { protectUser } from "../middleware/protectUser.js";
 
@@ -16,5 +16,6 @@ userRoute.post(
 
 
 userRoute.post("/user-detailes", protectUser, AddUserProfile);
+userRoute.get("/get-profile",protectUser,getUserProfile)
 
 export default userRoute;
