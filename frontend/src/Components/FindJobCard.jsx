@@ -9,46 +9,49 @@ import {
   SearchIcon,
   Layers,
   ChevronDown,
-  ChevronUp,
   MapPin,
 } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
+
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 const FindJobCard = () => {
-  const navigate = useNavigate();
-  const [jobs, setJobs] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState([]);
-  const [favoriteJobs, setFavoriteJobs] = useState([]);
+  const navigate = useNavigate()
+  const [jobs , setJobs] = useState([])
+  const [appliedJobs , setAppliedJobs] = useState([])
+  const [favoriteJobs , setFavoriteJobs] = useState([])
   const [showDelete, setShowDelete] = useState(false);
   const [curDeleteId, setCurDeleteId] = useState("");
   const [showAdded, setShowAdded] = useState(false);
   const [curAddedId, setCurAddedId] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [page , setPage] = useState(1);
+  const [totalPages , setTotalPages] = useState(0);
   const limit = 5;
 
-  const [category, setCategory] = useState("");
-  const [isAdvanced, setIsAdvanced] = useState(false);
-  const [experience, setExperience] = useState("");
-  const [salary, setSalary] = useState("");
-  const [jobType, setJobType] = useState([]);
-  const [education, setEducation] = useState([]);
-  const [jobLevel, setJobLevel] = useState("");
-  const [search, setSearch] = useState("");
-
-  const handleCheckboxChange = (state, setState, value) => {
-    if (state.includes(value)) {
-      setState(state.filter((item) => item !== value));
-    } else {
-      setState([...state, value]);
-    }
-  };
-
+    const [category, setCategory] = useState("");
+    const [isAdvanced , setIsAdvanced] = useState(false)
+    const [experience, setExperience] = useState("");
+    const [salary, setSalary] = useState("");
+    const [jobType, setJobType] = useState([]);
+    const [education, setEducation] = useState([]);
+    const [jobLevel, setJobLevel] = useState("");
+    const [search , setSearch] = useState("");
+  
+    const handleCheckboxChange = (state, setState, value) => {
+          if (state.includes(value)) {
+              setState(state.filter((item) => item !== value));
+          } else {
+              setState([...state, value]);
+          }
+      };
+  
+  
+  
   const jobFilterData = {
     experience: [
       { label: "Freshers", value: "0" },
@@ -60,7 +63,7 @@ const FindJobCard = () => {
       { label: "10 - 15 Years", value: "10-15" },
       { label: "15+ Years", value: "15+" },
     ],
-
+  
     salary: [
       { label: "$50 - $1000", value: "50-1000" },
       { label: "$1000 - $2000", value: "1000-2000" },
@@ -71,7 +74,7 @@ const FindJobCard = () => {
       { label: "$10000 - $15000", value: "10000-15000" },
       { label: "$15000+", value: "15000+" },
     ],
-
+  
     jobType: [
       { label: "All", value: "all" },
       { label: "Full Time", value: "Full-Time" },
@@ -81,7 +84,7 @@ const FindJobCard = () => {
       { label: "Temporary", value: "Temporary" },
       { label: "Contract Base", value: "Contract" },
     ],
-
+  
     education: [
       { label: "All", value: "all" },
       { label: "High School", value: "high_school" },
@@ -90,7 +93,7 @@ const FindJobCard = () => {
       { label: "Graduation", value: "graduation" },
       { label: "Master Degree", value: "master" },
     ],
-
+  
     jobLevel: [
       { label: "Entry Level", value: "Entry Level" },
       { label: "Mid Level", value: "Mid Level" },
@@ -102,17 +105,17 @@ const FindJobCard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get(DOMAIN + "/api/job/all-jobs", {
-          params: {
+        const response = await axios.get(DOMAIN + '/api/job/all-jobs',{
+          params:{
             page,
-            limit,
-          },
-        });
+            limit
+          }
+        })
 
-        if (response.status === 200) {
-          console.log(response.data.jobs);
-          setJobs(response.data.jobs);
-          setTotalPages(response.data.totalPages);
+        if (response.status === 200){
+          console.log(response.data.jobs)
+          setJobs(response.data.jobs)
+          setTotalPages(response.data.totalPages)
         }
       } catch (error) {
         console.log(error.message);
@@ -144,14 +147,14 @@ const FindJobCard = () => {
           setFavoriteJobs(response.data.jobs);
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     };
 
     fetchJobs();
     fetchAppliedJobs();
     fetchFavoriteJobs();
-  }, [page]);
+  },[page])
 
   const isExpired = (date) => new Date(date) < new Date();
 
@@ -205,46 +208,47 @@ const FindJobCard = () => {
     } catch (error) {
       console.log(error.message);
     }
-  };
+  }
 
-  const filteredJobs = jobs.filter((job) => {
-    // serach
-    if (search && !job.title.toLowerCase().includes(search.toLowerCase())) {
-      return false;
-    }
+const filteredJobs = jobs.filter((job) => {
 
-    // CATEGORY
-    if (category && job.role !== category) {
-      return false;
-    }
+  // serach
+  if (search && !job.title.toLowerCase().includes(search.toLowerCase())) {
+    return false;
+  }
 
-    // EXPERIENCE
-    if (experience) {
-      const jobExp = job.experience; // example: "2-4"
+  // CATEGORY
+  if (category && job.role !== category) {
+    return false;
+  }
 
-      if (experience.includes("-")) {
-        const [min, max] = experience.split("-");
-        const [jobMin, jobMax] = jobExp?.split("-") || [];
+  // EXPERIENCE
+  if (experience) {
+    const jobExp = job.experience; // example: "2-4"
 
-        if (jobMin < min || jobMax > max) {
-          return false;
-        }
-      } else if (experience === "15+") {
-        if (Number(jobExp) < 15) {
-          return false;
-        }
+    if (experience.includes("-")) {
+      const [min, max] = experience.split("-");
+      const [jobMin, jobMax] = jobExp?.split("-") || [];
+
+      if (jobMin < min || jobMax > max) {
+        return false;
+      }
+    } else if (experience === "15+") {
+      if (Number(jobExp) < 15) {
+        return false;
       }
     }
+  }
 
-    // SALARY
-    if (salary) {
-      const [min, max] = salary.split("-");
-      const jobSalary = job.salary?.max || 0;
+  // SALARY
+  if (salary) {
+    const [min, max] = salary.split("-");
+    const jobSalary = job.salary?.max || 0;
 
-      if (max) {
-        if (jobSalary < Number(min) || jobSalary > Number(max)) {
-          return false;
-        }
+    if (max) {
+      if (jobSalary < Number(min) || jobSalary > Number(max)) {
+        return false;
+      }
       } else {
         if (jobSalary < Number(min)) {
           return false;
@@ -252,35 +256,37 @@ const FindJobCard = () => {
       }
     }
 
-    // JOB TYPE
-    if (jobType.length > 0 && !jobType.includes(job.jobType)) {
-      return false;
-    }
+  // JOB TYPE
+  if (jobType.length > 0 && !jobType.includes(job.jobType)) {
+    return false;
+  }
 
-    // EDUCATION
-    if (education.length > 0 && !education.includes(job.education)) {
-      return false;
-    }
+  // EDUCATION
+  if (education.length > 0 && !education.includes(job.education)) {
+    return false;
+  }
 
-    // JOB LEVEL
-    if (jobLevel && job.jobLevel !== jobLevel) {
-      return false;
-    }
+  // JOB LEVEL
+  if (jobLevel && job.jobLevel !== jobLevel) {
+    return false;
+  }
 
-    return true;
-  });
+  return true;
+});
 
+
+  
   return (
-    <div className="w-full bg-gray-50 py-4">
-      
-          <div className="w-full  py-4 ">
-            <div className="w-full bg-gray-100">
-              <div className="max-w-7xl mx-auto px-4 py-4">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <p className="font-semibold">Find Jobs</p>
-                  <p className="text-sm text-gray-500">Home / Find Jobs</p>
-                </div>
+    <div className="w-full  py-4 ">
+
+      <div className="w-full bg-gray-100">
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="font-semibold">Find Jobs</p>
+          <p className="text-sm text-gray-500">Home / Find Jobs</p>
+        </div>
 
                 {/* Filters */}
                 <div className="w-full bg-white grid grid-cols-1 sm:grid-cols-5 gap-3 p-4 rounded-sm shadow-sm">
@@ -515,21 +521,24 @@ const FindJobCard = () => {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between min-h-[65vh]">
-              <div>
-                {filteredJobs.map((job) => (
-                  <div key={job._id} className="w-full bg-white p-2">
-                    <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
-                      {/* MAIN FLEX */}
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        {/* LEFT SECTION */}
-                        <div className="flex flex-col sm:flex-row gap-4 sm:flex-1">
-                          {/* Logo */}
-                          <img
-                            src={iphonelogo}
-                            alt="logo"
-                            className="h-14 w-14 rounded-lg object-contain"
-                          />
+      <div className="flex flex-col justify-between min-h-[65vh]">
+        <div>
+          {filteredJobs.map((job) => (
+        <div key={job._id} className="w-full bg-white p-2">
+          <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
+
+            {/* MAIN FLEX */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+              {/* LEFT SECTION */}
+              <div className="flex flex-col sm:flex-row gap-4 sm:flex-1">
+
+                {/* Logo */}
+                <img
+                  src={iphonelogo}
+                  alt="logo"
+                  className="h-14 w-14 rounded-lg object-contain"
+                />
 
                           {/* Job Info */}
                           <div className="flex flex-col gap-3">
@@ -572,61 +581,55 @@ const FindJobCard = () => {
                           </div>
                         </div>
 
-                        {/* RIGHT SECTION */}
-                        <div className="flex items-center justify-between sm:justify-end gap-4 sm:flex-shrink-0">
-                          {favoriteJobs.some(
-                            (f) => f.jobId?._id === job._id,
-                          ) ? (
-                            <button
-                              onClick={() => {
-                                setCurDeleteId(job._id);
-                                setShowDelete(true);
-                              }}
-                              className="cursor-pointer"
-                            >
-                              <Bookmark className="size-5" fill="black" />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => {
-                                setCurAddedId(job._id);
-                                setShowAdded(true);
-                              }}
-                            >
-                              <Bookmark className="size-5 text-gray-500 cursor-pointer hover:text-blue-500" />
-                            </button>
-                          )}
-                          {isExpired(job.expirationDate) ? (
-                            <button
-                              disabled
-                              className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
-                            >
-                              Expired
-                            </button>
-                          ) : appliedJobs.some(
-                              (app) => app.jobId?._id === job._id,
-                            ) ? (
-                            <button
-                              disabled
-                              className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
-                            >
-                              Already Applied
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => applyJob(job._id)}
-                              className="bg-blue-100 px-4 py-2 flex items-center gap-2 text-blue-500 rounded-md hover:bg-blue-200 transition"
-                            >
-                              Apply Now
-                              <ArrowRight className="size-4" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              {/* RIGHT SECTION */}
+              <div className="flex items-center justify-between sm:justify-end gap-4 sm:flex-shrink-0">
+                {favoriteJobs.some((f)=>  f.jobId?._id === job._id)?(
+                  <button
+                      onClick={() => {
+                        setCurDeleteId(job._id);
+                          setShowDelete(true);}}
+                            className="cursor-pointer">
+                            <Bookmark className="size-5" fill="black" />
+                    </button>
+                ):(
+                  <button onClick={()=>{setCurAddedId(job._id);setShowAdded(true);}} >
+                    <Bookmark 
+                  
+                 className="size-5 text-gray-500 cursor-pointer hover:text-blue-500" />
+                  </button>
+                )}
+                {isExpired(job.expirationDate) ? (
+                    <button
+                      disabled
+                      className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
+                    >
+                      Expired
+                    </button>
+                  ) : appliedJobs.some((app) => app.jobId?._id === job._id)
+                     ? (
+                    <button
+                      disabled
+                      className="bg-gray-200 px-4 py-2 text-gray-500 rounded-md cursor-not-allowed"
+                    >
+                      Already Applied
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => applyJob(job._id)}
+                      className="bg-blue-100 px-4 py-2 flex items-center gap-2 text-blue-500 rounded-md hover:bg-blue-200 transition"
+                    >
+                      Apply Now
+                      <ArrowRight className="size-4" />
+                    </button>
+                  )}
+
               </div>
+
+            </div>
+          </div>
+        </div>
+      ))}
+        </div>
 
               {/* DELETE MODAL */}
               {showDelete && (
@@ -713,36 +716,30 @@ const FindJobCard = () => {
                         Cancel
                       </button>
 
-                      <button
-                        onClick={() => {
-                          addToFavorite(curAddedId);
-                          setCurAddedId("");
-                          setShowAdded(false);
-                        }}
-                        className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center justify-center">
-                <Stack spacing={2}>
-                  <Pagination
-                    count={5}
-                    variant="outlined"
-                    color="primary"
-                    size="medium"
-                    shape="rounded"
-                    onChange={(event, value) => setPage(value)}
-                  />
-                </Stack>
-              </div>
+              <button
+                onClick={() => {
+                  addToFavorite(curAddedId);
+                  setCurAddedId("");
+                  setShowAdded(false);
+                }}
+                className="w-36 h-10 rounded-md text-white bg-red-600 text-sm hover:bg-red-700 transition"
+              >
+                Confirm
+              </button>
             </div>
           </div>
-        
+        </div>
+      )}
+      
+      <div className="flex items-center justify-center">
+        <Stack spacing={2}>
+          <Pagination count={5}
+           variant="outlined" color="primary" size="medium" shape="rounded"
+           onChange={(event, value) => setPage(value)}
+            />
+        </Stack>
+      </div>
+      </div>
     </div>
   );
 };
