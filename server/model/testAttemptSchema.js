@@ -20,6 +20,11 @@ const testAttemptSchema = new mongoose.Schema(
       required: true
     },
 
+    jobScore:{
+      type: Number,
+      default: 0
+    },
+
     codingAnswers: [
       {
         questionId: {
