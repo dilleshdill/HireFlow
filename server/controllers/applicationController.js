@@ -53,16 +53,21 @@ export const getAppliedJobs = async (req,res) => {
         const page = Number(req.query.page) || 1
         const limit = Number(req.query.limit) || 5
         const skip = (page - 1)*limit
+        const userId = req.user.id
 
         const totalJobs = await Application.countDocuments({userId})
-        const userId = req.user.id
+        
         const jobs = await Application.find({ userId })
-            .populate("jobId", "title jobType vacancies location role");
+            .populate("jobId", "title jobType vacancies location role")
+            .skip(skip)
+            .limit(limit)
 
-        if (!jobs){
-            return res.status(400).json({message:"no jobs are found"})
-        }
-        return res.status(200).json({jobs,message:"applied jobs fetched"})
+        return res.status(200).json({
+            jobs,
+            totalJobs,
+            totalPages: Math.ceil(totalJobs / limit),
+            currentPage: page,
+            message:"applied jobs fetched"})
     } catch (error) {
         return res.status(500).json({message:error.message})
     }
