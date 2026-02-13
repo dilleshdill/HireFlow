@@ -448,7 +448,7 @@ const filteredJobs = jobs.filter((job) => {
     </div>
 
 
-      <div className="flex flex-col justify-between min-h-10/12">
+      <div className="flex flex-col justify-between min-h-[65vh]">
         <div>
           {filteredJobs.map((job) => (
         <div key={job._id} className="w-full bg-white p-2">
