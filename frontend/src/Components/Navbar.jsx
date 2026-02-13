@@ -1,40 +1,10 @@
 import { Search, Phone } from "lucide-react";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 const Navbar = () => {
+  const navigate = useNavigate()
   return (
     <header className="w-full bg-white  ">
 
-      {/* 🔹 Top Bar */}
-      <div className="bg-gray-100 text-xs text-gray-600">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
-
-          {/* Left Menu */}
-          <ul className="flex gap-4 p-1">
-            <Link to='/' className="text-[#0A65CC] font-medium text-sm border-b-2 border-[#0A65CC]">
-              Home
-            </Link>
-            <Link to='find-jobs' className="hover:text-[#0A65CC] text-sm cursor-pointer">Find Job</Link>
-            <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Employers</li>
-            <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Candidates</li>
-            <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Pricing Plans</li>
-            <li className="hover:text-[#0A65CC] text-sm  cursor-pointer">Customer Supports</li>
-          </ul>
-
-          {/* Right Info */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <Phone size={14} />
-              <span>+1-202-555-0178</span>
-            </div>
-            <div className="flex items-center gap-1 cursor-pointer">
-              🇺🇸 <span>English</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* 🔹 Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
 
         {/* Logo */}
@@ -66,8 +36,8 @@ const Navbar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm border border-[#0A65CC] text-[#0A65CC] rounded-md hover:bg-[#0A65CC]/10">
-            Sign In
+          <button className="px-4 py-2 text-sm border border-[#0A65CC] text-[#0A65CC] rounded-md hover:bg-[#0A65CC]/10" onClick={() =>navigate("/login")}>
+            Sign Up
           </button>
           <button className="px-4 py-2 text-sm bg-[#0A65CC] text-white rounded-md hover:opacity-90">
             Post A Jobs

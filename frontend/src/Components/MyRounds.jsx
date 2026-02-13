@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect,useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -61,6 +62,8 @@ const statusStyles = {
 
 const MyRounds = () => {
   const [results,setResults] = useState([])
+  const [jobData,setJobData] = useState([])
+  const navigate = useNavigate()
   
   
   const fetchData = async() => {
@@ -76,9 +79,25 @@ const MyRounds = () => {
       console.log(err)
     }
   }
+  
+  const fetchJobData = async() => {
+    try{
+      const response = await axios.get(DOMAIN + `/api/job/get-history`,{
+        withCredentials:true
+      })
+      if(response.status === 200){
+        console.log(response.data)
+        setJobData(response.data.jobHistory)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
 
   useEffect(() => {
     fetchData()
+    fetchJobData()
   },[])
 
   const clearedCount = results.filter(r => r.status === "EVALUATED").length;
@@ -158,7 +177,7 @@ const MyRounds = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Score</span>
                   <span className={`text-sm font-medium ${round.score !== "-" ? "text-gray-900" : "text-gray-500"}`}>
-                    {round.totalScore}
+                    {round.totalScore.toFixed(1)}
                   </span>
                 </div>
 
@@ -166,26 +185,22 @@ const MyRounds = () => {
                   <div className="pt-2">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
                       <span>Performance</span>
-                      <span>{round.score}</span>
+                      <span>{round.totalScore.toFixed(1)}</span>
                     </div>
                     <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div 
                         className={`h-full rounded-full ${
-                          parseFloat(round.score) >= 80 ? "bg-green-500" :
-                          parseFloat(round.score) >= 60 ? "bg-blue-500" : "bg-gray-400"
+                          parseFloat(round.totalScore.toFixed(1)) >= 80 ? "bg-green-500" :
+                          parseFloat(round.totalScore.toFixed(1)) >= 60 ? "bg-blue-500" : "bg-gray-400"
                         }`}
-                        style={{ width: round.score }}
+                        style={{ width: round.totalScore.toFixed(1)}}
                       ></div>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <button className="w-full py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 border border-gray-300 rounded transition-colors">
-                  View Details
-                </button>
-              </div>
+              
             </div>
           </div>
         ))}

@@ -8,17 +8,48 @@ import UserFavoriteJobs from "../Components/UserFavoriteJobs.jsx";
 import UserSettings from "../Components/UserSettings.jsx"
 import MyRounds from "../Components/MyRounds.jsx";
 import { useEffect } from "react";
+import axios from "axios";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const UserDashboard = () => {
 
     const [selectedSidebar , setSelectedSidebar] = useState('overview')
     const [showAllJobs, setShowAllJobs] = useState(false);
 
+    const fetchAppliedJobs = async() => {
+        try{
+            const response = await axios.get(DOMAIN + "/api/user/job-applied",{
+                withCredentials:true
+            })
+            if(response.status === 200){
+                console.log(response.data)
+            }
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    const fetchFaviorateJobs = async() => {
+        try{
+            const response = await axios.get(DOMAIN + "/api/user/job-applied",{
+                withCredentials:true
+            })
+            if(response.status === 200){
+                console.log(response.data)
+            }
+        }catch(err){
+            console.log(err)
+        }
+    }
+
   useEffect(() => {
     const savedSidebar = localStorage.getItem("userSideBar");
     if (savedSidebar) {
       setSelectedSidebar(savedSidebar);
     }
+    fetchAppliedJobs()
+    fetchFaviorateJobs()
   }, []);
 
 
