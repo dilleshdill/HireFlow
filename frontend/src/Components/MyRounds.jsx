@@ -60,10 +60,8 @@ const statusStyles = {
 
 
 const MyRounds = () => {
-  const clearedCount = myRounds.filter(r => r.status === "Cleared").length;
-  const pendingCount = myRounds.filter(r => r.status === "Pending").length;
-  const rejectedCount = myRounds.filter(r => r.status === "Rejected").length;
   const [results,setResults] = useState([])
+  
   
   const fetchData = async() => {
     try{
@@ -71,8 +69,8 @@ const MyRounds = () => {
         withCredentials:true
       })
       if(response.status === 200){
-        console.log(response.data)
-        // setResults(response.data)
+        console.log(response.data.testHistory)
+        setResults(response.data.testHistory)
       }
     }catch(err){
       console.log(err)
@@ -82,6 +80,10 @@ const MyRounds = () => {
   useEffect(() => {
     fetchData()
   },[])
+
+  const clearedCount = results.filter(r => r.status === "EVALUATED").length;
+  const pendingCount = myRounds.filter(r => r.status === "SUBMITTED").length;
+  const rejectedCount = myRounds.filter(r => r.status === "PENDING").length;
 
   return (
     <div className="p-6 bg-white">

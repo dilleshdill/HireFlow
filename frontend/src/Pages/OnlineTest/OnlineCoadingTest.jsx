@@ -114,6 +114,7 @@ const OnlineCodingTest = () => {
         },
       );
       if (response.status === 200) {
+        console.log(response.data)
         const fetchedQuestions = response.data.questions || [];
         setQuestions(fetchedQuestions);
         setLength(fetchedQuestions.length);
