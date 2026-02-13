@@ -1,11 +1,14 @@
 import { ArrowRight } from "lucide-react";
 import { FaRegDotCircle } from "react-icons/fa";
-import React, { useEffect } from "react";
+import React, { useEffect,useRef } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import useAntiCheat from "./useAntiCheating";
+import Chatimage from '../../assets/Chatimage.jpg';
+import { Send } from "lucide-react";
+
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -18,7 +21,36 @@ const OnlineTestExam = () => {
   const [review, setReview] = useState([]);
   const [loading,setLoading] = useState(false)
   const [showFinishModel,setFinishModel] = useState(false)
+  const [showChatImage,setShowChatImage] = useState(false)
+   const [messages, setMessages] = useState([
+    { text: "Hello 👋 Need help with this question?", sender: "admin" },
+  ]);
   const navigate = useNavigate()
+
+   const [input, setInput] = useState("");
+
+  const bottomRef = useRef(null);
+
+  const sendMessage = async() => {
+    if (!input.trim()) return;
+
+    setMessages((prev) => [
+      ...prev,
+      { text: input, sender: "user" },
+    ]);
+
+    try{
+      const response = await axios.post(DOMAIN + "/api/test/send-message",{
+        input
+      })
+      if(response.status === 200){
+        console.log(response.data)
+      }
+    }catch(error){
+      console.log(error.msg)
+    }
+    setInput("");
+  };
 
   const [time, setTime] = useState(0);
 
@@ -242,8 +274,6 @@ const OnlineTestExam = () => {
     }
   }
 
-  
-
   useEffect(() => {
     
     fetchData();
@@ -267,6 +297,18 @@ const OnlineTestExam = () => {
 
   return (
     <div className="flex flex-col lg:flex-row max-w-10xl ">
+      {
+        !showChatImage && <div className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 rounded-full shadow-2xl cursor-pointer transition-all duration-300 hover:scale-110 animate-bounce" onClick={() => setShowChatImage(prev=>!prev)}>
+        <img
+          src={Chatimage}
+          alt="Chat"
+          className="w-20 h-20 object-contain rounded-full"
+        />
+      </div>
+      }
+
+
+
       <div className="flex flex-col w-full lg:w-11/12">
         <h1 className="text-xl font-semibold text-center bg-gray-200 p-5">
           Online Test - CAT Preparation
@@ -350,7 +392,9 @@ const OnlineTestExam = () => {
         </div>
       </div>
 
-      <div className="w-full lg:w-1/3 ">
+      {
+        !showChatImage ? (
+          <div className="w-full lg:w-1/3 ">
         <h1 className="text-xl font-medium text-center bg-gray-300 p-5">
           Time Left
         </h1>
@@ -443,7 +487,61 @@ const OnlineTestExam = () => {
             </div>
           </div>
         </div>
+        
       </div>
+        ):(
+           <div className="w-full lg:w-1/3 bg-white rounded-xl shadow-lg flex flex-col h-screen">
+
+      {/* Header */}
+      <div className="bg-gray-300 text-white p-5 flex justify-between items-center">
+        <h2 className="font-semibold text-lg">Live Support</h2>
+        <span className="text-sm bg-red-200 border text-gray-600 border-red-400  px-3 py-1 rounded-full cursor-pointer" onClick={()=>setShowChatImage(false)}>
+          Back
+        </span>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50">
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex ${
+              msg.sender === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`px-4 py-2 rounded-2xl max-w-xs text-sm shadow ${
+                msg.sender === "user"
+                  ? "bg-green-500 text-white rounded-br-none"
+                  : "bg-gray-200 text-gray-800 rounded-bl-none"
+              }`}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+        <div ref={bottomRef}></div>
+      </div>
+
+      {/* Input */}
+      <div className="border-t p-4 flex gap-3 items-center">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type your message..."
+          className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <button
+          onClick={sendMessage}
+          className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition"
+        >
+          <Send size={18} />
+        </button>
+      </div>
+    </div>
+ ) }
 
       {
         showFinishModel && 

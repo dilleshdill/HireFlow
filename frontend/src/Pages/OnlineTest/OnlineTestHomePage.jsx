@@ -67,8 +67,6 @@ const OnlineTestHomePage = () => {
     fetchData();
   }, []);
 
-  
-
   return (
     <div>
       <div className="min-h-screen flex max-w-7xl mx-auto gap-3">
