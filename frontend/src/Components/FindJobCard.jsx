@@ -10,11 +10,12 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindJobCard = () => {
-
+  const navigate = useNavigate()
   const [jobs , setJobs] = useState([])
   const [appliedJobs , setAppliedJobs] = useState([])
   const [favoriteJobs , setFavoriteJobs] = useState([])
@@ -59,7 +60,7 @@ const FindJobCard = () => {
           setFavoriteJobs(response.data.jobs)
         }
       } catch (error) {
-        
+        console.log(error)
       }
     }
 
@@ -113,7 +114,7 @@ const FindJobCard = () => {
   return (
     <div className="w-full bg-gray-50 py-4">
       {jobs.map((job) => (
-        <div key={job._id} className="w-full bg-white p-4">
+        <div key={job._id} className="w-full bg-white p-4" onClick={()=>navigate(`/company-profile/${job._id}`)}>
           <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
 
             {/* MAIN FLEX */}
