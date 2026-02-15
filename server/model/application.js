@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const applicationSchema = mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        ref:"UserProfile",
         required:true
     },
 
@@ -15,7 +15,7 @@ const applicationSchema = mongoose.Schema({
 
     recruiterId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "RecruiterProfile",
       required: true
     },
 

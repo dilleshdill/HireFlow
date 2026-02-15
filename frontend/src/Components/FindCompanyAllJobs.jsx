@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Loader from "./Loader";
 
 
 
@@ -26,6 +27,8 @@ const FindCompanyAllJobs = () => {
   const [curDeleteId, setCurDeleteId] = useState("");
   const [showAdded, setShowAdded] = useState(false);
   const [curAddedId, setCurAddedId] = useState("");
+  const [loading , setLoading] = useState(true)
+  const navigate = useNavigate();
 
   useEffect(()=>{
     const fetchJobs = async () => {
@@ -70,12 +73,14 @@ const FindCompanyAllJobs = () => {
         try {
             
             const response = await axios.get(DOMAIN + `/api/job/company-jobs/${id}`)
-            if(response.status === 200){
+            if(response.status === 200){ 
                 console.log(response.data)
                 setJobs(response.data.jobs)
             }
         } catch (error) {
             console.log(error.message)
+        }finally{
+          setLoading(false)
         }
     }
 
@@ -126,22 +131,29 @@ const FindCompanyAllJobs = () => {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
   
   return (
     <div className="w-full bg-gray-50 py-4">
       {jobs.map((job) => (
-        <div key={job._id} className="w-full bg-white p-4">
+        <div key={job._id}  className="w-full bg-white p-4">
           <div className="max-w-7xl mx-auto px-4 py-4 border border-gray-200 rounded-lg hover:shadow-md transition">
 
             {/* MAIN FLEX */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
               {/* LEFT SECTION */}
-              <div className="flex flex-col sm:flex-row gap-4 sm:flex-1">
+              <div onClick={()=>navigate(`/company-details/${job._id}`)} className="flex flex-col sm:flex-row gap-4 cursor-pointer">
 
                 {/* Logo */}
                 <img
-                  src={iphonelogo}
+                  src={job.postedBy.logoUrl || iphonelogo}
                   alt="logo"
                   className="h-14 w-14 rounded-lg object-contain"
                 />

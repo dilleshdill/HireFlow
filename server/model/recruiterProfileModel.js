@@ -10,7 +10,7 @@ const RecruiterProfileSchema = new mongoose.Schema(
 
     companyName: {
       type: String,
-      default: "User Details",
+      default: "Hire Flow",
     },
 
     aboutUs : {
@@ -36,6 +36,12 @@ const RecruiterProfileSchema = new mongoose.Schema(
     },
 
     companyWebSite: {
+        type:String
+    },
+    logoUrl : {
+        type:String
+    },
+    bannerUrl :{
         type:String
     },
     vision:{

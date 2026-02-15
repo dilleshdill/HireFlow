@@ -24,6 +24,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import iphonelogo from "../../assets/iphonelogo.png";
+import { useNavigate } from 'react-router-dom';
+import Loader from '../Loader';
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
@@ -68,19 +70,23 @@ const SavedCandidates = () => {
   const [curDeleteId, setCurDeleteId] = useState("");
   const [showAdded, setShowAdded] = useState(false);
   const [curAddedId, setCurAddedId] = useState("");
+  const [loading , setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(()=>{
-    const fetchSavedCandidates = async () => {
-      try {
-        const response = await axios.get(DOMAIN + '/api/recruiter/getsaved-candidates',{withCredentials:true})
-        if(response.status === 200){
-          console.log(response.data.savedCandidates)
-          setSavedCandidates(response.data.savedCandidates)
+  const fetchSavedCandidates = async () => {
+        try {
+          const response = await axios.get(DOMAIN + '/api/recruiter/get-all-savedCandidates',{withCredentials:true})
+          if(response.status === 200){
+            console.log(response.data.savedCandidates)
+            setSavedCandidates(response.data.savedCandidates)
+          }
+        } catch (error) {
+          console.log(error.message)
+        }finally{
+          setLoading(false)
         }
-      } catch (error) {
-        console.log(error.message)
       }
-    }
 
     fetchSavedCandidates();
 
@@ -101,6 +107,15 @@ const SavedCandidates = () => {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
+
+
   return (
     <div>
       {/* MOBILE VIEW (GRID CARDS) */}
@@ -112,30 +127,32 @@ const SavedCandidates = () => {
           >
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={candidate.image}
+                src={candidate.image || iphonelogo}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
               <div>
-                <p className="font-semibold">{candidate.candidateRole}</p>
-                <p className="font-semibold text-xs">{candidate.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{candidate.type}</p>
+                <p className="font-semibold">{candidate.userId.userId.name}</p>
+                <p className="font-semibold text-xs">{candidate.userId.title}</p>
+                <p className="text-xs text-gray-500 capitalize">{candidate.userId.websiteUrl}</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <MapPin className="size-4" />
-                {candidate.role}
+                {candidate.userId.location}
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4" />
-                {candidate.name} open candidates
+                {candidate.userId.experience} Experience
               </div>
             </div>
 
-            <button className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
-              Open positions
+            <button
+              onClick={()=>navigate(`/user/job-page/${candidate.userId._id}`)}
+             className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
+              View Profile
               <ArrowRight className="size-4" />
             </button>
           </div>
@@ -144,6 +161,7 @@ const SavedCandidates = () => {
 
       {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
       <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
+        <h2 className='font-medium'>Saved Candidates ( {savedCandidates.length} )</h2>
         {savedCandidates.map((candidate) => (
           <div
             key={candidate._id}
@@ -162,18 +180,18 @@ const SavedCandidates = () => {
                 {/* Job Info */}
                 <div className="flex flex-col gap-1">
                   <div className="flex flex-wrap items-center">
-                    <p className="text-md font-medium">{candidate.name}</p>
+                    <p className="text-md font-medium">{candidate.userId.userId.name}</p>
 
                   </div>
-                    <p className="text-sm text-gray-500">{candidate.profile.title}</p>
+                    <p className="text-sm text-gray-500">{candidate.userId.title}</p>
                   <div className="flex flex-wrap gap-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1">
                       <MapPin className="size-4" />
-                      <span>{candidate.profile.location}</span>
+                      <span>{candidate.userId.location}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <DollarSignIcon className="size-4" />
-                      <span>{candidate.profile.experience} experience</span>
+                      <span>{candidate.userId.experience} experience</span>
                     </div>
 
                   </div>
@@ -187,7 +205,7 @@ const SavedCandidates = () => {
                 <button onClick={()=>{setCurDeleteId(candidate.userId._id),setShowDelete(true)}}>
                   <Bookmark className='size-5 cursor-pointer' fill='blac' />
                 </button>
-                <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-blue-100 rounded-md hover:bg-gray-200 transition">
+                <button onClick={()=>navigate(`/user/job-page/${candidate.userId._id}`)} className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-blue-100 rounded-md hover:bg-gray-200 transition">
                   View Profile
                   <ArrowRightIcon className='size-4' />
                 </button>

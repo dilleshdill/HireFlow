@@ -12,6 +12,7 @@ import axios from "axios";
 import iphonelogo from "../assets/iphonelogo.png";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Loader from "./Loader";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -19,6 +20,7 @@ const UserFavoriteJobs = () => {
   const [favoriteJobs, setFavoriteJobs] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [curDeleteId, setCurDeleteId] = useState("");
+  const [loading , setLoading] = useState(true)
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const limit = 5;
@@ -38,11 +40,14 @@ const UserFavoriteJobs = () => {
         );
 
         if (response.status === 200) {
+          console.log(response.data)
           setFavoriteJobs(response.data.jobs || []);
           setTotalPages(response.data.totalPages);
         }
       } catch (error) {
         console.log(error.message);
+      }finally{
+        setLoading(false)
       }
   };
 
@@ -78,6 +83,14 @@ const UserFavoriteJobs = () => {
     return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* HEADER */}
@@ -107,7 +120,7 @@ const UserFavoriteJobs = () => {
               >
                 <div className="flex items-center gap-4 mb-4">
                   <img
-                    src={iphonelogo}
+                    src={job.recruiterId.logoUrl || iphonelogo}
                     alt="logo"
                     className="h-12 w-12 rounded-md object-contain"
                   />
@@ -184,7 +197,7 @@ const UserFavoriteJobs = () => {
                   {/* LEFT */}
                   <div className="flex items-center gap-4">
                     <img
-                      src={iphonelogo}
+                      src={job.recruiterId.logoUrl || iphonelogo}
                       alt="logo"
                       className="h-12 w-12 rounded-md object-contain"
                     />

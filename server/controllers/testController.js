@@ -465,9 +465,7 @@ export const submitCodingAnswer = async (req, res) => {
       (passedCount / question.testCases.length) * question.marks;
 
     console.log("score , totalScore",score,question.marks)
-    if(score !== question.marks){
-        return res.status(409).json({score , message:"Not Passed all the testcases"})
-    }
+    
     // Find or update coding answer
     let answer = test.codingAnswers.find(
       a => a.questionId.toString() === questionId
@@ -498,6 +496,10 @@ export const submitCodingAnswer = async (req, res) => {
 
     await test.save();
 
+    if(score !== question.marks){
+        return res.status(200).json({score , message:"Not Passed all the testcases"})
+    }
+
     return res.status(200).json({
       message: "Code submitted successfully",
       score,
@@ -510,7 +512,7 @@ export const submitCodingAnswer = async (req, res) => {
   }
 };
 
-// get testDetails
+// get testDetails 
 export const getTestDetails = async (req , res) => {
     try {
         const {jobId} = req.query;
@@ -576,7 +578,7 @@ export const getChatAi = async(req,res) => {
         console.log(input)
 
         const response = await ai.chat.completions.create({
-  model: "gpt-4o-mini",
+  model: "gemini-3-flash-preview",
   messages: [
     {
       role: "system",
@@ -599,7 +601,7 @@ Keep reply conversational.
 console.log(response.choices[0].message)
 const reply = response.choices[0].message.content;
 console.log(reply)
-    res.status(200).json({msg:reply})
+    return res.status(200).json({msg:reply , message:"response from ai"})
 
     }catch(err){
         console.log(err)

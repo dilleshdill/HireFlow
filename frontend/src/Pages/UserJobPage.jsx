@@ -1,236 +1,301 @@
-import React from 'react'
-import NavBar from '../Components/Navbar.jsx'
-import { Link,Phone,Mail,Bookmark,MoveRight,CalendarDays,Timer,GraduationCap, Wallet,MapPin,BriefcaseBusiness ,ShieldCheck} from 'lucide-react';
-import { Facebook,Twitter,MessageCircle,Youtube } from 'lucide-react';
-import RelatedJobs from '../Components/RelatedJobs.jsx';
+import React, { useEffect, useState } from "react";
+import NavBar from "../Components/Navbar.jsx";
+import {
+  Link,
+  Phone,
+  Mail,
+  CalendarDays,
+  GraduationCap,
+  MapPin,
+  BriefcaseBusiness,
+  LayoutDashboard,
+  User,
+  PlusSquare,
+  Briefcase ,
+  Bookmark,
+  Users,
+  Building2,
+  Settings,
+  ClipboardClock,
 
-const Responsibilites = [
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  {
-    "data":"Donec et sapien id leo accumsan pellentesque eget maximus"
-  },
-  
-  
-]
+  ShieldCheck,
+} from "lucide-react";
+import { Facebook, Twitter, MessageCircle, Youtube } from "lucide-react";
+import RelatedJobs from "../Components/RelatedJobs.jsx";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import Sidebar from "../Components/Sidebar.jsx";
+import RecruiterStaticSidebar from "../Components/Recruiter/RecruiterStaticSidebar.jsx";
+import Loader from "../Components/Loader.jsx";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const UserJobPage = () => {
-  return (
-    <>
-      <NavBar />
-      <div className='w-full bg-gray-200 pt-3 pb-3'>
-        <div className = "flex max-w-7xl mx-auto justify-between px-4">
-            <h1 className='text-lg'>Job Detailes</h1>
-            <div className='flex'>
-            <p className='text-md text-gray-400'>Home/JobFind/JobDetailes</p>
-            </div>
-          </div>
+  const { id } = useParams();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+    const [selectedSidebar , setSelectedSidebar] = useState('overview')
+    const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          DOMAIN + `/api/user/get-user/?userId=${id}`,
+          { withCredentials: true }
+        );
+
+        if (response.status === 200) {
+          setUserData(response.data.user);
+        }
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+    
+  
+    useEffect(() => {
+      const savedSidebar = localStorage.getItem("sideBar");
+      if (savedSidebar) {
+        setSelectedSidebar(savedSidebar);
+      }
+    }, []);
+  
+    const sidebarData = [
+      {
+        id: 1,
+        icon: <LayoutDashboard />,
+        label: "Overview",
+        value: "overview",
+      },
+      {
+        id: 2,
+        icon: <User />,
+        label: "Profile",
+        value: "profile",
+      },
+      {
+        id: 3,
+        icon: <PlusSquare />,
+        label: "Post a Job",
+        value: "post-job",
+      },
+      {
+        id: 4,
+        icon: <Briefcase />,
+        label: "My Jobs",
+        value: "my-jobs",
+      },
+      {
+        id: 5,
+        icon: <Bookmark />,
+        label: "Saved Candidates",
+        value: "saved-candidates",
+      },
+      {
+        id: 6,
+        icon: <Users />,
+        label: "Employee Profile",
+        value: "employee-profile",
+      },
+      {
+        id: 7,
+        icon: <Building2 />,
+        label: "All Companies",
+        value: "all-companies",
+      },
+      {
+        id: 8,
+        icon: <Settings />,
+        label: "Settings",
+        value: "settings",
+      },
+      {
+        id: 9,
+        icon: <ClipboardClock />,
+        label: "My Tests",
+        value: "my-tests",
+      },
+    ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
       </div>
-      <div className='w-full'>
-        <div className = "flex flex-col max-w-7xl mx-auto justify-between px-4">
-          <div className='flex w-full justify-between items-center'>
-            <div className='flex items-center gap-5 mt-5'>
-              <img 
-              src='https://uttrakhandcoldandcuttings.co.in/images/Instagram-Log-in.jpg'
-              className='h-20 w-20 rounded-full'/>
-              <div className='flex flex-col gap-2'>
-                  <div className='flex gap-5'>
-                    <p className='text-xl'>Senior UX Designer</p>
-                    <button className='bg-red-200 text-red-500 rounded-lg text-sm px-2 py-1'>
-                      Featured
-                    </button>
-                    <button className='bg-green-200 text-green-500 rounded-lg text-sm px-2 py-1'>
-                      Full Time
-                    </button>
-                  </div>
-                  <div className='flex gap-3'>
-                    <div className='flex items-center gap-1'>
-                        <Link size={15} className='text-blue-400'/>
-                        <p className='text-sm'>http://localhost:5000</p>
-                    </div>
-                    <div className='flex items-center gap-1'>
-                        <Phone size={15} className='text-blue-400'/>
-                        <p className='text-sm'>9010144168</p>
-                    </div>
-                    <div className='flex items-center gap-1' >
-                        <Mail size={15} className='text-blue-400'/>
-                        <p className='text-sm'>tarunbommana798@gmail.com</p>
-                    </div>
-                  </div>
-              </div>
-          
-            </div>
-            <div className='flex flex-col'>
-              <div className='flex gap-3'>
-                  <button className='bg-blue-100 p-2 rounded-sm'>
-                    <Bookmark size={20} className="text-blue-400"/>
-                  </button>
-                    <div className='flex bg-blue-600 px-6 py-2 items-center gap-1 rounded-sm'>
-                      <p className='text-white'>Apply Now</p>
-                      <MoveRight size={20} className='text-white'/>
-                    </div>
-              </div>
-              <div className='flex justify-end '>
-                <p className='text-gray-500 font-bold text-sm'>Job Expired : </p>
-                <p className='text-red-400 text-sm'>Jan 23,2026</p>
-              </div>
+    );
+  }
 
-            </div>
-            
-          </div>
-          <div className='flex mt-5 gap-16'>
-            <div className='flex flex-col max-w-3xl'>
-              <h1 className='text-gray-600 text-lg font-semibold'>Job Description</h1>
-              <p className='text-gray-500 mt-3'>Job Description
-                Integer aliquet pretium consequat. Donec et sapien id leo accumsan pellentesque eget maximus tellus. Duis et est ac 
-                leo rhoncus tincidunt vitae vehicula augue. Donec in suscipit diam. Pellentesque quis justo sit amet arcu commodo sollicitudin. Integer 
-                finibus blandit condimentum. Vivamus sit amet ligula ullamcorper, 
-                pulvinar ante id, tristique erat. Quisque sit amet aliquam urna. Maecenas blandit felis id massa sodales finibus. Integer bibendum eu nulla eu 
-                sollicitudin. Sed lobortis diam tincidunt accumsan faucibus. Quisque blandit augue quis turpis auctor, dapibus euismod ante ultricies. Ut non felis lacinia turpis feugiat euismod at id magna. Sed ut orci arcu. Suspendisse sollicitudin faucibus aliquet.
-                Nam dapibus consectetur erat in euismod. Cras urna augue, mollis venenatis augue sed, porttitor aliquet nibh. Sed tristique dictum elementum. Nulla imperdiet sit amet quam eget lobortis. Etiam in neque sit amet orci interdum tincidunt.
-                
-                  sollicitudin. Sed lobortis diam tincidunt accumsan faucibus. Quisque blandit augue quis turpis auctor, dapibus euismod ante ultricies. Ut non felis lacinia turpis feugiat euismod at id magna. Sed ut orci arcu. Suspendisse sollicitudin faucibus aliquet.
-                Nam dapibus consectetur erat in euismod. Cras urna augue, mollis venenatis augue sed, porttitor aliquet nibh. Sed tristique dictum elementum. Nulla imperdiet sit amet quam eget lobortis. Etiam in neque sit amet orci interdum tincidunt.</p>
-            
-                <h1 className='text-gray-600 text-lg font-semibold mt-4'>Responsibilites</h1>
-                <div className='px-7'>
-                  {
-                  Responsibilites.map(each => (
-                    <li className='text-gray-400 mb-2'>{each.data}</li>
-                  ))
-                }
+  if (!userData) {
+    return <div className="p-10 text-center">User not found</div>;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <div className='sm:hidden'>
+        <RecruiterStaticSidebar />
+      </div>
+    <div className="flex flex-1 max-w-9xl mx-auto w-full px-4 py-4 gap-4">
+      <div className='hidden sm:flex'>
+          <RecruiterStaticSidebar />
+      </div>
+      <div>
+        {/* Header */}
+      <div className="w-full bg-gray-200 pt-3 pb-3">
+        <div className="flex max-w-7xl mx-auto justify-between px-4">
+          <h1 className="text-lg">User Profile</h1>
+          <p className="text-md text-gray-400">Home / User / Profile</p>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 mt-6">
+
+        {/* Top Section */}
+        <div className="flex justify-between items-center">
+
+          <div className="flex items-center gap-5">
+            <img
+              src="https://ui-avatars.com/api/?name=User"
+              className="h-20 w-20 rounded-full"
+              alt="profile"
+            />
+
+            <div>
+              <h2 className="text-xl font-semibold">
+                {userData.title}
+              </h2>
+              <p className="text-gray-500">
+                {userData.education} • {userData.location}
+              </p>
+
+              <div className="flex gap-4 mt-2 text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <Phone size={15} />
+                  {userData.phoneNo}
                 </div>
-                <div className='flex mt-5 gap-2'>
-                <h1 className="text-gray-600 font-medium">Share this job:</h1>
-                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
-                    <Facebook className='text-blue-700'/>
-                    <p className='text-blue-700'>FaceBook</p>
 
-                </div>
-                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
-                    <Twitter className='text-blue-400'/>
-                    <p className='text-blue-400'>Twitter</p>
-
-                </div>
-                <div className='flex border-1 border-gray-300 px-3 py-1 gap-1'>
-                    <MessageCircle className='text-green-500'/>
-                    <p className='text-green-500'>WhatsApp</p>
-
+                <div className="flex items-center gap-1">
+                  <Link size={15} />
+                  {userData.websiteUrl}
                 </div>
               </div>
-
-            </div>
-            <div className='flex flex-col gap-3'>
-              <div className='border-2 border-gray-300 p-5'>
-                <h1 className='text-lg text-gray-500 font-semibold'>Job OverView</h1>
-                <div className='p-2 grid sm:grid-cols-2 md:grid-cols-3 gap-12'>
-                  <div className='flex flex-col gap-1'>
-                    <CalendarDays size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Job Posted</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <Timer size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Job Expires In</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <GraduationCap size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Education</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <Wallet  size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Salary</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <MapPin size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Location</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <BriefcaseBusiness size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Job Time</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                  <div className='flex flex-col gap-1'>
-                    <ShieldCheck size={30} className='text-blue-400'/>
-                    <p className='text-gray-500 font-bold'>Experience</p>
-                    <p className=''>14,Jan 2026</p>
-                  </div>
-                </div>
-                
-              </div>
-              <div className='flex flex-col gap-2 border-2 border-gray-300 p-5'>
-                  <div className='flex gap-3 items-center'>
-                      <img 
-                        src='https://uttrakhandcoldandcuttings.co.in/images/Instagram-Log-in.jpg'
-                        className='h-15 w-15 rounded-md'/>
-                        <div className='flex flex-col gap-1'>
-                            <p className='text-lg'>Senior UX Designer</p>
-                            <p className='text-md text-gray-400'>Social Networking Service</p>
-                        </div>
-                  </div>
-                  <div className='flex justify-between'>
-                    <p className='text-gray-400 font-medium'>Founded in:</p>
-                    <p className='text-sm'>17 2008</p>
-                  </div>
-                  <div className='flex justify-between'>
-                    <p className='text-gray-400 font-medium'>Founded in:</p>
-                    <p className='text-sm'>Private Compayn</p>
-                  </div>
-                  <div className='flex justify-between'>
-                    <p className='text-gray-400 font-medium'>Founded in:</p>
-                    <p className='text-sm'>17 2008</p>
-                  </div>
-                  <div className='flex justify-between'>
-                    <p className='text-gray-400 font-medium'>Founded in:</p>
-                    <p className='text-sm'>17 2008</p>
-                  </div>
-                  <div className='flex justify-between'>
-                    <p className='text-gray-400 font-medium'>Founded in:</p>
-                    <p className='text-sm'>17 2008</p>
-                  </div>
-                  <div className='flex gap-2 mt-2'>
-                      <div className='bg-blue-200 p-1.5 rounded-md'>
-                        <Facebook className='text-blue-400'/>
-                      </div>
-                      <div className='bg-blue-800 p-1.5 rounded-md'>
-                        <Twitter className='text-white'/>
-                      </div>
-                      <div className='bg-green-200 p-1.5 rounded-md'>
-                        <MessageCircle className='text-green-600'/>
-                      </div>
-                      <div className='bg-red-200 p-1.5 rounded-md'>
-                        <Youtube className='text-red-500' />
-                      </div>
-                  </div>
-              </div>
-              
-              
             </div>
           </div>
-          <div>
-            <RelatedJobs />
-          </div>
-        </div> 
-      </div>  
-    </>
-  )
-}
 
-export default UserJobPage
+        </div>
+
+        {/* Content */}
+        <div className="flex gap-16 mt-8">
+
+          {/* Left Section */}
+          <div className="max-w-3xl">
+
+            <h3 className="text-lg font-semibold text-gray-700">
+              Biography
+            </h3>
+
+            <p className="text-gray-600 mt-3">
+              {userData.biography}
+            </p>
+
+          </div>
+
+          {/* Right Section */}
+          <div className="w-full max-w-md">
+
+            <div className="border border-gray-300 p-5 rounded-lg">
+
+              <h3 className="text-lg font-semibold mb-4">
+                Profile Overview
+              </h3>
+
+              <div className="space-y-4">
+
+                <div className="flex items-center gap-2">
+                  <GraduationCap size={20} className="text-blue-400" />
+                  <span>{userData.education}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <BriefcaseBusiness size={20} className="text-blue-400" />
+                  <span>{userData.experience} Years Experience</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <MapPin size={20} className="text-blue-400" />
+                  <span>{userData.location}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={20} className="text-blue-400" />
+                  <span>{userData.nationality}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={20} className="text-blue-400" />
+                  <span>{userData.dateOfBirth}</span>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Social Links */}
+            <div className="border border-gray-300 p-5 rounded-lg mt-6">
+
+              <h3 className="text-lg font-semibold mb-4">
+                Social Links
+              </h3>
+
+              <div className="flex gap-3">
+
+                {userData.facebook && (
+                  <a href={`https://${userData.facebook}`} target="_blank">
+                    <Facebook className="text-blue-600" />
+                  </a>
+                )}
+
+                {userData.twitter && (
+                  <a href={`https://${userData.twitter}`} target="_blank">
+                    <Twitter className="text-blue-400" />
+                  </a>
+                )}
+
+                {userData.instagram && (
+                  <a href={`https://${userData.instagram}`} target="_blank">
+                    <MessageCircle className="text-green-500" />
+                  </a>
+                )}
+
+                {userData.youtube && (
+                  <a href={`https://${userData.youtube}`} target="_blank">
+                    <Youtube className="text-red-500" />
+                  </a>
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="mt-10">
+          <RelatedJobs />
+        </div>
+
+      </div>
+      </div>
+    </div>
+    </div>
+  );
+};
+
+export default UserJobPage;

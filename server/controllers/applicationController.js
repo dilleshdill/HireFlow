@@ -1,5 +1,6 @@
 import Application from "../model/application.js";
 import Job from "../model/job.js";
+import { UserProfile } from "../model/UserProfileModel.js";
 
 
 // apply job
@@ -19,10 +20,16 @@ export const applyJob = async (req,res) =>{
             return res.status(400).json({message:"no job id found"})
         }
         const recruiterId = job.postedBy
-        const userId = req.user.id 
+        const id = req.user.id
+
+        const profile = await UserProfile.findOne({userId:id}) 
+        if(!profile){
+            return res.status(400).json({message:"complete profile first"})
+        }
+        console.log("profile",profile)
 
         const alreadyApplied = await Application.findOne({
-            userId,
+            userId:profile._id,
             jobId
         })
 
@@ -31,12 +38,12 @@ export const applyJob = async (req,res) =>{
         }
 
         const application = await Application.create({
-            userId,
+            userId:profile._id,
             recruiterId,
             jobId:job._id
         })
 
-        job.applications.push({userId})
+        job.applications.push({userId:profile._id})
         await job.save();
 
 
@@ -53,12 +60,22 @@ export const getAppliedJobs = async (req,res) => {
         const page = Number(req.query.page) || 1
         const limit = Number(req.query.limit) || 5
         const skip = (page - 1)*limit
-        const userId = req.user.id
+        const id = req.user.id
 
-        const totalJobs = await Application.countDocuments({userId})
+        const profile = await UserProfile.findOne({userId:id})
+
+        const totalJobs = await Application.countDocuments({userId:profile._id})
         
-        const jobs = await Application.find({ userId })
-            .populate("jobId", "title jobType vacancies location role")
+        const jobs = await Application.find({ userId:profile._id })
+            .populate({
+                        path: "jobId",
+                        select: "title jobType vacancies location role"
+                        })
+                        .populate({
+                        path: "recruiterId",
+                        select: "logoUrl"
+                    })
+
             .skip(skip)
             .limit(limit)
 

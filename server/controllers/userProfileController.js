@@ -34,30 +34,30 @@ export const UploadResume = async (req, res) => {
 
 export const AddUserProfile = async (req, res) => {
   try {
+    const data = req.body.userProfileData;
+    const userId = req.user.id;
 
-    const data = req.body.userProfileData; 
-    console.log(data)
-    const existingProfile = await UserProfile.findOne({
-      userId: req.user.id,
-    });
+    const existingProfile = await UserProfile.findOne({ userId });
 
     const updateFields = {};
 
     if (data.title) updateFields.title = data.title;
     if (data.location) updateFields.location = data.location;
     if (data.phone) updateFields.phoneNo = data.phone;
-    if (data.resumeUrl) updateFields.resumeUrl = data.resumeUrl;  
+    if (data.resumeUrl) updateFields.resumeUrl = data.resumeUrl;
     if (data.websiteUrl) updateFields.websiteUrl = data.websiteUrl;
     if (data.dateOfBirth) updateFields.dateOfBirth = data.dateOfBirth;
 
     if (data.experience) updateFields.experience = data.experience;
     if (data.education) updateFields.education = data.education;
 
-    if (data.martinalStatus) updateFields.maritalStatus = data.martinalStatus;
-    if (data.nationalitie) updateFields.nationality = data.nationalitie;
-    if (data.gender) updateFields.gender = data.gender;
+    if (data.martinalStatus)
+      updateFields.maritalStatus = data.martinalStatus;
 
-    if (data.resumeUrl) updateFields.resumeUrl = data.resumeUrl;
+    if (data.nationalitie)
+      updateFields.nationality = data.nationalitie;
+
+    if (data.gender) updateFields.gender = data.gender;
 
     if (data.facebook) updateFields.facebook = data.facebook;
     if (data.instagram) updateFields.instagram = data.instagram;
@@ -65,18 +65,23 @@ export const AddUserProfile = async (req, res) => {
     if (data.youtube) updateFields.youtube = data.youtube;
     if (data.linkedin) updateFields.linkedin = data.linkedin;
 
-    if (data.description) updateFields.biography = data.description;
+    if (data.description)
+      updateFields.biography = data.description;
 
     if (existingProfile) {
       await UserProfile.updateOne(
-        { userId: req.user.id },
-        updateFields
+        { userId },
+        { $set: updateFields }
       );
       return res.json({ message: "Profile Updated" });
     }
 
-    await UserProfile.create(updateFields);
-    res.json({ message: "Profile Created" });
+    await UserProfile.create({
+      userId,
+      ...updateFields
+    });
+
+    return res.json({ message: "Profile Created" });
 
   } catch (err) {
     console.log(err);
@@ -99,5 +104,22 @@ export const getUserProfile = async(req,res) => {
 
   }catch(err){
     res.status(500).json({msg:"internal server error"})
+  }
+}
+
+// get userBy id
+export const getUserById = async (req,res) => {
+  try {
+    const {userId} = req.query
+    console.log("userId",userId)
+
+    const user = await UserProfile.findById(userId)
+    if(!user){
+      return res.status(400).json({message:"no user found"})
+    }
+
+    return res.status(200).json({user,message:"user fetched"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
   }
 }

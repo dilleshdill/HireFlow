@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Layers,
@@ -8,12 +9,12 @@ import {
   Book,
   SearchCheck,
   Menu,
-  Building2,
-  X
+  X,
+  Building2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ selectedSidebar, setSelectedSidebar }) => {
+const UserSidebar = () => {
 const sidebarData = [
   {
     id: 1,
@@ -65,7 +66,7 @@ const sidebarData = [
   },
 ];
 
-  // const [selectedSidebar, setSelectedSidebar] = useState("overview");
+  const [selectedSidebar, setSelectedSidebar] = useState("overview");
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -79,7 +80,7 @@ const sidebarData = [
   const handleClick = (value) => {
     setSelectedSidebar(value);
     localStorage.setItem("userSideBar", value);
-    // navigate("/user-dashboard");
+    navigate("/user-dashboard");
     setIsOpen(false); // close drawer on mobile
   };
 
@@ -87,7 +88,7 @@ const sidebarData = [
     <>
       {/* Mobile Top Bar */}
       <div className="sm:hidden flex justify-between items-center p-4 border-b">
-        <h2 className="font-semibold text-gray-700">Hire Flow</h2>
+        <h2 className="font-semibold text-gray-700">Dashboard</h2>
         <button onClick={() => setIsOpen(true)}>
           <Menu size={24} />
         </button>
@@ -147,4 +148,4 @@ const sidebarData = [
   );
 };
 
-export default Sidebar;
+export default UserSidebar;

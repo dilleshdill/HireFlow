@@ -124,8 +124,8 @@ const RecruiterSettings = () => {
     aboutUs: "Welcome to the page",
     organizationType: "software",
     industryTypes: "software",
-    logoImageUrl: "",
-    bannerImageUrl: "",
+    logoUrl: "",
+    bannerUrl: "",
     teamSizes: "5",
     yearofEstablishment: "26-05-2004",
     companyWebsite: "http://localhost:5000",
@@ -182,7 +182,7 @@ const RecruiterSettings = () => {
         setPreviewImage1(res.data.resumeUrl);
         setUserProfileData({
           ...userProfileData,
-          logoImageUrl: res.data.resumeUrl,
+          logoUrl: res.data.resumeUrl,
         });
       }
     } catch (e) {
@@ -211,7 +211,7 @@ const RecruiterSettings = () => {
         setPreviewImage2(res.data.resumeUrl);
         setUserProfileData({
           ...userProfileData,
-          logoImageUrl: res.data.resumeUrl,
+          bannerUrl: res.data.resumeUrl,
         });
       }
     } catch (e) {
@@ -223,7 +223,7 @@ const RecruiterSettings = () => {
     try {
       const response = await axios.get(DOMAIN + "/api/recruiter/get-profile", {
         withCredentials: true,
-      });
+      }); 
       if (response.status === 200) {
         console.log(response.data.recruiterProfile);
         setUserProfileData(response.data.recruiterProfile);
@@ -340,14 +340,14 @@ const RecruiterSettings = () => {
                 <div className="flex gap-5 ">
                   <div className="flex flex-col gap-2">
                     <h1 className="text-md text-gray-600 text-start">
-                      Upload Document
+                      Upload Logo Image
                     </h1>
-                    {userProfileData?.imageUrl ? (
+                    {userProfileData?.logoUrl ? (
                       <img
                         src={
-                          typeof userProfileData?.imageUrl === "string"
-                            ? userProfileData?.imageUrl
-                            : URL.createObjectURL(userProfileData?.imageUrl)
+                          typeof userProfileData?.logoUrl === "string"
+                            ? userProfileData?.logoUrl
+                            : URL.createObjectURL(userProfileData?.logoUrl)
                         }
                         alt="user-image"
                         className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
@@ -379,13 +379,13 @@ const RecruiterSettings = () => {
                     <h1 className="text-md text-gray-600 text-start ">
                       Banner Image
                     </h1>
-                    {userProfileData?.imageUrl ? (
+                    {userProfileData?.bannerUrl ? (
                       <div
                         onClick={getFile}
                         className="border-2 border-dashed border-gray-300 rounded-md h-48 w-full overflow-hidden cursor-pointer"
                       >
                         <img
-                          src={userProfileData?.imageUrl}
+                          src={userProfileData?.bannerUrl}
                           alt="banner"
                           className="w-full h-full object-cover"
                         />

@@ -8,7 +8,7 @@ const savedCandidateSchema = mongoose.Schema({
     },
     userId:{
         type:mongoose.Schema.ObjectId,
-        ref:"User",
+        ref:"UserProfile",
         required:true
     }
     

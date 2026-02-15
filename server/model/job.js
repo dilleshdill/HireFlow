@@ -4,7 +4,7 @@ const jobSchema = new mongoose.Schema(
   {
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "RecruiterProfile",
       required: true
     },
 
@@ -34,7 +34,7 @@ const jobSchema = new mongoose.Schema(
     applications:[{
         userId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"User",
+            ref:"UserProfile",
         }
     }],
 
@@ -156,13 +156,6 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Salary validation
-// jobSchema.pre("save", function (next) {
-//   if (this.salary.min > this.salary.max) {
-//     return next(new Error("Minimum salary cannot be greater than maximum salary"));
-//   }
-//   next();
-// });
 
 const Job = mongoose.model("Job", jobSchema);
 export default Job;

@@ -1,55 +1,59 @@
 import { ArrowRight } from "lucide-react";
 import { FaRegDotCircle } from "react-icons/fa";
-import React, { useEffect,useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import useAntiCheat from "./useAntiCheating";
-import Chatimage from '../../assets/Chatimage.jpg';
+import Chatimage from "../../assets/Chatimage.jpg";
 import { Send } from "lucide-react";
+import { SyncLoader } from "react-spinners";
+import Loader from '../../Components/Loader.jsx'
 
-
-const DOMAIN = import.meta.env.VITE_DOMAIN
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const OnlineTestExam = () => {
-  const {id} = useParams()
-  const jobId = id
+  const { id } = useParams();
+  const jobId = id;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [question,setQuestion] = useState([])
+  const [question, setQuestion] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [review, setReview] = useState([]);
-  const [loading,setLoading] = useState(false)
-  const [showFinishModel,setFinishModel] = useState(false)
-  const [showChatImage,setShowChatImage] = useState(false)
-   const [messages, setMessages] = useState([
+  const [loading, setLoading] = useState(false);
+  const [showFinishModel, setFinishModel] = useState(false);
+  const [showChatImage, setShowChatImage] = useState(false);
+  const [aiTyping , setAiTyping] = useState(false)
+  const [messages, setMessages] = useState([
     { text: "Hello 👋 Need help with this question?", sender: "admin" },
   ]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-   const [input, setInput] = useState("");
+  const [input, setInput] = useState("");
 
   const bottomRef = useRef(null);
 
-  const sendMessage = async() => {
+  const sendMessage = async () => {
+    setAiTyping(true)
+    setInput("");
     if (!input.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      { text: input, sender: "user" },
-    ]);
+    setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
-    try{
-      const response = await axios.post(DOMAIN + "/api/test/send-message",{
-        input
-      })
-      if(response.status === 200){
-        console.log(response.data)
+    try {
+      const response = await axios.post(DOMAIN + "/api/test/send-message", {
+        input,
+      });
+      if (response.status === 200) {
+        console.log(response.data);
+        setMessages((prev) => [...prev , {text : response.data.msg , sender:"Admin"}])
       }
-    }catch(error){
-      console.log(error.msg)
+    } catch (error) {
+      console.log(error.msg);
+    }finally{
+      setAiTyping(false)
     }
-    setInput("");
+    
   };
 
   const [time, setTime] = useState(0);
@@ -59,7 +63,7 @@ const OnlineTestExam = () => {
   const seconds = Math.floor(time % 60);
 
   const submitTest = (reason) => {
-    toast.error("Max Tab Switches Are Occured",reason)
+    toast.error("Max Tab Switches Are Occured", reason);
   };
 
   useAntiCheat({
@@ -68,246 +72,263 @@ const OnlineTestExam = () => {
   });
 
   const handleOptionChange = (e) => {
-    setAnswers(prev => {
+    setAnswers((prev) => {
       const updated = [...prev];
       updated[currentIndex] = e.target.value;
       return updated;
     });
   };
 
-  const getPrevious = async() => {
-    try{
-      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
-        jobId,
-        roundType:question[currentIndex].roundType,
-        questionId:question[currentIndex]._id,
-        score:question[currentIndex].marks,
-        selectedAnswer : answers[currentIndex] ?? "",
-        markAsPreview : review[currentIndex] ?? "false" ,
-        codeSubmission : "code"
-      },{
-        withCredentials:true
-      })
-      if(response.status === 200){
+  const getPrevious = async () => {
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/job/update-answer",
+        {
+          jobId,
+          roundType: question[currentIndex].roundType,
+          questionId: question[currentIndex]._id,
+          score: question[currentIndex].marks,
+          selectedAnswer: answers[currentIndex] ?? "",
+          markAsPreview: review[currentIndex] ?? "false",
+          codeSubmission: "code",
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
         if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      sessionStorage.setItem("currentIndex",currentIndex -1 )
-      
-    }
+          setCurrentIndex(currentIndex - 1);
+          sessionStorage.setItem("currentIndex", currentIndex - 1);
+        }
       }
-    }catch(err){
-      console.log(err)
-      toast.error(err.msg)
+    } catch (err) {
+      console.log(err);
+      toast.error(err.msg);
     }
-
   };
 
   const getNext = async () => {
-    if(currentIndex === question.length -1) {
-      setFinishModel(true)
-      return 
+    if (currentIndex === question.length - 1) {
+      setFinishModel(true);
+      return;
     }
-    try{
-      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
-        jobId,
-        roundType:question[currentIndex].roundType,
-        questionId:question[currentIndex]._id,
-        score:question[currentIndex].marks,
-        selectedAnswer : answers[currentIndex] ?? "",
-        markAsPreview :  false ,
-        codeSubmission : "code"
-      },{
-        withCredentials:true
-      })
-      if(response.status === 200){
-        console.log(response.data)
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/job/update-answer",
+        {
+          jobId,
+          roundType: question[currentIndex].roundType,
+          questionId: question[currentIndex]._id,
+          score: question[currentIndex].marks,
+          selectedAnswer: answers[currentIndex] ?? "",
+          markAsPreview: false,
+          codeSubmission: "code",
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
+        console.log(response.data);
         if (currentIndex < question.length - 1) {
           setCurrentIndex(currentIndex + 1);
-          sessionStorage.setItem("currentIndex",currentIndex +1 )
-    }
+          sessionStorage.setItem("currentIndex", currentIndex + 1);
+        }
       }
-    }catch(err){
-      console.log(err)
-      toast.error(err.msg)
+    } catch (err) {
+      console.log(err);
+      toast.error(err.msg);
     }
-
-    
   };
 
   const getPreview = async () => {
-
-    setReview(prev => {
+    setReview((prev) => {
       const updated = [...prev];
       updated[currentIndex] = true;
       return updated;
     });
 
-    try{
-      const response = await axios.post(DOMAIN + "/api/job/update-answer",{
-        jobId,
-        roundType:question[currentIndex].roundType,
-        questionId:question[currentIndex]._id,
-        score:question[currentIndex].marks,
-        selectedAnswer : answers?.[currentIndex]  ?? " ",
-        markAsPreview : answers[currentIndex]?.markAsPreview ?? "true" ,
-        codeSubmission : "code"
-      },{
-        withCredentials:true
-      })
-      if(response.status === 200){
-        if(currentIndex < question.length - 1){
-            setCurrentIndex(currentIndex +1)
-            sessionStorage.setItem("currentIndex",currentIndex +1 )
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/job/update-answer",
+        {
+          jobId,
+          roundType: question[currentIndex].roundType,
+          questionId: question[currentIndex]._id,
+          score: question[currentIndex].marks,
+          selectedAnswer: answers?.[currentIndex] ?? " ",
+          markAsPreview: answers[currentIndex]?.markAsPreview ?? "true",
+          codeSubmission: "code",
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
+        if (currentIndex < question.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+          sessionStorage.setItem("currentIndex", currentIndex + 1);
         }
       }
-    }catch(err){
-      console.log(err)
-      toast.error(err.msg)
+    } catch (err) {
+      console.log(err);
+      toast.error(err.msg);
     }
   };
 
-  const fetchTime = async() => {
-    try{
-    const response = await axios.post(DOMAIN + "/api/test/get-time",
-      {
-        jobId,
-        roundType:question[0]?.roundType ?? "APTITUDE"
-      },{
-        withCredentials:true
-      }
-    )  
-    if(response.status === 200){
-      console.log(response.data)
-      setTime(response.data.time)
-    }
-    }catch(err){
-      console.log(err)
-    }
-  }
-
-  const changeRound = async() => {
-    try{
-      const response = await axios.get(DOMAIN + `/api/test/change-round?jobId=${jobId}`,{
-        withCredentials:true
-      })
-      if (response.status === 200){
-        fetchData()
-        setFinishModel(false)
-      }
-      if (response.status === 201){
-        navigate("/feedback")
-      }
-    }catch(err){
-      console.log(err.msg)
-    }
-  }
-
-  const fetchData = async () => {
-    setLoading(true)
-
+  const fetchTime = async () => {
     try {
-      const response = await axios.get(DOMAIN + `/api/job/get-questions?jobId=${jobId}`,{
-        withCredentials:true
-      })
-      if(response.status === 200){
-        
-        const questions = response.data.questions
-
-        if (questions.length === 0 ){
-            changeRound()
-        }
-        
-        if (questions[0].roundType === "CODING"){
-            navigate(`/job/test/coading-test/${jobId}`)
-        }
-        
-        setQuestion(questions)
-        fetchTime()
-        fetchAllAnswers(questions)
-        setLoading(false)
+      const response = await axios.post(
+        DOMAIN + "/api/test/get-time",
+        {
+          jobId,
+          roundType: question[0]?.roundType ?? "APTITUDE",
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+        setTime(response.data.time);
       }
     } catch (err) {
-      setLoading(false)
       console.log(err);
     }
   };
 
-  const fetchAllAnswers = async(questions) => {
-    if(!questions){
-      toast.error("question not there ")
+  const changeRound = async () => {
+    try {
+      const response = await axios.get(
+        DOMAIN + `/api/test/change-round?jobId=${jobId}`,
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
+        fetchData();
+        setFinishModel(false);
+      }
+      if (response.status === 201) {
+        navigate("/feedback");
+      }
+    } catch (err) {
+      console.log(err.msg);
     }
-    try{
-      const response = await axios.post(DOMAIN + "/api/test/get-allAnswers",{
-        jobId,
-        roundType:question[0]?.roundType ?? "APTITUDE"
-      },{
-        withCredentials:true
-      })
+  };
 
-      if (response.status === 200){
-        
-          response.data.answers.forEach(eachItem => {
-            const index = questions.findIndex(q => (
-              eachItem.questionId === q._id
-            ))
-          
-          setAnswers(prev => {
+  const fetchData = async () => {
+    setLoading(true);
+
+    try {
+      const response = await axios.get(
+        DOMAIN + `/api/job/get-questions?jobId=${jobId}`,
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.status === 200) {
+        const questions = response.data.questions;
+
+        if (questions.length === 0) {
+          changeRound();
+        }
+
+        if (questions[0].roundType === "CODING") {
+          navigate(`/job/test/coading-test/${jobId}`);
+        }
+
+        setQuestion(questions);
+        fetchTime();
+        fetchAllAnswers(questions);
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+    }
+  };
+
+  const fetchAllAnswers = async (questions) => {
+    if (!questions) {
+      toast.error("question not there ");
+    }
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/test/get-allAnswers",
+        {
+          jobId,
+          roundType: question[0]?.roundType ?? "APTITUDE",
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.status === 200) {
+        response.data.answers.forEach((eachItem) => {
+          const index = questions.findIndex(
+            (q) => eachItem.questionId === q._id,
+          );
+
+          setAnswers((prev) => {
             const updated = [...prev];
             updated[index] = eachItem.selectedAnswer;
             return updated;
           });
 
-          if(eachItem.markAsPreview) {
-            setReview(prev => {
+          if (eachItem.markAsPreview) {
+            setReview((prev) => {
               const updated = [...prev];
               updated[index] = true;
               return updated;
             });
           }
-        })
-
+        });
       }
-
-    }catch(err){
-      console.log(err)
-      toast.error(err.msg)
+    } catch (err) {
+      console.log(err);
+      toast.error(err.msg);
     }
-  }
+  };
 
   useEffect(() => {
-    
     fetchData();
-    
-    const localIndex = sessionStorage.getItem("currentIndex")
-    if (localIndex){
-      setCurrentIndex(parseInt(localIndex))
+
+    const localIndex = sessionStorage.getItem("currentIndex");
+    if (localIndex) {
+      setCurrentIndex(parseInt(localIndex));
     }
-  },[]);
+  }, []);
 
   useEffect(() => {
-
-  if (time <= 0) fetchData();
-  const intervalId = setInterval(() => {
-    setTime(prev => prev - 1);
-  }, 1000);
-  return () => clearInterval(intervalId);
+    if (time <= 0) fetchData();
+    const intervalId = setInterval(() => {
+      setTime((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, [time]);
 
   const currentQuestion = question?.[currentIndex];
+  const loadingComponent = aiTyping ? <SyncLoader color="#c0c0b8" size={10} /> : ""
 
   return (
     <div className="flex flex-col lg:flex-row max-w-10xl ">
-      {
-        !showChatImage && <div className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 rounded-full shadow-2xl cursor-pointer transition-all duration-300 hover:scale-110 animate-bounce" onClick={() => setShowChatImage(prev=>!prev)}>
-        <img
-          src={Chatimage}
-          alt="Chat"
-          className="w-20 h-20 object-contain rounded-full"
-        />
-      </div>
-      }
+      {!showChatImage && (
+        <div
+          className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 rounded-full shadow-2xl cursor-pointer transition-all duration-300 hover:scale-110 animate-bounce"
+          onClick={() => setShowChatImage((prev) => !prev)}
+        >
+          <img
+            src={Chatimage}
+            alt="Chat"
+            className="w-20 h-20 object-contain rounded-full"
+          />
+        </div>
+      )}
 
-
+      
 
       <div className="flex flex-col w-full lg:w-11/12">
         <h1 className="text-xl font-semibold text-center bg-gray-200 p-5">
@@ -319,256 +340,282 @@ const OnlineTestExam = () => {
             <h1 className="text-2xl font-normal mt-5">
               Quant- Question {currentIndex + 1}
             </h1>
-            <button className="text-white bg-cyan-800 px-7 py-2.5 rounded-lg" onClick={() => setFinishModel(true)}>
+            <button
+              className="text-white bg-cyan-800 px-7 py-2.5 rounded-lg"
+              onClick={() => setFinishModel(true)}
+            >
               Finish Test
             </button>
           </div>
 
           <div className="border border-b-0 border-gray-400"></div>
-          {
-            loading ? <h1>Loading .....</h1> :
+          {loading ? (
+            <h1>Loading .....</h1>
+          ) : (
             <div className="flex flex-col min-h-[70vh] justify-between">
-            <div>
-              <p className="text-xl font-normal text-gray-700">
-                {currentQuestion?.questionText ?? ""}
-              </p>
+              <div>
+                <p className="text-xl font-normal text-gray-700">
+                  {currentQuestion?.questionText ?? ""}
+                </p>
 
-              <div className="space-y-5 mt-6">
-                {currentQuestion?.options?.map((option, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center gap-4 cursor-pointer transition-all duration-200"
-                  >
-                    <input
-                      type="radio"
-                      name={`question-${currentIndex}`}
-                      value={option}
-                      checked={answers[currentIndex] === option}
-                      onChange={handleOptionChange}
-                      className="w-5 h-5 accent-blue-600"
-                    />
-
-                    <span
-                      className={`text-lg transition-all duration-200 ${
-                        answers[currentIndex] === option
-                          ? "text-blue-600 font-semibold"
-                          : "text-gray-700"
-                      }`}
+                <div className="space-y-5 mt-6">
+                  {currentQuestion?.options?.map((option, index) => (
+                    <label
+                      key={index}
+                      className="flex items-center gap-4 cursor-pointer transition-all duration-200"
                     >
-                      {option}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
+                      <input
+                        type="radio"
+                        name={`question-${currentIndex}`}
+                        value={option}
+                        checked={answers[currentIndex] === option}
+                        onChange={handleOptionChange}
+                        className="w-5 h-5 accent-blue-600"
+                      />
 
-            <div className="pt-6 flex flex-col gap-5">
-              <div className="flex justify-between items-center">
-                <button
-                  className="bg-purple-900 text-white px-5 py-2 rounded-3xl"
-                  onClick={getPreview}
-                >
-                  Mark As Review
-                </button>
-                <div className="flex gap-4">
+                      <span
+                        className={`text-lg transition-all duration-200 ${
+                          answers[currentIndex] === option
+                            ? "text-blue-600 font-semibold"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {option}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-6 flex flex-col gap-5">
+                <div className="flex justify-between items-center">
                   <button
-                    className="bg-gray-400 px-5 py-2 rounded-3xl text-white"
-                    onClick={getPrevious}
+                    className="bg-purple-900 text-white px-5 py-2 rounded-3xl"
+                    onClick={getPreview}
                   >
-                    Previous
+                    Mark As Review
                   </button>
-                  <button
-                    className="flex items-center bg-cyan-600 px-5 py-2 rounded-3xl text-white"
-                    onClick={getNext}
-                  >
-                    Next
-                    <ArrowRight />
-                  </button>
+                  <div className="flex gap-4">
+                    <button
+                      className="bg-gray-400 px-5 py-2 rounded-3xl text-white"
+                      onClick={getPrevious}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      className="flex items-center bg-cyan-600 px-5 py-2 rounded-3xl text-white"
+                      onClick={getNext}
+                    >
+                      Next
+                      <ArrowRight />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          }
+          )}
         </div>
       </div>
 
-      {
-        !showChatImage ? (
-          <div className="w-full lg:w-1/3 ">
-        <h1 className="text-xl font-medium text-center bg-gray-300 p-5">
-          Time Left
-        </h1>
+      {!showChatImage ? (
+        <div className="w-full lg:w-1/3 ">
+          <h1 className="text-xl font-medium text-center bg-gray-300 p-5">
+            Time Left
+          </h1>
 
-        <div className="flex items-center gap-8 justify-center mt-5">
-          <div className="flex flex-col gap-2 items-center">
-            <p className="text-3xl font-normal font-mono text-gray-500">
-              {String(hours).padStart(2, "0")}
-            </p>
-            <p className="text-xl font-normal text-gray-400">hours</p>
+          <div className="flex items-center gap-8 justify-center mt-5">
+            <div className="flex flex-col gap-2 items-center">
+              <p className="text-3xl font-normal font-mono text-gray-500">
+                {String(hours).padStart(2, "0")}
+              </p>
+              <p className="text-xl font-normal text-gray-400">hours</p>
+            </div>
+            <div className="flex flex-col gap-2 items-center">
+              <p className="text-3xl font-normal font-mono text-gray-500">
+                {String(minutes).padStart(2, "0")}
+              </p>
+              <p className="text-xl font-normal text-gray-400">minutes</p>
+            </div>
+            <div className="flex flex-col gap-2 items-center">
+              <p className="text-3xl font-normal font-mono text-gray-500">
+                {String(seconds).padStart(2, "0")}
+              </p>
+              <p className="text-xl font-normal text-gray-400">seconds</p>
+            </div>
           </div>
-          <div className="flex flex-col gap-2 items-center">
-            <p className="text-3xl font-normal font-mono text-gray-500">
-              {String(minutes).padStart(2, "0")}
-            </p>
-            <p className="text-xl font-normal text-gray-400">minutes</p>
+
+          <h1 className="text-xl font-medium text-center bg-gray-300 p-5 mt-10">
+            Quant
+          </h1>
+
+          <div className="cursor-pointer flex flex-wrap px-15 py-5 gap-3  justify-center">
+            {question.map((eachQuestion, index) => {
+              const isCurrent = index === currentIndex;
+              const isAnswered = answers[index];
+              const isReview = review[index];
+
+              let bgColor = "bg-white text-gray-500 border-gray-400";
+
+              if (isCurrent) {
+                bgColor = "bg-blue-600 text-white border-blue-600";
+              } else if (isReview) {
+                bgColor = "bg-purple-600 text-white border-purple-600";
+              } else if (isAnswered) {
+                bgColor = "bg-green-600 text-white border-green-600";
+              }
+
+              return (
+                <div
+                  key={index}
+                  className={`flex h-10 w-10 border items-center justify-center rounded-lg cursor-pointer ${bgColor}`}
+                  onClick={() => {
+                    sessionStorage.setItem("currentIndex", index);
+                    setCurrentIndex(index);
+                  }}
+                >
+                  {index + 1}
+                </div>
+              );
+            })}
           </div>
-          <div className="flex flex-col gap-2 items-center">
-            <p className="text-3xl font-normal font-mono text-gray-500">
-              {String(seconds).padStart(2, "0")}
-            </p>
-            <p className="text-xl font-normal text-gray-400">seconds</p>
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 gap-5">
+              <div className="flex items-center gap-1">
+                <FaRegDotCircle
+                  className="text-gray-500 fill-gray-600"
+                  size={20}
+                />
+                <p className="text-gray-600 text-md">Not Seen</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaRegDotCircle
+                  className="text-green-500 fill-green-600"
+                  size={20}
+                />
+                <p className="text-gray-600 text-md">Attempted</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaRegDotCircle
+                  className="text-blue-500 fill-blue-600"
+                  size={20}
+                />
+                <p className="text-gray-600 text-md">current</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaRegDotCircle
+                  className="text-purple-500 fill-purple-600"
+                  size={20}
+                />
+                <p className="text-gray-600 text-md">Review</p>
+              </div>
+            </div>
           </div>
         </div>
+      ) : (
+        <div className="w-full lg:w-1/3 bg-white rounded-xl shadow-lg flex flex-col h-screen">
+          {/* Header */}
+          <div className="bg-gray-300 text-white p-5 flex justify-between items-center">
+            <h2 className="font-semibold text-lg">Live Support</h2>
+            <span
+              className="text-sm bg-red-200 border text-gray-600 border-red-400  px-3 py-1 rounded-full cursor-pointer"
+              onClick={() => setShowChatImage(false)}
+            >
+              Back
+            </span>
+          </div>
 
-        <h1 className="text-xl font-medium text-center bg-gray-300 p-5 mt-10">
-          Quant
-        </h1>
-
-        <div className="cursor-pointer flex flex-wrap px-15 py-5 gap-3  justify-center">
-          {
-          question.map((eachQuestion, index) => {
-            const isCurrent = index === currentIndex;
-            const isAnswered = answers[index];
-            const isReview = review[index] ;
-
-            let bgColor = "bg-white text-gray-500 border-gray-400";
-
-            if (isCurrent) {
-              bgColor = "bg-blue-600 text-white border-blue-600";
-            } else if (isReview) {
-              bgColor = "bg-purple-600 text-white border-purple-600";
-            } else if (isAnswered) {
-              bgColor = "bg-green-600 text-white border-green-600";
-            }
-
-            return (
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50">
+            {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex h-10 w-10 border items-center justify-center rounded-lg cursor-pointer ${bgColor}`}
-                onClick={() => {
-                  sessionStorage.setItem("currentIndex",index)
-                  setCurrentIndex(index)
-                }}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
               >
-                {index + 1}
+                <div
+                  className={`px-4 py-2 rounded-2xl max-w-xs text-sm shadow ${
+                    msg.sender === "user"
+                      ? "bg-green-500 text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none"
+                  }`}
+                >
+                  {msg.text}
+                </div>
               </div>
-            );
-          })}
-        </div>
-        <div className="flex justify-center">
-          <div className="grid grid-cols-2 gap-5">
-            <div className="flex items-center gap-1">
-              <FaRegDotCircle
-                className="text-gray-500 fill-gray-600"
-                size={20}
-              />
-              <p className="text-gray-600 text-md">Not Seen</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <FaRegDotCircle
-                className="text-green-500 fill-green-600"
-                size={20}
-              />
-              <p className="text-gray-600 text-md">Attempted</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <FaRegDotCircle
-                className="text-blue-500 fill-blue-600"
-                size={20}
-              />
-              <p className="text-gray-600 text-md">current</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <FaRegDotCircle
-                className="text-purple-500 fill-purple-600"
-                size={20}
-              />
-              <p className="text-gray-600 text-md">Review</p>
-            </div>
+            ))}
+            <div ref={bottomRef}></div>
           </div>
-        </div>
-        
-      </div>
-        ):(
-           <div className="w-full lg:w-1/3 bg-white rounded-xl shadow-lg flex flex-col h-screen">
-
-      {/* Header */}
-      <div className="bg-gray-300 text-white p-5 flex justify-between items-center">
-        <h2 className="font-semibold text-lg">Live Support</h2>
-        <span className="text-sm bg-red-200 border text-gray-600 border-red-400  px-3 py-1 rounded-full cursor-pointer" onClick={()=>setShowChatImage(false)}>
-          Back
-        </span>
-      </div>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`px-4 py-2 rounded-2xl max-w-xs text-sm shadow ${
-                msg.sender === "user"
-                  ? "bg-green-500 text-white rounded-br-none"
-                  : "bg-gray-200 text-gray-800 rounded-bl-none"
-              }`}
+          <div className="bg-gray-50 pb-2 pl-3">
+            {loadingComponent}
+          </div>
+          {/* Input */}
+          <div className="border-t p-4 flex gap-3 items-center">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition"
             >
-              {msg.text}
-            </div>
+              <Send size={18} />
+            </button>
           </div>
-        ))}
-        <div ref={bottomRef}></div>
-      </div>
+        </div>
+      )}
 
-      {/* Input */}
-      <div className="border-t p-4 flex gap-3 items-center">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition"
-        >
-          <Send size={18} />
-        </button>
-      </div>
-    </div>
- ) }
-
-      {
-        showFinishModel && 
+      {showFinishModel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 ">
           <div className="flex flex-col items-center bg-white shadow-md rounded-xl py-6 px-5 h-fit md:w-[460px] w-[370px] border border-gray-200">
             <div className="flex items-center justify-center p-4 bg-red-100 rounded-full">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.875 5.75h1.917m0 0h15.333m-15.333 0v13.417a1.917 1.917 0 0 0 1.916 1.916h9.584a1.917 1.917 0 0 0 1.916-1.916V5.75m-10.541 0V3.833a1.917 1.917 0 0 1 1.916-1.916h3.834a1.917 1.917 0 0 1 1.916 1.916V5.75m-5.75 4.792v5.75m3.834-5.75v5.75"
+                  stroke="#DC2626"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
-            <h2 className="text-gray-900 font-semibold mt-4 text-xl">Are you sure?</h2>
+            <h2 className="text-gray-900 font-semibold mt-4 text-xl">
+              Are you sure?
+            </h2>
             <p className="text-sm text-gray-600 mt-2 text-center">
-                Do you really want to continue? This action<br />cannot be undone.
+              Do you really want to continue? This action
+              <br />
+              cannot be undone.
             </p>
             <div className="flex items-center justify-center gap-4 mt-5 w-full">
-                <button type="button" className="w-full md:w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 font-medium text-sm hover:bg-gray-100 active:scale-95 transition" 
-                onClick={() => setFinishModel(false)}>
-                    Cancel
-                </button>
-                <button type="button" className="w-full md:w-36 h-10 rounded-md text-white bg-red-600 font-medium text-sm hover:bg-red-700 active:scale-95 transition" 
-                onClick={changeRound}>
-                    Confirm
-                </button>
+              <button
+                type="button"
+                className="w-full md:w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 font-medium text-sm hover:bg-gray-100 active:scale-95 transition"
+                onClick={() => setFinishModel(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="w-full md:w-36 h-10 rounded-md text-white bg-red-600 font-medium text-sm hover:bg-red-700 active:scale-95 transition"
+                onClick={changeRound}
+              >
+                Confirm
+              </button>
             </div>
+          </div>
         </div>
-        </div>
-      }
+      )}
     </div>
   );
 };

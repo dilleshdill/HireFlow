@@ -30,6 +30,7 @@ import MyRounds from './Components/MyRounds.jsx'
 
 import CompanyProfile from './Pages/CompanyProfile.jsx'
 import Loader from './Components/Loader.jsx'
+import Sidebar from './Components/Sidebar.jsx'
 const App = () => {
   return (
     <>
@@ -38,9 +39,9 @@ const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/email-verification' element={<EmailVerficationPage />} />
-        <Route path="/user/job-page" element={<UserJobPage />} />
+        <Route path="/user/job-page/:id" element={<UserJobPage />} />
         <Route path='/find-jobs' element={<FindJobs />} />
-        <Route path='/company-details' element={<RecruterCompanyPage />} />
+        <Route path='/company-details/:id' element={<RecruterCompanyPage />} />
         <Route path='/find-companies' element={<FindCompanis />} />
         <Route path='/find-candidates/:id' element={<FindCandidates />} />
         <Route path='/user-dashboard' element={<UserDashboard />} />
@@ -57,9 +58,10 @@ const App = () => {
         <Route path="/job/test/coading-test/:id" element={<OnlineCoadingTest />} />
         <Route path="/questions-setup/:id" element={<RecruiterTestDetailes />} />
         <Route path="/feedback" element={<FeedBackPage />} />
-        <Route path="/my-founds" element={<MyRounds />} />
+        <Route path="/my-rounds" element={<MyRounds />} />
         <Route path='/company-profile/:id' element={<CompanyProfile />} />
         <Route path='/loader' element={<Loader />} />
+        <Route path='/sidebar' element={<Sidebar />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>

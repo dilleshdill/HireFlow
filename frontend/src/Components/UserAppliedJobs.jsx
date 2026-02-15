@@ -96,34 +96,34 @@ const UserAppliedJobs = () => {
       <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
         {visibleJobs.map((job) => (
           <div
-            key={job.id}
+            key={job._id}
             className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
           >
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={job.image}
+                src={job.recruiterId.logoUrl}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
               <div>
-                <p className="font-semibold">{job.jobRole}</p>
-                <p className="font-semibold text-xs">{job.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{job.type}</p>
+                <p className="font-semibold">{job.jobId.role}</p>
+                <p className="font-semibold text-xs">{job.jobId.title}</p>
+                <p className="text-xs text-gray-500 capitalize">{job.jobId.jobType}</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <MapPin className="size-4" />
-                {job.location}
+                {job.jobId.location}
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4" />
-                {job.open_jobs} open jobs
+                {job.jobId.vacancies} open jobs
               </div>
             </div>
 
-            <button className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-gray-300 transition">
+            <button onClick={()=>navigate(`/job/homepage/${job.jobId._id}`)} className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-gray-300 transition">
               View Details
               <ArrowRight className="size-4" />
             </button>
@@ -141,7 +141,7 @@ const UserAppliedJobs = () => {
             {/* LEFT */}
             <div className="flex items-center gap-4">
               <img
-                src={job.image || iphonelogo}
+                src={job.recruiterId.logoUrl || iphonelogo}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />

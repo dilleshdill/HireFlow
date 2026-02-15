@@ -96,7 +96,7 @@ const UserProfileSchema = new mongoose.Schema(
     },
 
     biography: {
-        String,
+      type:String,
     },
 
     facebook: String,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../Components/Navbar.jsx";
-import { Layers, Briefcase,ChevronUp, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon, Book, SearchCheck } from "lucide-react";
+import { Layers, Briefcase,ChevronUp, Bell,Check ,CircleDashed, Settings, BriefcaseBusiness, Bookmark, ArrowRightIcon, MapPin, ArrowRight, ArrowLeftIcon, Book, SearchCheck, Building2 } from "lucide-react";
 import iphonelogo from '../assets/iphonelogo.png';
 import UserAppliedJobs from "../Components/UserAppliedJobs.jsx";
 import UserJobAlerts from "../Components/UserJobAlerts.jsx";
@@ -10,6 +10,9 @@ import MyRounds from "../Components/MyRounds.jsx";
 import { useEffect } from "react";
 import axios from "axios";
 import FindJobs from "./FindJobs.jsx";
+import FindCompanis from "./FindCompanis.jsx";
+import Sidebar from "../Components/Sidebar.jsx";
+import { useNavigate } from "react-router-dom";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -20,6 +23,7 @@ const UserDashboard = () => {
     const [appliedJobs , setAppliedJobs] = useState([])
     const [appledNo , setAppliedNo] = useState(0)
     const [savedNo , setSavedNo] = useState(0)
+    const navigate = useNavigate();
 
 
     const fetchFavoriteJobs = async () => {
@@ -77,6 +81,12 @@ const sidebarData = [
     value: "find-jobs",
   },
   {
+    id: 9,
+    icon: <Building2 />,
+    label: "Find Companies",
+    value: "find-companies",
+  },
+  {
     id: 3,
     icon: <Briefcase />,
     label: "Applied Jobs",
@@ -118,35 +128,12 @@ const sidebarData = [
       {/* <Navbar /> */}
 
       {/* Content wrapper */}
+      <div className="sm:hidden"><Sidebar selectedSidebar={selectedSidebar} setSelectedSidebar={setSelectedSidebar}/></div>
       <div className="flex flex-1 max-w-9xl mx-auto w-full px-4 py-4 gap-4">
 
         {/* Sidebar */}
-        <div className="w-64 pl-4 pt-4 pb-4 border-r border-gray-200  hidden sm:block sticky top-0 h-[calc(100vh-64px)]">
-
-            <p className="font-medium text-gray-600 pb-3 px-5">
-                Candidate Dashboard
-            </p>
-
-            <div className="flex flex-col gap-2 text-gray-600 text-sm">
-                {sidebarData.map((item) => (
-                <div
-                    key={item.id}
-                    onClick={() => {setSelectedSidebar(item.value); localStorage.setItem("userSideBar",item.value)}}
-                    className={`flex items-center gap-3 cursor-pointer p-2 px-7 
-                    hover:bg-gray-100
-                    ${
-                        selectedSidebar === item.value
-                        ? "border-l-4 border-[#0A65CC] text-[#0A65CC] bg-[#0A65CC]/10"
-                        : ""
-                    }
-                    `}
-                >
-                    <span className="text-lg">{item.icon}</span>
-                    <span>{item.label}</span>
-                </div>
-                ))}
-            </div>
-        </div>
+        <div className="hidden sm:flex"><Sidebar selectedSidebar={selectedSidebar} setSelectedSidebar={setSelectedSidebar} /></div>
+        
 
 
         {/* Main Content */}
@@ -268,29 +255,29 @@ const sidebarData = [
                     >
                         <div className="flex items-center gap-4 mb-4">
                         <img
-                            src={job.image}
+                            src={job.recruiterId.logoUrl}
                             alt="logo"
                             className="h-12 w-12 rounded-md object-contain"
                         />
                         <div>
-                            <p className="font-semibold">{job.jobRole}</p>
-                            <p className="font-semibold text-xs">{job.name}</p>
-                            <p className="text-xs text-gray-500 capitalize">{job.type}</p>
+                            <p className="font-semibold">{job.jobId.role}</p>
+                            <p className="font-semibold text-xs">{job.jobId.title}</p>
+                            <p className="text-xs text-gray-500 capitalize">{job.jobId.jobType}</p>
                         </div>
                         </div>
 
                         <div className="flex flex-col gap-2 text-sm text-gray-500">
                         <div className="flex items-center gap-2">
                             <MapPin className="size-4" />
-                            {job.location}
+                            {job.jobId.location}
                         </div>
                         <div className="flex items-center gap-2">
                             <Briefcase className="size-4" />
-                            {job.open_jobs} open jobs
+                            {job.jobId.vacancies} open jobs
                         </div>
                         </div>
 
-                        <button className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-gray-300 transition">
+                        <button onClick={()=>navigate(`/job/homepage/${job.jobId._id}`)} className="bg-gray-200 font-medium w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-gray-300 transition">
                         View Details
                         <ArrowRight className="size-4" />
                         </button>
@@ -308,7 +295,7 @@ const sidebarData = [
                         {/* LEFT */}
                         <div className="flex items-center gap-4">
                         <img
-                            src={job.image || iphonelogo}
+                            src={job.recruiterId.logoUrl || iphonelogo}
                             alt="logo"
                             className="h-12 w-12 rounded-md object-contain"
                         />
@@ -370,6 +357,10 @@ const sidebarData = [
 
             {selectedSidebar === "find-jobs" && (
                 <FindJobs />
+            )}
+
+            {selectedSidebar === "find-companies" && (
+                <FindCompanis />
             )}
 
             {selectedSidebar === "favorite-jobs" && (

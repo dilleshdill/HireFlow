@@ -5,31 +5,45 @@ import TestAttempt from "../model/testAttemptSchema.js"
 import User from "../model/user.js"
 import { UserProfile } from "../model/UserProfileModel.js"
 import ai from "../config/ai.js";
+import mongoose from "mongoose";
 
 
 // post a job
-export const postJob = async (req , res) => {
-    
-    try {
-        const payload = req.body;
-        console.log(payload)
-        // const userId = req.user.id
+export const postJob = async (req, res) => {
+  try {
+    const { payload } = req.body;
+    const userId = req.user.id
 
-        const user = await User.findById({_id:payload.postedBy})
-        if (!user){
-            return res.status(400).json({message:"user was not found"})
-        }
+    console.log("Job Data:", payload);
 
-        const newJob = await Job.create({
-            postedBy:payload.postedBy,
-            ...payload
-        })
+    const user = await User.findById(userId);
 
-        return res.status(200).json({job:newJob,message:"successfully posted the job"})
-    } catch (error) {
-        return res.status(500).json({message:"server error"})
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
-}
+
+    const postedBy = await RecruiterProfile.findOne({recruiterId:userId})
+
+    if(!postedBy){
+        return res.status(400).json({message:"complete profile first"})
+    }
+
+    const newJob = await Job.create({
+      ...payload,
+      postedBy:postedBy._id
+    });
+
+    return res.status(200).json({
+      job: newJob,
+      message: "Successfully posted the job"
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 // get all the jobs
 export const getAllJobs = async (req, res) => {
@@ -47,7 +61,7 @@ export const getAllJobs = async (req, res) => {
     const totalJobs = await Job.countDocuments(filter);
 
     const jobs = await Job.find(filter)
-      .populate("postedBy", "name email")
+      .populate("postedBy", "logoUrl")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -70,7 +84,7 @@ export const getJobById = async (req,res) => {
     try {
         const {jobId} = req.query;
 
-        const job = await Job.findById({_id:jobId}).populate('postedBy','name ')
+        const job = await Job.findById({_id:jobId}).populate('postedBy','logoUrl phoneNo companyWebSite ')
 
         if(!job){
             return res.status(400).json({message:"no jobs is found"})
@@ -86,7 +100,11 @@ export const getMyJobs = async (req,res) =>{
     
     try {
         const userId = req.user.id
-        const myJobs = await Job.find({postedBy:userId})
+        const profile = await RecruiterProfile.findOne({recruiterId:userId})
+        if(!profile){
+            return res.status(400).json({message:"complete profile first"})
+        }
+        const myJobs = await Job.find({postedBy:profile._id}).populate("postedBy","logoUrl")
         if(!myJobs){
             return res.status(400).json({message:"no jobs are found"})
         }
@@ -152,10 +170,15 @@ export const getComapanies = async (req , res) => {
 export const getCompanyJobs = async (req , res) => {
     try {
         const {id} = req.params;
+
+        console.log("id",id)
         if (!id){
             return res.status(400).json({message:"postedby is invalid"})
         }
-        const allJobs = await Job.find({postedBy:id})
+        
+        const profile = await RecruiterProfile.findOne({recruiterId:id})
+        console.log("profile",profile)
+        const allJobs = await Job.find({postedBy:profile._id}).populate("postedBy","logoUrl")
         if (!allJobs){
             return res.status(400).json({message:"no jobs are found"})
         }
@@ -166,43 +189,46 @@ export const getCompanyJobs = async (req , res) => {
 }
 
 // get all candidates for the particular jobId
-export const getCandidatesByJobId = async (req,res) => {
-    
-    try {
-        const {id} = req.params;
-        if(!id){
-            return res.status(400).json({message:"no jobId is found"})
-        }
-        const job = await Job.findById({_id:id}).select("applications").populate({
-            path:"applications.userId",
-            select:"-password -otp -otpExpiry"
-        })
-        if(!job){
-            return res.status(400).json({message:"no jobs found"})
-        }
+export const getCandidatesByJobId = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-        const userIds = job.applications.map(app => app.userId._id)
-
-        const profiles = await UserProfile.find({
-            userId: {$in: userIds}
-        })
-
-        const candidates = job.applications.map(app => {
-            const profile = profiles.find(
-                p => p.userId.toString() === app.userId._id.toString()
-            );
-
-            return{
-                ...app.userId.toObject(),
-                profile:profile || null
-            }
-        })
-
-        return res.status(200).json({candidates,message:"candidates are fetched"})
-    } catch (error) {
-        return res.status(500).json({message:error.message})
+    if (!id) {
+      return res.status(400).json({ message: "No jobId provided" });
     }
-}
+
+    const job = await Job.findById(id)
+      .select("applications")
+      .populate({
+        path: "applications.userId",
+        select: "title education experience location phoneNo websiteUrl userId _id",
+        populate: {
+          path: "userId",
+          select: "name email"
+        }
+      });
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const candidates = job.applications
+      .filter(app => app.userId)
+      .map(app => ({
+        profile: app.userId,
+        user: app.userId.userId
+      }));
+
+    return res.status(200).json({
+      message: "Candidates fetched successfully",
+      candidates
+    });
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 //fetch the questions of the respectie job\
 export const getJobQuestions = async (req , res) =>{
@@ -423,59 +449,66 @@ export const getUserTests = async(req,res) => {
     }
 }
 
+
+
 export const recommendedList = async (req, res) => {
-  console.log("enter in to the recommended list");
-
   try {
-    const userId = req.user.id;
-    const { title } = req.body;
+    const { jobId } = req.body;
 
-    const response = await ai.chat.completions.create({
-      model: "gpt-4o-mini",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a job recommendation engine. Suggest related job titles",
-        },
-        {
-          role: "user",
-          content: `
-              Job Title: ${title}
-              Skills: React, Node.js, MongoDB, Express
-              
-              Return JSON:
-              {
-                "relatedJobs": [
-                  {
-                    "title": "",
-                    "matchReason": ""
-                  }
-                ]
-              }
-          `,
-        },
-      ],
-    });
+    if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({ message: "Invalid Job ID" });
+    }
 
-    const related = JSON.parse(response.choices[0].message.content);
+    const currentJob = await Job.findById(jobId);
 
-    console.log("recommend details", related);
+    if (!currentJob) {
+      return res.status(404).json({ message: "Job not found" });
+    }
 
-    // ✅ SEND RESPONSE ONLY HERE
+    const relatedJobs = await Job.aggregate([
+      {
+        $match: {
+          _id: { $ne: currentJob._id },
+          isActive: true
+        }
+      },
+      {
+        $addFields: {
+          score: {
+            $add: [
+              { $size: { $setIntersection: ["$tags", currentJob.tags] } },
+              { $cond: [{ $eq: ["$role", currentJob.role] }, 2, 0] },
+              { $cond: [{ $eq: ["$jobLevel", currentJob.jobLevel] }, 1, 0] }
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          score: { $gt: 0 }
+        }
+      },
+      {
+        $sort: { score: -1, createdAt: -1 }
+      },
+      {
+        $limit: 5
+      }
+    ]);
+
     return res.status(200).json({
       success: true,
-      relatedJobs: related.relatedJobs,
+      relatedJobs
     });
 
   } catch (err) {
     console.error(err);
-
     return res.status(500).json({
       success: false,
-      message: "Failed to generate recommendations",
+      message: "Failed to fetch related jobs"
     });
   }
 };
+
+
 

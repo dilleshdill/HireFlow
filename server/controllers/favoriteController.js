@@ -1,24 +1,35 @@
 import Favorite from "../model/favorite.js";
+import Job from "../model/job.js";
+import { UserProfile } from "../model/UserProfileModel.js";
 
 
 
 // add to favorite
 export const addToFavorite = async (req , res) => {
+    console.log("enter")
     try {
         const userId = req.user.id;
         const {jobId} = req.body
-        
+
         if(!jobId){
             return res.status(400).json({message:"jobId is not found"})
         }
-        const existed = await Favorite.findOne({userId,jobId})
+        
+        const profile = await UserProfile.findOne({userId})
+        if(!profile){
+            return res.status(400).json({message:"complete profile first"})
+        }
+        const job = await Job.findById(jobId)
+
+        const existed = await Favorite.findOne({userId:profile._id,jobId , recruiterId:job.postedBy})
 
         if(existed){
             return res.status(400).json({message:"job already in favorites"})
         }
         const favorite = await Favorite.create({
-            userId,
-            jobId
+            userId:profile._id,
+            jobId ,
+            recruiterId:job.postedBy
         })
 
         return res.status(200).json({favorite,message:"added to the favorite"})
@@ -36,12 +47,23 @@ export const removeFavorite = async (req , res) => {
         if(!jobId){
             return res.status(400).json({message:"jobId is not found"})
         }
-        const existed = await Favorite.findOne({userId,jobId})
+        const profile = await UserProfile.findOne({userId})
+        if(!profile){
+            return res.status(400).json({message:"complete profile first"})
+        }
+        const jobDetails = await Job.findById(jobId)
+
+        const existed = await Favorite.findOne({userId:profile._id,jobId , recruiterId:jobDetails.postedBy})
         
         if(!existed){
             return res.status(400).json({message:"job not in favorite"})
         }
-        const job = await Favorite.findOneAndDelete({userId,jobId})
+        const favorite = await Favorite.findOneAndDelete({
+            userId: profile._id,
+            jobId: jobId,
+            recruiterId: jobDetails.postedBy
+        });
+
 
         return res.status(200).json({job,message:"job removed form favorites"})
 
@@ -59,20 +81,30 @@ export const savedJobs = async (req, res) => {
     const limit = Number(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    const totalJobs = await Favorite.countDocuments({ userId });
+    const profile = await UserProfile.findOne({userId})
+    if(!profile){
+        return res.status(400).json({message:"complete profile first"})
+    }
 
-    const favorites = await Favorite.find({ userId })
-      .populate({
-        path: "jobId",
-        select: "title role jobType location salary expirationDate isActive",
-        match: {
-          isActive: true,
-          expirationDate: { $gte: new Date() }
-        }
-      })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const totalJobs = await Favorite.countDocuments({ userId:profile._id });
+
+    const favorites = await Favorite.find({ userId:profile._id })
+        .populate({
+            path: "jobId",
+            select: "title role jobType location salary expirationDate isActive",
+            match: {
+            isActive: true,
+            expirationDate: { $gte: new Date() }
+            }
+        })
+        .populate({
+            path: "recruiterId",
+            select: "logoUrl"
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
 
     // Remove favorites where jobId became null (due to match filter)
     const validFavorites = favorites.filter(fav => fav.jobId !== null);

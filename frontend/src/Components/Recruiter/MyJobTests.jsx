@@ -22,12 +22,14 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import iphonelogo from "../../assets/iphonelogo.png";
+import Loader from "../Loader";
 
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const MyJobTests = () => {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const [jobs , setJobs] = useState([])
+  const [loading , setLoading] = useState(true)
   const navigate = useNavigate();
 
   const developerRoles = [
@@ -54,21 +56,26 @@ const MyJobTests = () => {
         }
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
+      }finally{
+        setLoading(false)
       }
     }
     fetchJobs();
   },[])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between p-2">
-        <p className="font-medium text-gray-700">Favorite Jobs(567)</p>
-        <div className="flex gap-4">
-          <button
-            onClick={() => setShowAllJobs((prev) => !prev)}
-            className="p-2 text-sm flex items-center justify-center text-gray-500 gap-2"
-          >
-            Job status
-          </button>
+        <h2 className="font-medium text-gray-700">My Tests ( {jobs.length} )</h2>
+        <div>
           <select className="border border-gray-200 px-3 py-2 rounded">
             <option value="" disabled>
               Select Role
@@ -93,22 +100,22 @@ const MyJobTests = () => {
       </div>
 
       {/* MOBILE VIEW (GRID CARDS) */}
-      {/* <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
+      <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
         {jobs.map((job) => (
           <div
-            key={job.id}
+            key={job._id}
             className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
           >
             <div className="flex items-center gap-4 mb-4">
               <img
-                src={job.image}
+                src={job.postedBy.logoUrl}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
               <div>
-                <p className="font-semibold">{job.jobRole}</p>
-                <p className="font-semibold text-xs">{job.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{job.type}</p>
+                <p className="font-semibold">{job.role}</p>
+                <p className="font-semibold text-xs">{job.jobLevel}</p>
+                <p className="text-xs text-gray-500 capitalize">{job.jobType}</p>
               </div>
             </div>
 
@@ -119,17 +126,17 @@ const MyJobTests = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="size-4" />
-                {job.open_jobs} open jobs
+                {job.vacancies} open jobs
               </div>
             </div>
 
-            <button className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
-              Open positions
+            <button onClick={()=>navigate(`/questions-setup/${job._id}`)} className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
+              Add Test Details
               <ArrowRight className="size-4" />
             </button>
           </div>
         ))}
-      </div> */}
+      </div>
 
       {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
       <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
@@ -141,7 +148,7 @@ const MyJobTests = () => {
             {/* LEFT */}
             <div className="flex items-center gap-4">
               <img
-                src={job.image || iphonelogo}
+                src={job.postedBy.logoUrl || iphonelogo}
                 alt="logo"
                 className="h-12 w-12 rounded-md object-contain"
               />
@@ -172,7 +179,7 @@ const MyJobTests = () => {
             <div className="flex items-center justify-between w-110">
               <div className="flex items-center justify-center gap-1 text-gray-400">
                 <Users2 className="size-4" />
-                <p className="text-sm "> 365 Applications</p>
+                <p className="text-sm "> {job.applications.length} Applications</p>
               </div>
               {job.isActive === true ? (
                 <div className="flex items-center justify-center gap-1 text-green-600">

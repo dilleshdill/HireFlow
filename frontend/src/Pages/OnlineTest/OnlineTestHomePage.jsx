@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const OnlineTestHomePage = () => {
@@ -17,12 +18,13 @@ const OnlineTestHomePage = () => {
   const [jobStatus, setJobStatus] = useState("start");
   const navigate = useNavigate();
   const [job, setJob] = useState({});
+  const [relatedJobs , setRelatedJobs] = useState([])
 
-  const fetchRecommendJob = async(title) => {
+  const fetchRecommendJob = async() => {
 
     try{
       const response = await axios.post(DOMAIN + '/api/job/recommended-list',
-        {title},
+        {jobId:id},
         {
           withCredentials:true
         }
@@ -30,6 +32,7 @@ const OnlineTestHomePage = () => {
       
       if(response.status === 200){
         console.log(response.data)
+        setRelatedJobs(response.data.relatedJobs)
       }
     }catch(err){
       console.log(err)
@@ -55,7 +58,7 @@ const OnlineTestHomePage = () => {
             setJobStatus("start")
         }
         setJob(response.data.job)
-        fetchRecommendJob(response.data.job.title)
+        fetchRecommendJob()
       }
     } catch (err) {
       console.log(err.msg);
@@ -66,11 +69,12 @@ const OnlineTestHomePage = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id]);
 
   return (
     <div>
       <div className="min-h-screen flex max-w-7xl mx-auto gap-3">
+        
         <div className="flex flex-col h-fit max-w-4xl w-full gap-3">
           <div className="flex flex-col bg-white rounded-xl shadow-2xl p-5">
             <img
@@ -225,168 +229,80 @@ const OnlineTestHomePage = () => {
             <h1 className="text-gray-600 font-semibold text-lg">
               Similar contests
             </h1>
-            <div className="flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl">
-              <div className="flex items-center bg-white">
-                <img src={hireflow} className="h-15 w-15 rounded-xl" />
-                <div>
-                  <h1 className="text-xl font-medium text-gray-900">
-                    Deloite National Test
-                  </h1>
-                  <p className="text-md text-gray-600">Hireflow campus</p>
+            {relatedJobs?.map((job) => (
+              <div
+                key={job._id}
+                onClick={()=>navigate(`/job/homepage/${job._id}`)}
+                className="flex flex-col border border-gray-200 h-fit bg-white rounded-xl px-4 py-6 gap-3 shadow-xl"
+              >
+                {/* Top Section */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src={hireflow}
+                    className="h-14 w-14 rounded-xl object-cover"
+                    alt="company"
+                  />
+                  <div>
+                    <h1 className="text-xl font-medium text-gray-900">
+                      {job.title}
+                    </h1>
+                    <p className="text-md text-gray-600">
+                      {job.role} • {job.location}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex flex-wrap gap-3">
-                <h1 className="flex text-gray-400 mb-0">
-                  Roundes :{" "}
-                  <span className="flex text-gray-500 font-normal">1</span>
-                </h1>
-                <h1 className="flex text-gray-400 mb-0">
-                  Duration :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    07 Feb to 07 Feb
-                  </span>
-                </h1>
-                <h1 className="flex text-gray-400 mt-0">
-                  Partipation :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    Individual
-                  </span>
-                </h1>
-              </div>
+                {/* Job Info */}
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <p className="text-gray-500">
+                    Experience: <span className="text-gray-700">{job.experience}</span>
+                  </p>
+                  <p className="text-gray-500">
+                    Type: <span className="text-gray-700">{job.jobType}</span>
+                  </p>
+                  <p className="text-gray-500">
+                    Level: <span className="text-gray-700">{job.jobLevel}</span>
+                  </p>
+                </div>
 
-              <div className="flex flex-wrap gap-3">
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">cgl</h1>
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {job.tags?.map((tag, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-200 rounded-xl px-2 py-1"
+                    >
+                      <p className="text-sm text-gray-500">{tag}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">gate</h1>
-                </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">exam</h1>
-                </div>
-              </div>
 
-              <div className="border border-dashed border-gray-300 "></div>
+                <div className="border border-dashed border-gray-300"></div>
 
-              <div className="flex gap-3">
-                <div className="flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1">
-                  <MdOutlineAccountCircle size={16} />
-                  <p className="text-sm">5798 Applied</p>
+                {/* Bottom Section */}
+                <div className="flex justify-between items-center flex-wrap gap-2">
+                  <div className="flex border border-gray-200 rounded-xl font-medium text-indigo-700 items-center px-2 py-1 gap-1">
+                    <MdOutlineAccountCircle size={16} />
+                    <p className="text-sm">
+                      {job.applications?.length || 0} Applied
+                    </p>
+                  </div>
+
+                  <p className="text-gray-500 text-sm">
+                    Expires:{" "}
+                    {new Date(job.expirationDate).toLocaleDateString()}
+                  </p>
                 </div>
-                <p className="flex text-gray-500">
-                  Reg. Closes on Feb 07.10 pm
+
+                {/* Salary */}
+                <p className="text-indigo-600 font-medium text-sm">
+                  ₹ {job.salary.min.toLocaleString()} - ₹{" "}
+                  {job.salary.max.toLocaleString()} / {job.salary.type}
                 </p>
               </div>
-            </div>
-            <div className="flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl">
-              <div className="flex items-center bg-white">
-                <img src={hireflow} className="h-15 w-15 rounded-xl" />
-                <div>
-                  <h1 className="text-xl font-medium text-gray-900">
-                    Deloite National Test
-                  </h1>
-                  <p className="text-md text-gray-600">Hireflow campus</p>
-                </div>
-              </div>
+            ))}
 
-              <div className="flex flex-wrap gap-3">
-                <h1 className="flex text-gray-400 mb-0">
-                  Roundes :{" "}
-                  <span className="flex text-gray-500 font-normal">1</span>
-                </h1>
-                <h1 className="flex text-gray-400 mb-0">
-                  Duration :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    07 Feb to 07 Feb
-                  </span>
-                </h1>
-                <h1 className="flex text-gray-400 mt-0">
-                  Partipation :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    Individual
-                  </span>
-                </h1>
-              </div>
 
-              <div className="flex flex-wrap gap-3">
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">cgl</h1>
-                </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">gate</h1>
-                </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">exam</h1>
-                </div>
-              </div>
-
-              <div className="border border-dashed border-gray-300 "></div>
-
-              <div className="flex gap-3">
-                <div className="flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1">
-                  <MdOutlineAccountCircle size={16} />
-                  <p className="text-sm">5798 Applied</p>
-                </div>
-                <p className="flex text-gray-500">
-                  Reg. Closes on Feb 07.10 pm
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col border border-gray-200 h-fit p-4 bg-white rounded-xl px-4 py-6 gap-3 shadow-xl">
-              <div className="flex items-center bg-white">
-                <img src={hireflow} className="h-15 w-15 rounded-xl" />
-                <div>
-                  <h1 className="text-xl font-medium text-gray-900">
-                    Deloite National Test
-                  </h1>
-                  <p className="text-md text-gray-600">Hireflow campus</p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <h1 className="flex text-gray-400 mb-0">
-                  Roundes :{" "}
-                  <span className="flex text-gray-500 font-normal">1</span>
-                </h1>
-                <h1 className="flex text-gray-400 mb-0">
-                  Duration :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    07 Feb to 07 Feb
-                  </span>
-                </h1>
-                <h1 className="flex text-gray-400 mt-0">
-                  Partipation :{" "}
-                  <span className="flex text-gray-500 font-normal">
-                    Individual
-                  </span>
-                </h1>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">cgl</h1>
-                </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">gate</h1>
-                </div>
-                <div className="border border-gray-200 rounded-xl px-2.5">
-                  <h1 className="text-md text-gray-400 text-center">exam</h1>
-                </div>
-              </div>
-
-              <div className="border border-dashed border-gray-300 "></div>
-
-              <div className="flex gap-3">
-                <div className="flex border border-gray-200 rounded-xl font-medium text-indigo-700 w-fit items-center px-2 py-1 gap-1">
-                  <MdOutlineAccountCircle size={16} />
-                  <p className="text-sm">5798 Applied</p>
-                </div>
-                <p className="flex text-gray-500">
-                  Reg. Closes on Feb 07.10 pm
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

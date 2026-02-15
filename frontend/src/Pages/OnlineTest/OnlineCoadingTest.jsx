@@ -147,13 +147,14 @@ const OnlineCodingTest = () => {
     },{
       withCredentials:true
     })
-    if (response.status === 200){
-      if(response.data.score === response.data.codingTotal){
-        setSubmittedOutput(true)
-      }
-      else{
-        setErrorOutput(true)
-      }
+    if (response.status === 200 || response.status === 409){
+      setSubmittedOutput(true)
+      // if(response.data.score === response.data.codingTotal){
+      //   setSubmittedOutput(true)
+      // }
+      // else{
+      //   setErrorOutput(true)
+      // }
     }
     }catch(err){
 
@@ -578,7 +579,7 @@ const OnlineCodingTest = () => {
               <button
                 type="button"
                 className="w-full md:w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 font-medium text-sm hover:bg-gray-100"
-                onClick={() => setFinishModel(false)}
+                onClick={() => {setFinishModel(false);}}
               >
                 Cancel
               </button>

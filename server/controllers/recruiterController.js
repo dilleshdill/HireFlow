@@ -45,24 +45,44 @@ export const uploadDetailes = async (req, res) => {
 
     const updateFields = {};
 
-    if (data.location) updateFields.location = data.location;
-    if (data.phone) updateFields.phoneNo = data.phoneNo;
-    if (data.companyName) updateFields.companyName = data.companyName;
-    if (data.aboutUs) updateFields.aboutUs = data.aboutUs;
-    if (data.organizationType) updateFields.organizationType = data.organizationType;
-    if (data.industryTypes) updateFields.industryTypes = data.industryTypes;
+if (data.companyName) updateFields.companyName = data.companyName;
 
-    if (data.teamSizes) updateFields.teamSize = data.teamSizes;
-    if (data.yearOfEstablishment) updateFields.yearOfEstablishment = data.yearOfEstablishment;
+if (data.aboutUs) updateFields.aboutUs = data.aboutUs;
 
-    if (data.companyWebsite) updateFields.companyWebsite = data.companyWebsite;
-    if (data.vision) updateFields.vision = data.vision;
+if (data.organizationType)
+  updateFields.organizationType = data.organizationType;
 
-    if (data.facebook) updateFields.facebook = data.facebook;
-    if (data.instagram) updateFields.instagram = data.instagram;
-    if (data.twitter) updateFields.twitter = data.twitter;
-    if (data.youtube) updateFields.youtube = data.youtube;
-    if (data.linkedin) updateFields.linkedin = data.linkedin;
+// ⚠️ Fix here
+if (data.industryTypes)
+  updateFields.industryType = data.industryTypes;
+
+// ⚠️ Fix here
+if (data.teamSizes)
+  updateFields.teamsize = data.teamSizes;
+
+// ⚠️ Fix here
+if (data.companyWebsite)
+  updateFields.companyWebSite = data.companyWebsite;
+
+if (data.yearofEstablishment) {
+  updateFields.yearofEstablishment = new Date(data.yearofEstablishment);
+}
+
+
+if (data.logoUrl) updateFields.logoUrl = data.logoUrl;
+if (data.bannerUrl) updateFields.bannerUrl = data.bannerUrl;
+
+if (data.vision) updateFields.vision = data.vision;
+
+if (data.location) updateFields.location = data.location;
+if (data.phoneNo) updateFields.phoneNo = data.phoneNo;
+
+if (data.facebook) updateFields.facebook = data.facebook;
+if (data.instagram) updateFields.instagram = data.instagram;
+if (data.twitter) updateFields.twitter = data.twitter;
+if (data.youtube) updateFields.youtube = data.youtube;
+
+
 
     if (existingProfile) {
       await RecruiterProfile.updateOne(
@@ -82,7 +102,7 @@ export const uploadDetailes = async (req, res) => {
     console.log(err);
     return res.status(500).json({ error: err.message });
   }
-};
+}; 
 
 // get the profile
 export const getRecruiterProfile = async(req , res) => {
@@ -108,7 +128,7 @@ export const saveCandidate = async (req , res) => {
     const recruiterId = req.user.id;
     const {userId} = req.body;
     console.log(userId,recruiterId)
-    if(!userId){
+    if(!userId){ 
       return res.status(400).json({message:"all fields are required"})
     }
     const existed = await SavedCandidates.findOne({recruiterId,userId})
@@ -153,20 +173,35 @@ export const removeCandidate = async (req , res) => {
 }
 
 //fetch saved candidates 
-export const fetchSavedCandidates = async (req , res) => {
+export const fetchSavedCandidates = async (req, res) => {
   try {
-    const recruiterId = req.user.id
-    const savedCandidates = await SavedCandidates.find({recruiterId})
+    const recruiterId = req.user.id;
 
-    if(!saveCandidate){
-      return res.status(400).json({message:"no saved candidates"})
+const savedCandidates = await SavedCandidates.find({ recruiterId })
+  .populate({
+    path: "userId", // UserProfile
+    select: "title education experience location phoneNo websiteUrl biography userId",
+    populate: {
+      path: "userId", // THIS is the User model
+      select: "name email"
+    }
+  });
+
+
+    if (!savedCandidates || savedCandidates.length === 0) {
+      return res.status(404).json({ message: "No saved candidates" });
     }
 
-    return res.status(200).json({savedCandidates,message:"fetch successfully"})
+    return res.status(200).json({
+      message: "Fetched successfully",
+      savedCandidates
+    });
+
   } catch (error) {
-    return res.status(500).json({message:error.message})
+    return res.status(500).json({ message: error.message });
   }
-}
+};
+
 
 // get saved candidates
 export const getSavedCandidates = async (req, res) => {

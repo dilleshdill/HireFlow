@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "./Loader";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -62,6 +63,7 @@ const statusStyles = {
 
 const MyRounds = () => {
   const [results,setResults] = useState([])
+  const [loading , setLoading] = useState(true)
 
   
   const fetchData = async() => {
@@ -75,12 +77,23 @@ const MyRounds = () => {
       }
     }catch(err){
       console.log(err)
+    }finally{
+      setLoading(false)
     }
   }
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchData()
   },[])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
+
 
   const clearedCount = results.filter(r => r.status === "EVALUATED").length;
   const pendingCount = myRounds.filter(r => r.status === "SUBMITTED").length;
@@ -126,7 +139,7 @@ const MyRounds = () => {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {results.map((round) => (
           <div
-            key={round.id}
+            key={round._id}
             className="border border-gray-200 rounded-lg hover:border-gray-300 transition-colors bg-white"
           >
 
@@ -134,7 +147,7 @@ const MyRounds = () => {
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{round.jobId.role}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{round.jobRole}</p>
+                  <p className="text-sm text-gray-600 mt-1">{round.jobId.title}</p>
                 </div>
                 <span
                   className={`px-3 py-1 text-xs font-medium rounded-full ${statusStyles[round.status]}`}

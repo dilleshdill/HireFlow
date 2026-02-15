@@ -522,7 +522,7 @@ const FindJobCard = () => {
                   <div className="flex flex-col sm:flex-row gap-4 sm:flex-1">
                     {/* Logo */}
                     <img
-                      src={iphonelogo}
+                      src={job.postedBy.logoUrl || iphonelogo}
                       alt="logo"
                       className="h-14 w-14 rounded-lg object-contain"
                     />

@@ -23,11 +23,21 @@ import RecruiterPostedJobs from "../Components/Recruiter/RecruiterPostedJobs.jsx
 import SavedCandidates from "../Components/Recruiter/SavedCandidates.jsx";
 import MyJobTests from "../Components/Recruiter/MyJobTests.jsx";
 import { useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import RecruiterSidebar from "../Components/Recruiter/RecruiterSidebar.jsx";
 
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const RecruiterDashboard = () => {
 
     const [selectedSidebar , setSelectedSidebar] = useState('overview')
     const [showAllJobs, setShowAllJobs] = useState(false);
+    const [jobs , setJobs] = useState([]);
+    const [jobNo , setJobNo] = useState(0);
+    const [savedNo , setSavedNo] = useState(0);
+    const [savedCandidates , setSavedCandidates] = useState([])
+    const navigate = useNavigate();
 
   useEffect(() => {
     const savedSidebar = localStorage.getItem("sideBar");
@@ -36,18 +46,45 @@ const RecruiterDashboard = () => {
     }
   }, []);
 
+  useEffect(()=>{
+    const fetchJobs = async() => {
+      try {
+        const response = await axios.get(DOMAIN + '/api/job/my-jobs' , {withCredentials:true})
+
+        if(response.status === 200){
+          console.log(response.data)
+          setJobs(response.data.jobs)
+          setJobNo(response.data.jobs.length)
+        }
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+      }
+    }
+
+    const fetchSavedCandidates = async () => {
+            try {
+              const response = await axios.get(DOMAIN + '/api/recruiter/get-all-savedCandidates',{withCredentials:true})
+              if(response.status === 200){
+                console.log(response.data.savedCandidates)
+                setSavedNo(response.data.savedCandidates.length)
+                setSavedCandidates(response.data.savedCandidates)
+              }
+            } catch (error) {
+              console.log(error.message)
+            }
+          }
+
+    fetchJobs();
+    fetchSavedCandidates();
+    
+  },[])
+
   const sidebarData = [
     {
       id: 1,
       icon: <LayoutDashboard />,
       label: "Overview",
       value: "overview",
-    },
-    {
-      id: 2,
-      icon: <User />,
-      label: "Profile",
-      value: "profile",
     },
     {
       id: 3,
@@ -68,18 +105,6 @@ const RecruiterDashboard = () => {
       value: "saved-candidates",
     },
     {
-      id: 6,
-      icon: <Users />,
-      label: "Employee Profile",
-      value: "employee-profile",
-    },
-    {
-      id: 7,
-      icon: <Building2 />,
-      label: "All Companies",
-      value: "all-companies",
-    },
-    {
       id: 8,
       icon: <Settings />,
       label: "Settings",
@@ -93,162 +118,19 @@ const RecruiterDashboard = () => {
     },
   ];
 
-  const jobs = [
-    {
-      id: 1,
-      name: "Tech Solutions Inc.",
-      jobRole: "Frontend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png",
-      location: "San Francisco, CA",
-      status: "active",
-      type: "full-time",
-      salary: "$120,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-05",
-    },
-    {
-      id: 2,
-      name: "Innovatech Corp.",
-      jobRole: "Full Stack Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968292.png",
-      location: "New York, NY",
-      status: "pending",
-      type: "remote",
-      salary: "$95,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-08",
-    },
-    {
-      id: 3,
-      name: "Global Enterprises",
-      jobRole: "Backend Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968672.png",
-      location: "Chicago, IL",
-      status: "active",
-      type: "part-time",
-      salary: "$45 / hour",
-      applied:"786",
-      dateApplied: "2025-01-10",
-    },
-    {
-      id: 4,
-      name: "Creative Minds LLC",
-      jobRole: "UI/UX Designer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968267.png",
-      location: "Austin, TX",
-      status: "pending",
-      type: "full-time",
-      salary: "$105,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-12",
-    },
-    {
-      id: 5,
-      name: "CloudNine Systems",
-      jobRole: "DevOps Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968282.png",
-      location: "Seattle, WA",
-      status: "active",
-      type: "remote",
-      applied:"786",
-      salary: "$110,000 / year",
-      dateApplied: "2025-01-15",
-    },
-    {
-      id: 6,
-      name: "NextGen Innovations",
-      jobRole: "QA Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968295.png",
-      location: "Boston, MA",
-      status: "pending",
-      type: "part-time",
-      applied:"786",
-      salary: "$40 / hour",
-      dateApplied: "2025-01-17",
-    },
-    {
-      id: 7,
-      name: "Apex Technologies",
-      jobRole: "Software Engineer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968300.png",
-      location: "Denver, CO",
-      status: "active",
-      type: "full-time",
-      salary: "$98,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-19",
-    },
-    {
-      id: 8,
-      name: "Bright Future Labs",
-      jobRole: "Data Scientist",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968312.png",
-      location: "Los Angeles, CA",
-      status: "pending",
-      type: "remote",
-      salary: "$115,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-21",
-    },
-    {
-      id: 9,
-      name: "Summit Solutions",
-      jobRole: "Product Manager",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968321.png",
-      location: "Dallas, TX",
-      status: "active",
-      type: "full-time",
-      salary: "$90,000 / year",
-      applied:"786",
-      dateApplied: "2025-01-23",
-    },
-    {
-      id: 10,
-      name: "BlueWave Tech",
-      jobRole: "Mobile App Developer",
-      image: "https://cdn-icons-png.flaticon.com/512/5968/5968330.png",
-      location: "Miami, FL",
-      status: "pending",
-      type: "part-time",
-      salary: "$42 / hour",
-      applied:"786",
-      dateApplied: "2025-01-25",
-    },
-  ];
-
   const visibleJobs = showAllJobs ? jobs : jobs.slice(0,4)
 
 
   return (
     <div className="min-h-screen flex flex-col">
+      <div className="sm:hidden">
+          <RecruiterSidebar selectedSidebar={selectedSidebar} setSelectedSidebar={setSelectedSidebar} />
+        </div>
       <div className="flex flex-1 max-w-9xl mx-auto w-full px-4 py-4 gap-4">
 
         {/* Sidebar */}
-        <div className="w-64 pl-4 pt-4 pb-4 border-r border-gray-200  hidden sm:block sticky top-0 h-[calc(100vh-64px)]">
-
-            <p className="font-medium text-gray-600 pb-3 px-5">
-                Candidate Dashboard
-            </p>
-
-            <div className="flex flex-col gap-2 text-gray-600 text-sm">
-                {sidebarData.map((item) => (
-                <div
-                    key={item.id}
-                    onClick={() => {setSelectedSidebar(item.value); localStorage.setItem("sideBar",item.value)}}
-                    className={`flex items-center gap-3 cursor-pointer p-2 px-7 
-                    hover:bg-gray-100
-                    ${
-                        selectedSidebar === item.value
-                        ? "border-l-4 border-[#0A65CC] text-[#0A65CC] bg-[#0A65CC]/10"
-                        : ""
-                    }
-                    `}
-                >
-                    <span className="text-lg">{item.icon}</span>
-                    <span>{item.label}</span>
-                </div>
-                ))}
-            </div>
+        <div className="hidden sm:flex">
+          <RecruiterSidebar selectedSidebar={selectedSidebar} setSelectedSidebar={setSelectedSidebar} />
         </div>
 
 
@@ -267,7 +149,7 @@ const RecruiterDashboard = () => {
                     {/* Applied Jobs */}
                     <div className="bg-blue-50 rounded-lg p-4 flex items-center justify-between">
                     <div>
-                        <p className="text-xl font-semibold">589</p>
+                        <p className="text-xl font-semibold">{jobNo}</p>
                         <p className="text-sm text-gray-500">Open Jobs</p>
                     </div>
                     <div className="p-3 bg-white rounded-md">
@@ -278,7 +160,7 @@ const RecruiterDashboard = () => {
                     {/* Saved Jobs */}
                     <div className="bg-orange-100 rounded-lg p-4 flex items-center justify-between">
                     <div>
-                        <p className="text-xl font-semibold">120</p>
+                        <p className="text-xl font-semibold">{savedNo}</p>
                         <p className="text-sm text-gray-500">Saved Candidates</p>
                     </div>
                     <div className="p-3 bg-white rounded-md">
@@ -348,18 +230,18 @@ const RecruiterDashboard = () => {
                     <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
                     {visibleJobs.map((job) => (
                         <div
-                        key={job.id}
+                        key={job._id}
                         className="bg-white p-5 rounded-lg border border-gray-200 hover:shadow-md transition"
                         >
                         <div className="flex items-center gap-4 mb-4">
                             <img
-                            src={job.image}
+                            src={job.postedBy.logoUrl}
                             alt="logo"
                             className="h-12 w-12 rounded-md object-contain"
                             />
                             <div>
-                                <p className="font-semibold">{job.jobRole}</p>
-                            <p className="font-semibold text-xs">{job.name}</p>
+                                <p className="font-semibold">{job.role}</p>
+                            <p className="font-semibold text-xs">{job.jobType}</p>
                             <p className="text-xs text-gray-500 capitalize">
                                 {job.type}
                             </p>
@@ -373,12 +255,14 @@ const RecruiterDashboard = () => {
                             </div>
                             <div className="flex items-center gap-2">
                             <Briefcase className="size-4" />
-                            {job.open_jobs} open jobs
+                            {job.vacancies} open jobs
                             </div>
                         </div>
 
-                        <button className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
-                            Open positions
+                        <button
+                        onClick={()=>navigate(`/find-candidates/${job._id}`)}
+                        className="bg-blue-200 w-full mt-4 px-4 py-2 flex items-center justify-center gap-2 text-blue-500 rounded-md hover:bg-blue-300 transition">
+                            View Applications
                             <ArrowRight className="size-4" />
                         </button>
                         </div>
@@ -389,23 +273,23 @@ const RecruiterDashboard = () => {
                     <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
                     {visibleJobs.map((job) => (
                         <div
-                        key={job.id}
+                        key={job._id}
                         className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
                         >
                         {/* LEFT */}
                         <div className="flex items-center gap-4">
                             <img
-                            src={job.image}
+                            src={job.postedBy.logoUrl}
                             alt="logo"
                             className="h-12 w-12 rounded-md object-contain"
                             />
 
                             <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
-                                <p className="font-semibold">{job.jobRole}</p>
+                                <p className="font-semibold">{job.role}</p>
                                 
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
-                                {job.type}
+                                {job.jobType}
                                 </span>
                             </div>
                             
@@ -417,7 +301,7 @@ const RecruiterDashboard = () => {
                                 </div>
                                 <div className="flex items-center gap-1">
                                 <Briefcase className="size-4" />
-                                {job.open_jobs} open jobs
+                                {job.vacancies} open jobs
                                 </div>
                             </div>
                             </div>
@@ -427,23 +311,26 @@ const RecruiterDashboard = () => {
                         <div className="flex items-center justify-between w-110">
                             <div className="flex items-center justify-center gap-1 text-gray-400">
                               <Users2 className="size-4" />
-                              <p className="text-sm ">{job.applied} Applications</p>
+                              <p className="text-sm ">{job.applications.length} Applications</p>
                             </div>
-                            {job.status === 'active' ? (
+                            {job.isActive ? (
                                 <div className="flex items-center justify-center gap-1 text-green-600">
                                     <Check className="size-4" />
-                                    <p className="text-sm ">{job.status}</p>
+                                    <p className="text-sm ">Active</p>
                                 </div>
                             ):(
                                 <div className="flex items-center justify-center text-orange-400 gap-2">
                                     <CircleDashed className="size-3" />
-                                    <p className="text-sm">{job.status}</p>
+                                    <p className="text-sm">Expired</p>
                                 </div>
                             )}
                             
                             
                             <div className="flex gap-2">
-                              <button className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
+                              <button
+                              onClick={()=>navigate(`/find-candidates/${job._id}`)}
+                              
+                              className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
                                 View Applications
                               </button>
                               <button className="flex items-center text-sm text-gray-500 font-medium">

@@ -5,11 +5,13 @@ import { useEffect } from "react";
 import axios from "axios";
 import iphonelogo from "../assets/iphonelogo.png";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Components/Loader.jsx";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const FindCompanis = () => {
   const [organization, setOrganization] = useState("");
   const [companies , setCompanies] = useState([])
+  const [loading , setLoading] = useState(true)
   const navigate = useNavigate();
 
   // const companies = [
@@ -72,14 +74,25 @@ const organizations = [
         }
       } catch (error) {
         console.log(error.message)
+      }finally{
+        setLoading(false)
       }
     }
 
     fetchCompanies();
   },[])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <Loader />
+      </div>
+    );
+  }
+
+
   return (
     <>
-      <Navbar />
 
       <div className="w-full ">
         <div className="max-w-7xl mx-auto px-4 py-6">
@@ -94,7 +107,7 @@ const organizations = [
           {/* Main Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* LEFT FILTER */}
-            <div className="bg-white p-4 rounded-lg border border-gray-200 h-fit">
+            {/* <div className="bg-white p-4 rounded-lg border border-gray-200 h-fit">
               <p className="font-semibold mb-4">Organization Type</p>
 
               <div className="flex flex-col gap-3 text-gray-600">
@@ -130,7 +143,7 @@ const organizations = [
                   Clear Filter
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* MOBILE VIEW (GRID CARDS) */}
             <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:hidden">
@@ -141,7 +154,7 @@ const organizations = [
                 >
                   <div className="flex items-center gap-4 mb-4">
                     <img
-                      src={company.image || iphonelogo}
+                      src={company.logoUrl || iphonelogo}
                       alt="logo"
                       className="h-12 w-12 rounded-md object-contain"
                     />
@@ -175,7 +188,7 @@ const organizations = [
             </div>
 
             {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
-            <div className="hidden sm:flex lg:col-span-3 flex-col gap-4">
+            <div className="hidden sm:flex lg:col-span-5 flex-col gap-4">
               {filteredCompanies.map((company) => (
                 <div
                   key={company._id}
@@ -184,7 +197,7 @@ const organizations = [
                   {/* LEFT */}
                   <div className="flex items-center gap-4">
                     <img
-                      src={company.image || iphonelogo}
+                      src={company.logoUrl || iphonelogo}
                       alt="logo"
                       className="h-12 w-12 rounded-md object-contain"
                     />
