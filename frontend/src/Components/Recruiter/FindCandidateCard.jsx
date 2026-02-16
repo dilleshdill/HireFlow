@@ -1,5 +1,6 @@
 import React from "react";
 import iphonelogo from "../../assets/iphonelogo.png";
+import userIcon from "../../assets/userIcon.png"
 
 import {
   ArrowRight,
@@ -117,7 +118,7 @@ const FindCandidateCard = () => {
               <div className="flex  gap-4 sm:flex-1 sm:items-center">
                 {/* Logo */}
                 <img
-                  src={item.userLogo || iphonelogo}
+                  src={item.userLogo || userIcon}
                   alt="logo"
                   className="h-14 w-14 rounded-lg object-contain"
                 />

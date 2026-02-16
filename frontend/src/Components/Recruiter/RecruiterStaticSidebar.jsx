@@ -102,7 +102,8 @@ const RecruiterStaticSidebar = () => {
           Recruiter Dashboard
         </p>
 
-        <div className="flex flex-col gap-2 text-gray-600 text-sm px-2">
+        <div className="flex flex-col justify-between min-h-[80vh]">
+          <div className="flex flex-col gap-2 text-gray-600 text-sm px-2">
           {sidebarData.map((item) => (
             <div
               key={item.id}
@@ -131,6 +132,7 @@ const RecruiterStaticSidebar = () => {
                   </button>
                   
                 </div>
+        </div>
       </div>
     </>
   );
