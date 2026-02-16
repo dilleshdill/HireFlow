@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import useAntiCheat from "./useAntiCheating";
-import Chatimage from "../../assets/Chatimage.jpg";
+import Chatimage from "../../assets/ChatImage.jpg";
 import { Send } from "lucide-react";
 import { SyncLoader } from "react-spinners";
 import Loader from '../../Components/Loader.jsx'
