@@ -24,9 +24,10 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import iphonelogo from "../../assets/iphonelogo.png";
+import userIcon from "../../assets/userIcon.png";
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader';
-
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const SavedCandidates = () => {
@@ -78,7 +79,6 @@ const SavedCandidates = () => {
         try {
           const response = await axios.get(DOMAIN + '/api/recruiter/get-all-savedCandidates',{withCredentials:true})
           if(response.status === 200){
-            console.log(response.data.savedCandidates)
             setSavedCandidates(response.data.savedCandidates)
           }
         } catch (error) {
@@ -97,13 +97,13 @@ const SavedCandidates = () => {
     try {
       const response = await axios.post(DOMAIN + '/api/recruiter/remove-candidate',{userId},{withCredentials:true})
       if(response.status === 200){
-        console.log(response.data)
+        toast.success("removed successfully")
         setSavedCandidates((prev) =>
           prev.filter((saved) => saved.userId?._id !== userId)
         );
       }
     } catch (error) {
-      console.log(error.message)
+      toast.success("error to remove")
     }
   }
 
@@ -172,7 +172,7 @@ const SavedCandidates = () => {
 
                 {/* Logo */}
                 <img
-                  src={candidate.userLogo || iphonelogo}
+                  src={candidate.userLogo || userIcon}
                   alt="logo"
                   className="h-14 w-14 rounded-lg object-contain"
                 />

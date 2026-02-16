@@ -38,7 +38,6 @@ const UserAppliedJobs = () => {
           }
           ,withCredentials:true})
         if(response.status === 200){
-          console.log(response.data.jobs)
           setAppliedJobs(response.data.jobs)
         }
       } catch (error) {
@@ -132,80 +131,92 @@ const UserAppliedJobs = () => {
       </div>
 
       {/* LAPTOP / DESKTOP VIEW (ONE CARD PER ROW) */}
-      <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
-        {visibleJobs.map((job) => (
-          <div
-            key={job._id}
-            className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
-          >
-            {/* LEFT */}
-            <div className="flex items-center gap-4">
-              <img
-                src={job.recruiterId.logoUrl || iphonelogo}
-                alt="logo"
-                className="h-12 w-12 rounded-md object-contain"
-              />
+      <div className="flex flex-col justify-between min-h-[75vh]">
+        <div className="hidden sm:flex lg:col-span-3 flex-col gap-4 pt-3">
+          {visibleJobs.map((job) => (
+            <div
+              key={job._id}
+              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition"
+            >
+              {/* LEFT */}
+              <div className="flex items-center gap-4">
+                <img
+                  src={job.recruiterId.logoUrl || iphonelogo}
+                  alt="logo"
+                  className="h-12 w-12 rounded-md object-contain"
+                />
 
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold">{job.jobId.role}</p>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold">{job.jobId.role}</p>
 
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
-                    {job.jobId.jobType}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-xs">{job.jobId.title}</p>
-
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="size-4" />
-                    {job.jobId.location}
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 capitalize">
+                      {job.jobId.jobType}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Briefcase className="size-4" />
-                    {job.jobId.vacancies} open jobs
+                  <p className="text-gray-600 text-xs">{job.jobId.title}</p>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="size-4" />
+                      {job.jobId.location}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Briefcase className="size-4" />
+                      {job.jobId.vacancies} open jobs
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* RIGHT */}
+              <div className="flex items-center justify-between w-110">
+                <p className="text-sm text-gray-500">{job.createdAt}</p>
+                {job.status === "APPLIED" ? (
+                  <div className="flex items-center justify-center gap-1 text-green-600">
+                    <Check className="size-4" />
+                    <p className="text-sm ">{job.status}</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center text-orange-400 gap-2">
+                    <CircleDashed className="size-3" />
+                    <p className="text-sm">{job.status}</p>
+                  </div>
+                )}
+
+                <button
+                  onClick={()=>navigate(`/job/homepage/${job.jobId._id}`)}
+                className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
+                  View Details
+                </button>
+              </div>
             </div>
-
-            {/* RIGHT */}
-            <div className="flex items-center justify-between w-110">
-              <p className="text-sm text-gray-500">{job.createdAt}</p>
-              {job.status === "APPLIED" ? (
-                <div className="flex items-center justify-center gap-1 text-green-600">
-                  <Check className="size-4" />
-                  <p className="text-sm ">{job.status}</p>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center text-orange-400 gap-2">
-                  <CircleDashed className="size-3" />
-                  <p className="text-sm">{job.status}</p>
-                </div>
-              )}
-
-              <button
-                onClick={()=>navigate(`/job/homepage/${job.jobId._id}`)}
-              className="flex items-center gap-3 px-4 py-2 text-sm text-blue-500 font-medium bg-gray-100 rounded-md hover:bg-gray-200 transition">
-                View Details
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-center mt-4">
-          <Stack spacing={2}>
-            <Pagination
-              count={5}
-              variant="outlined"
-              color="primary"
-              size="medium"
-              shape="rounded"
-              onChange={(event, value) => setPage(value)}
-            />
-          </Stack>
+          ))}
         </div>
+
+        {visibleJobs.length === 0 && !loading && (
+          <div className="flex flex-col items-center justify-center gap-4 mt-10">
+            <p className="text-gray-500">You haven't applied to any jobs yet.</p> 
+            {/* <button onClick={()=>navigate("/find-jobs")} className="flex items-center gap-2 px-4 py-2 text-sm text-white font-medium bg-blue-500 rounded-md hover:bg-blue-600 transition">
+              Explore Jobs
+              <ArrowRight className="size-4" />
+            </button> */}
+          </div>
+        )}
+
+        <div className="flex items-center justify-center mt-4">
+            <Stack spacing={2}>
+              <Pagination
+                count={5}
+                variant="outlined"
+                color="primary"
+                size="medium"
+                shape="rounded"
+                onChange={(event, value) => setPage(value)}
+              />
+            </Stack>
+          </div>
+      </div>
     </div>
   );
 };

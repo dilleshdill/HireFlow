@@ -37,7 +37,6 @@ const RecruterCompanyPage = () => {
       try {
         const response = await axios.get(DOMAIN + `/api/job/job-detailes/?jobId=${id}`,{withCredentials:true})
         if(response.status === 200){
-          console.log(response.data)
           setJobData(response.data.job)
         }
       } catch (error) {

@@ -7,13 +7,17 @@ import {
   Settings,
   Bookmark,
   Book,
+  LogOutIcon,
   SearchCheck,
   Menu,
   X,
   Building2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
 
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const UserSidebar = () => {
 const sidebarData = [
   {
@@ -70,6 +74,19 @@ const sidebarData = [
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+
+  const getLogout = async () => {
+      try {
+        const response = await axios.post(DOMAIN + '/api/auth/logout')
+        if(response.status === 200){
+          toast.success("logout successfully")
+          navigate('/login')
+        }
+      } catch (error) {
+        toast.error("error to logout")
+      }
+    }
+
   useEffect(() => {
     const saved = localStorage.getItem("userSideBar");
     if (saved) {
@@ -84,11 +101,12 @@ const sidebarData = [
     setIsOpen(false); // close drawer on mobile
   };
 
+
   return (
     <>
       {/* Mobile Top Bar */}
       <div className="sm:hidden flex justify-between items-center p-4 border-b">
-        <h2 className="font-semibold text-gray-700">Dashboard</h2>
+        <h2 className="font-semibold text-[#0A65CC]">HireFlow</h2>
         <button onClick={() => setIsOpen(true)}>
           <Menu size={24} />
         </button>
@@ -125,7 +143,8 @@ const sidebarData = [
           Candidate Dashboard
         </p>
 
-        <div className="flex flex-col gap-2 text-gray-600 text-sm px-2">
+        <div className="flex flex-col min-h-[80vh] justify-between">
+            <div className="flex flex-col gap-2 text-gray-600 text-sm px-2">
           {sidebarData.map((item) => (
             <div
               key={item.id}
@@ -142,6 +161,18 @@ const sidebarData = [
               <span>{item.label}</span>
             </div>
           ))}
+            </div>
+
+        <div className="flex items-center pl-8 gap-2">
+          <button
+            onClick={()=>getLogout()}
+            className="flex items-center gap-2 text-red-500 bg-red-50 p-2 rounded-md px-4 cursor-pointer"
+          >
+            Logout
+            <LogOutIcon className="size-5 text-red-500" />
+          </button>
+          
+        </div>
         </div>
       </div>
     </>

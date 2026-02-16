@@ -36,6 +36,7 @@ const RecruiterDashboard = () => {
     const [jobs , setJobs] = useState([]);
     const [jobNo , setJobNo] = useState(0);
     const [savedNo , setSavedNo] = useState(0);
+    const [name , setName] = useState('')
     const [savedCandidates , setSavedCandidates] = useState([])
     const navigate = useNavigate();
 
@@ -46,13 +47,24 @@ const RecruiterDashboard = () => {
     }
   }, []);
 
+    const getUserDetails = async () => {
+        try {
+            const response = await axios.get(DOMAIN + '/api/auth/get-user',{withCredentials:true})
+
+            if(response.status === 200){
+                setName(response.data.user.name)
+            }
+        } catch (error) {
+         console.log(error.message)   
+        }
+    }
+
   useEffect(()=>{
     const fetchJobs = async() => {
       try {
         const response = await axios.get(DOMAIN + '/api/job/my-jobs' , {withCredentials:true})
 
         if(response.status === 200){
-          console.log(response.data)
           setJobs(response.data.jobs)
           setJobNo(response.data.jobs.length)
         }
@@ -65,7 +77,6 @@ const RecruiterDashboard = () => {
             try {
               const response = await axios.get(DOMAIN + '/api/recruiter/get-all-savedCandidates',{withCredentials:true})
               if(response.status === 200){
-                console.log(response.data.savedCandidates)
                 setSavedNo(response.data.savedCandidates.length)
                 setSavedCandidates(response.data.savedCandidates)
               }
@@ -73,50 +84,12 @@ const RecruiterDashboard = () => {
               console.log(error.message)
             }
           }
-
+    
+    getUserDetails()
     fetchJobs();
     fetchSavedCandidates();
     
   },[])
-
-  const sidebarData = [
-    {
-      id: 1,
-      icon: <LayoutDashboard />,
-      label: "Overview",
-      value: "overview",
-    },
-    {
-      id: 3,
-      icon: <PlusSquare />,
-      label: "Post a Job",
-      value: "post-job",
-    },
-    {
-      id: 4,
-      icon: <Briefcase />,
-      label: "My Jobs",
-      value: "my-jobs",
-    },
-    {
-      id: 5,
-      icon: <Bookmark />,
-      label: "Saved Candidates",
-      value: "saved-candidates",
-    },
-    {
-      id: 8,
-      icon: <Settings />,
-      label: "Settings",
-      value: "settings",
-    },
-    {
-      id: 9,
-      icon: <ClipboardClock />,
-      label: "My Tests",
-      value: "my-tests",
-    },
-  ];
 
   const visibleJobs = showAllJobs ? jobs : jobs.slice(0,4)
 
@@ -139,7 +112,7 @@ const RecruiterDashboard = () => {
           {selectedSidebar === "overview" && (
             <>
                 <div className="flex flex-col gap-1">
-                    <p className="text-lg font-medium  text-gray-800">Hello , Dillesh Nakkina</p>
+                    <p className="text-lg font-medium  text-gray-800">Hello , {name}</p>
                     <p className="text-sm text-gray-500">Here is your daily activities and job alerts</p>
                 </div>
 

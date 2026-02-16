@@ -158,7 +158,7 @@ const RecruiterSettings = () => {
         toast.success("Data Successfully Inserted");
       }
     } catch (err) {
-      console.log(err);
+      toast.error("error in insert data")
     }
   };
 
@@ -178,7 +178,7 @@ const RecruiterSettings = () => {
         { withCredentials: true },
       );
       if (res.status === 200) {
-        console.log(res.data);
+        toast.success("uploaded successfully")
         setPreviewImage1(res.data.resumeUrl);
         setUserProfileData({
           ...userProfileData,
@@ -186,7 +186,7 @@ const RecruiterSettings = () => {
         });
       }
     } catch (e) {
-      console.log(e);
+      toast.error("error to upload")
     }
   };
 
@@ -207,7 +207,7 @@ const RecruiterSettings = () => {
         { withCredentials: true },
       );
       if (res.status === 200) {
-        console.log(res.data.resumeUrl);
+        toast.success("uploaded successfully")
         setPreviewImage2(res.data.resumeUrl);
         setUserProfileData({
           ...userProfileData,
@@ -215,7 +215,7 @@ const RecruiterSettings = () => {
         });
       }
     } catch (e) {
-      console.log(e);
+      toast.error("error to upload")
     }
   };
 
@@ -225,7 +225,6 @@ const RecruiterSettings = () => {
         withCredentials: true,
       }); 
       if (response.status === 200) {
-        console.log(response.data.recruiterProfile);
         setUserProfileData(response.data.recruiterProfile);
       }
     } catch (err) {
@@ -350,6 +349,7 @@ const RecruiterSettings = () => {
                             : URL.createObjectURL(userProfileData?.logoUrl)
                         }
                         alt="user-image"
+                        onClick={getFile}
                         className="flex flex-col border-2 gap-2 border-dashed border-gray-300 rounded-md h-48 w-60 items-center justify-center cursor-pointer hover:bg-gray-50 transition"
                       />
                     ) : (

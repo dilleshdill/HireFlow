@@ -6,12 +6,11 @@ import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
-const EmailVerficationPage = () => {
+const ForgetEmailVerfication = () => {
     const [otp,setOtp] = useState(["","","",""])
     const location = useLocation()
     const role = location.state?.role
-    
-    console.log("role",role)
+    const email = location.state?.email
     
     const inputRef = useRef([])
     const navigate = useNavigate()
@@ -51,21 +50,17 @@ const EmailVerficationPage = () => {
         const otpString = otp.join("")
         try{
             
-            const response = await axios.post(DOMAIN + "/api/auth/otp-verification",
+            const response = await axios.post(DOMAIN + "/api/auth/forget-otpVerfiaction",
               {
-                otp:otpString 
+                otp:otpString,
+                email:email 
             },{withCredentials:true})
             if(response.status === 200){
-                toast.success("login successfuly")
-                if (role === "USER"){
-                  navigate("/user-dashboard")
-                }       
-                else if (role === "RECRUITER"){
-                  navigate("/recruiter-dashboard")
-                }         
+                toast.success("otp verfied successfully")
+                navigate("/reset-password",{state:{email:email , role:role}})         
             }
         }catch(err){
-            toast.error("error to login")
+            toast.error("something went wrong")
         }
     }
 
@@ -121,4 +116,4 @@ const EmailVerficationPage = () => {
   )
 }
 
-export default EmailVerficationPage
+export default ForgetEmailVerfication

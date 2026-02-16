@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ArrowRight, MoveRight } from 'lucide-react';
 import React, { useState } from 'react'
-
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 const jobRoles = [
@@ -134,9 +134,9 @@ const RecruiterPostJob = () => {
     jobLevel: "",
     description: "",
     responsibilities: "",
-    aptitudeTime:0,
-    coreTime:0,
-    codingTime:0
+    aptitudeTime:30,
+    coreTime:30,
+    codingTime:60
   });
 
   const handlechange = (e) => {
@@ -178,10 +178,16 @@ const RecruiterPostJob = () => {
       },
     };
 
-    console.log("FINAL PAYLOAD:", payload);
-
-    const response = axios.post(DOMAIN + '/api/job/post-job', {payload} , {withCredentials:true})
-    console.log(response.data)
+    try {
+      const response = axios.post(DOMAIN + '/api/job/post-job', {payload} , {withCredentials:true})
+      if (response.status === 200){
+        toast.success("posted successfully")
+      }
+    } catch (error) {
+      toast.error("error to post job")
+    }
+    toast.success("posted successfully")
+    
   };
 
   return (

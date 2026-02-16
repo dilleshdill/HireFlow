@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import Loader from "./Loader";
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 const FindJobCard = () => {
@@ -113,7 +114,6 @@ const FindJobCard = () => {
         });
 
         if (response.status === 200) {
-          console.log(response.data.jobs);
           setJobs(response.data.jobs);
           setTotalPages(response.data.totalPages);
         }
@@ -130,7 +130,6 @@ const FindJobCard = () => {
           withCredentials: true,
         });
         if (response.status === 200) {
-          console.log(response.data);
           setAppliedJobs(response.data.jobs);
         }
       } catch (error) {
@@ -145,7 +144,6 @@ const FindJobCard = () => {
         });
 
         if (response.status === 200) {
-          console.log(response.data);
           setFavoriteJobs(response.data.jobs);
         }
       } catch (error) {
@@ -168,11 +166,11 @@ const FindJobCard = () => {
         { withCredentials: true },
       );
       if (response.status === 200) {
-        console.log(response.data);
+        toast.success("Job Applied Successfully")
         setAppliedJobs((prev) => [...prev, response.data.application]);
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("Failed to apply for job")
     }
   };
 
@@ -185,11 +183,11 @@ const FindJobCard = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
+        toast.success("Job Added to Favorite")
         setFavoriteJobs((prev) => [...prev, response.data.favorite]);
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("Failed to add job to favorite")
     }
   };
 
@@ -202,13 +200,13 @@ const FindJobCard = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
+        toast.success("Job Removed from Favorite")
         setFavoriteJobs((prev) =>
           prev.filter((fav) => fav.jobId?._id !== jobId),
         );
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("Faild to Remove job")
     }
   };
 
@@ -719,6 +717,12 @@ const FindJobCard = () => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {filteredJobs.length === 0 && !loading && (
+          <div className="flex flex-col items-center justify-center gap-4 mt-10">
+            <p className="text-gray-500">No jobs available yet.</p> 
           </div>
         )}
 

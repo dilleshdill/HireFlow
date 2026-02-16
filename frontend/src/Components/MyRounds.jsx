@@ -72,7 +72,6 @@ const MyRounds = () => {
         withCredentials:true
       })
       if(response.status === 200){
-        console.log(response.data.testHistory)
         setResults(response.data.testHistory)
       }
     }catch(err){

@@ -54,7 +54,6 @@ const RecruiterPostedJobs = () => {
         const response = await axios.get(DOMAIN + '/api/job/my-jobs' , {withCredentials:true})
 
         if(response.status === 200){
-          console.log(response.data)
           setJobs(response.data.jobs)
         }
       } catch (error) {

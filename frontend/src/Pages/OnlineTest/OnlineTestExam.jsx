@@ -45,7 +45,6 @@ const OnlineTestExam = () => {
         input,
       });
       if (response.status === 200) {
-        console.log(response.data);
         setMessages((prev) => [...prev , {text : response.data.msg , sender:"Admin"}])
       }
     } catch (error) {
@@ -190,7 +189,6 @@ const OnlineTestExam = () => {
         },
       );
       if (response.status === 200) {
-        console.log(response.data);
         setTime(response.data.time);
       }
     } catch (err) {

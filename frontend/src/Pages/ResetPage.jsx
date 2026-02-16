@@ -1,62 +1,113 @@
-import React from 'react'
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
-import { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-
+const DOMAIN = import.meta.env.VITE_DOMAIN
 const ResetPage = () => {
-    const [showNewPasswordIcon,setNewPasswordIcon] = useState(true)
-    const [showConfirmPasswordIcon,setConfirmPasswordIcon] = useState(true)
-    const [password,setPassword] = useState("")
-    const [confirmPassword,setConfirmPassword] = useState("")
+  const location = useLocation();
+  const role = location.state?.role;
+  const email = location.state?.email;
+
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error , setError] = useState("")
+  const navigate = useNavigate()
+
+  const resetPassword = async () => {
+    setError("")
+    try {
+        if (password && confirmPassword && password === confirmPassword){
+
+            const response = await axios.post(DOMAIN + '/api/auth/reset-password',{email,password})
+
+            if(response.status === 200){
+                toast.success("password changed successfully")
+                navigate('/login')
+            }
+        }else{
+            setError("give same password for new and confirm")
+            toast.error("something went wrong")
+        }
+    } catch (error) {
+        console.log(error.message)
+        setError("server error")
+    }
+  }
 
   return (
-    <div className='flex min-h-screen min-w-screen justify-center items-center'>
-      <div className='flex flex-col w-md'>
-        <h1 className='text-3xl font-normal text-center'>Reset Password</h1>
-        <p className='text-center mt-5 text-gray-400'>You can reset your password here.And Enter Your New password here and confirm that password here.</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 sm:p-10">
 
-        <div className='border border-gray-300 px-4 py-2 rounded-sm mt-3 flex flex-row justify-between'>
-            <input type={showNewPasswordIcon ? "text" : "password"}
-            placeholder='New Password'
+        {/* Heading */}
+        <h1 className="text-2xl sm:text-3xl font-semibold text-center text-gray-800">
+          Reset Password
+        </h1>
+
+        <p className="text-center text-gray-500 text-xs sm:text-base mt-3">
+          Email : {email}
+        </p>
+
+        <p className="text-center text-gray-500 text-xs sm:text-base mt-3">
+          Enter your new password and confirm it below.
+        </p>
+
+        {/* New Password */}
+        <div className="mt-6 relative">
+          <input
+            type={showNewPassword ? "text" : "password"}
+            placeholder="New Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className='outline-none'/>
-            {
-                showNewPasswordIcon ? 
-                <FaEye onClick={() => {
-                    setNewPasswordIcon(!showNewPasswordIcon)
-                    
-                }}/>
-                :
-                <FaEyeSlash onClick={() => setNewPasswordIcon(!showNewPasswordIcon)}/>
-            }
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 outline-none transition"
+          />
+
+          <div
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+            onClick={() => setShowNewPassword(!showNewPassword)}
+          >
+            {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+          </div>
         </div>
 
-        <div className='border border-gray-300 px-4 py-2 rounded-sm mt-3 flex flex-row justify-between'>
-            <input type={showConfirmPasswordIcon ? "text" : "password"} 
+        {/* Confirm Password */}
+        <div className="mt-4 relative">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="Confirm Password"
             value={confirmPassword}
-            onChange={(e) =>setConfirmPassword(e.target.value)}
-            placeholder='Confirm Password'
-            className='outline-none'/>
-            {
-                showConfirmPasswordIcon ? 
-                <FaEye onClick={() => setConfirmPasswordIcon(!showConfirmPasswordIcon)} />
-                :
-                <FaEyeSlash onClick={() => setConfirmPasswordIcon(!showConfirmPasswordIcon)}/>
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 outline-none transition"
+          />
+
+          <div
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+            onClick={() =>
+              setShowConfirmPassword(!showConfirmPassword)
             }
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </div>
         </div>
 
-        <button className='flex bg-blue-700 text-white justify-center py-2 mt-3 rounded-sm '>
-            Reset Password
-            <span>
-                <ArrowRight />
-            </span>
+        {error && <p className="text-red-500 text-xs pt-2">Error : {error}</p>}
+
+        {/* Button */}
+        <button
+            onClick={()=>resetPassword()}
+          className="w-full mt-6 bg-blue-500 hover:bg-blue-700 text-white py-3 rounded-lg flex items-center justify-center gap-2 font-medium text-lg transition duration-200"
+        >
+          Reset Password
+          <ArrowRight size={20} />
         </button>
+
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ResetPage
+export default ResetPage;

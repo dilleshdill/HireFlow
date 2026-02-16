@@ -30,7 +30,6 @@ const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const RecruterCompanyPage = () => {
   const {id} = useParams()
-  console.log("id",id)
   const [jobData , setJobData] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -39,7 +38,6 @@ const RecruterCompanyPage = () => {
       try {
         const response = await axios.get(DOMAIN + `/api/job/job-detailes/?jobId=${id}`,{withCredentials:true})
         if(response.status === 200){
-          console.log(response.data)
           setJobData(response.data.job)
         }
       } catch (error) {

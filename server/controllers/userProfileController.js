@@ -2,6 +2,7 @@ import { UserProfile } from "../model/UserProfileModel.js";
 import cloudinary from "../config/cloudinary.js";
 
 
+
 export const UploadResume = async (req, res) => {
   try {
     if (!req.file) {
@@ -123,3 +124,4 @@ export const getUserById = async (req,res) => {
     return res.status(500).json({message:error.message})
   }
 }
+

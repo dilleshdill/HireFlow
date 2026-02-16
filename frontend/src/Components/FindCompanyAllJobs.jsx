@@ -12,7 +12,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "./Loader";
-
+import toast from "react-hot-toast";
 
 
 
@@ -36,7 +36,6 @@ const FindCompanyAllJobs = () => {
         const response = await axios.get(DOMAIN + '/api/job/all-jobs')
 
         if (response.status === 200){
-          console.log(response.data.jobs)
           setJobs(response.data.jobs)
         }
       } catch (error) {
@@ -48,7 +47,6 @@ const FindCompanyAllJobs = () => {
       try {
         const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{withCredentials:true})
         if(response.status === 200){
-          console.log(response.data)
           setAppliedJobs(response.data.jobs)
         }
       } catch (error) {
@@ -61,11 +59,10 @@ const FindCompanyAllJobs = () => {
         const response = await axios.get(DOMAIN + '/api/job/get-favorite',{withCredentials:true})
 
         if(response.status === 200){
-          console.log(response.data)
           setFavoriteJobs(response.data.jobs)
         }
       } catch (error) {
-        
+        console.log(error.message)
       }
     }
 
@@ -74,7 +71,6 @@ const FindCompanyAllJobs = () => {
             
             const response = await axios.get(DOMAIN + `/api/job/company-jobs/${id}`)
             if(response.status === 200){ 
-                console.log(response.data)
                 setJobs(response.data.jobs)
             }
         } catch (error) {
@@ -96,11 +92,11 @@ const FindCompanyAllJobs = () => {
     try {
       const response = await axios.post(DOMAIN + '/api/job/apply',{jobId},{withCredentials:true})
       if(response.status === 200){
-        console.log(response.data)
+        toast.success("Job Applied Successfully")
         setAppliedJobs((prev) => [...prev, response.data.application]);
       }
     } catch (error) {
-      console.log(error.message)
+      toast.error("Error to apply job")
     }
   }
 
@@ -109,11 +105,11 @@ const FindCompanyAllJobs = () => {
       const response = await axios.post(DOMAIN + '/api/job/addTo-favorite',{jobId},{withCredentials:true})
       
       if (response.status === 200){
-        console.log(response.data)
+        toast.success("Job Added to Favorite")
         setFavoriteJobs((prev) => [...prev,response.data.favorite])
       }
     } catch (error) {
-      console.log(error.message)
+      toast.error("Error to Add Job")
     }
   }
 
@@ -123,11 +119,11 @@ const FindCompanyAllJobs = () => {
       const response = await axios.post(DOMAIN + '/api/job/remove-favorite',{jobId},{withCredentials:true})
       
       if (response.status === 200){
-        console.log(response.data)
+        toast.success("Job removed from Favorite")
         setFavoriteJobs((prev) => prev.filter((fav)=> fav.jobId?._id !== jobId))
       }
     } catch (error) {
-      console.log(error.message)
+      toast.error("Error to remove from Favorite")
     }
   }
 

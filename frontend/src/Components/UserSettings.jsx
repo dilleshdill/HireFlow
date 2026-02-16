@@ -197,7 +197,6 @@ const UserSettings = () => {
         withCredentials:true
       })
       if(response.status === 200){
-        console.log(response.data.userData)
         setUserProfileData(response.data.userData)
       }
     }catch(err){

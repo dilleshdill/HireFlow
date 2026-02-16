@@ -69,7 +69,6 @@ const organizations = [
       try {
         const response = await axios.get(DOMAIN + '/api/job/get-companies',{withCredentials:true})
         if(response.status === 200){
-          console.log(response.data.companies)
           setCompanies(response.data.companies)
         }
       } catch (error) {

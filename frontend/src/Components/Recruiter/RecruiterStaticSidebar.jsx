@@ -7,17 +7,35 @@ import {
   Bookmark,
   Users,
   Building2,
+LogOutIcon,
   Settings,
   ClipboardClock,
   Menu,
   X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
+
+
+const DOMAIN = import.meta.env.VITE_DOMAIN
 
 const RecruiterStaticSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSidebar, setSelectedSidebar] = useState("overview");
     const navigate = useNavigate();
+
+    const getLogout = async () => {
+        try {
+          const response = await axios.post(DOMAIN + '/api/auth/logout')
+          if(response.status === 200){
+            toast.success("logout successfully")
+            navigate('/login')
+          }
+        } catch (error) {
+          toast.error("error to logout")
+        }
+    }
 
   useEffect(() => {
     const savedSidebar = localStorage.getItem("sideBar");
@@ -43,11 +61,13 @@ const RecruiterStaticSidebar = () => {
     setIsOpen(false); // close mobile drawer
   };
 
+
+
   return (
     <>
       {/* 🔹 MOBILE TOP BAR */}
       <div className="sm:hidden flex justify-between items-center p-4 border-b bg-white">
-        <h2 className="font-semibold text-gray-700">Recruiter Dashboard</h2>
+        <h2 className="font-semibold text-[#0A65CC]">HireFlow</h2>
         <button onClick={() => setIsOpen(true)}>
           <Menu size={24} />
         </button>
@@ -100,6 +120,17 @@ const RecruiterStaticSidebar = () => {
             </div>
           ))}
         </div>
+
+        <div className="flex items-center pl-8 gap-2">
+                  <button
+                    onClick={()=>getLogout()}
+                    className="flex items-center gap-2 text-red-500 bg-red-50 p-2 rounded-md px-4 cursor-pointer"
+                  >
+                    Logout
+                    <LogOutIcon className="size-5 text-red-500" />
+                  </button>
+                  
+                </div>
       </div>
     </>
   );

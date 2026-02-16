@@ -23,6 +23,7 @@ const UserDashboard = () => {
     const [appliedJobs , setAppliedJobs] = useState([])
     const [appledNo , setAppliedNo] = useState(0)
     const [savedNo , setSavedNo] = useState(0)
+    const [name , setName] = useState('')
     const navigate = useNavigate();
 
 
@@ -34,13 +35,24 @@ const UserDashboard = () => {
         );
 
         if (response.status === 200) {
-          console.log(response.data)
           setSavedNo(response.data.jobs.length)
         }
       } catch (error) {
         console.log(error.message);
       }
     };
+
+    const getUserDetails = async () => {
+        try {
+            const response = await axios.get(DOMAIN + '/api/auth/get-user',{withCredentials:true})
+
+            if(response.status === 200){
+                setName(response.data.user.name)
+            }
+        } catch (error) {
+         console.log(error.message)   
+        }
+    }
 
   useEffect(() => {
     const savedSidebar = localStorage.getItem("userSideBar");
@@ -55,7 +67,6 @@ const UserDashboard = () => {
         try {
           const response = await axios.get(DOMAIN + '/api/job/applied-jobs',{withCredentials:true})
           if(response.status === 200){
-            console.log(response.data.jobs)
             setAppliedJobs(response.data.jobs)
             setAppliedNo(response.data.jobs.length)
           }
@@ -65,58 +76,8 @@ const UserDashboard = () => {
       }
       fetchAppliedJobs();
       fetchFavoriteJobs();
+      getUserDetails();
     },[])
-
-const sidebarData = [
-  {
-    id: 1,
-    icon: <Layers />,
-    label: "Overview",
-    value: "overview",
-  },
-  {
-    id: 2,
-    icon: <SearchCheck />,
-    label: "Find Jobs",
-    value: "find-jobs",
-  },
-  {
-    id: 9,
-    icon: <Building2 />,
-    label: "Find Companies",
-    value: "find-companies",
-  },
-  {
-    id: 3,
-    icon: <Briefcase />,
-    label: "Applied Jobs",
-    value: "applied-jobs",
-  },
-  {
-    id: 4,
-    icon: <Bookmark />,
-    label: "Favorite Jobs",
-    value: "favorite-jobs",
-  },
-  {
-    id: 5,
-    icon: <Bell />,
-    label: "Job Alerts",
-    value: "job-alerts",
-  },
-  {
-    id: 6,
-    icon: <Settings />,
-    label: "Settings",
-    value: "settings",
-  },
-  {
-    id: 7,
-    icon: <Book />,
-    label: "My Rounds",
-    value: "My Rounds",
-  },
-];
 
     const visibleJobs = showAllJobs ? appliedJobs : appliedJobs.slice(0,2)
 
@@ -141,7 +102,7 @@ const sidebarData = [
           {selectedSidebar === "overview" && (
             <>
                 <div className="flex flex-col gap-1">
-                    <p className="text-lg font-medium  text-gray-800">Hello , Dillesh Nakkina</p>
+                    <p className="text-lg font-medium  text-gray-800">Hello , {name}</p>
                     <p className="text-sm text-gray-500">Here is your daily activities and job alerts</p>
                 </div>
 

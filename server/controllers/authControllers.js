@@ -114,6 +114,7 @@ const verifyOtp = async (email, otp) => {
         throw new Error("otp is expired")
     }
 
+    console.log("otp user.otp",otp , user.otp)
     if (user.otp !== Number(otp)){
         throw new Error("invalid otp")
     }
@@ -131,8 +132,9 @@ export const otpVerification = async (req , res) => {
         const {otp} = req.body;
         const email = req.user.email
 
+        console.log("otp email" , otp , email)
         const normalizedEmail = validator.normalizeEmail(email)
-        
+        console.log("normalizedEmail",normalizedEmail)
         await verifyOtp(normalizedEmail,otp)
         return res.status(200).json({message:"otp verification successfully"})
     } catch (error) {
@@ -278,5 +280,118 @@ export const getChangeUserPassword = async(req,res) => {
 
   }catch(err){
     res.status(500).json({msg:err.msg})
+  }
+}
+
+// check email
+export const checkEmail = async (req , res) => {
+  try {
+    const {email} = req.query
+    if(!email){
+      return res.status(400).json({message:"email is required"})
+    }
+
+    
+    const user = await User.findOne({email}).select('-password')
+    if(!user){
+      return res.status(400).json({message:"no user found"})
+    }
+
+    const normalizedEmail = validator.normalizeEmail(email);
+
+    await sendOtp(normalizedEmail)
+    return res.status(200).json({user,message:"user found and otp send successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// send otp by forget
+export const otpSendByForget = async (req , res) => {
+  try {
+    const {email} = req.query
+    if(!email){
+      return res.status(400).json({message:"email is required"})
+    }
+    const normalizedEmail = validator.normalizeEmail(email);
+    await  sendOtp(normalizedEmail)
+
+    return res.status(201).json({
+      message: "Signup successful. OTP sent to email."
+    });
+  } catch (error) {
+    return res.status(500).json({message:err.message})
+  }
+}
+
+// forget Otp verfication
+export const forgetOtpVerification = async (req , res) => {
+
+    try {
+        const {otp , email} = req.body;
+
+        console.log("otp email" , otp , email)
+        const normalizedEmail = validator.normalizeEmail(email)
+        console.log("normalizedEmail",normalizedEmail)
+        await verifyOtp(normalizedEmail,otp)
+        return res.status(200).json({message:"otp verification successfully"})
+    } catch (error) {
+        console.log("error occured",error.message)
+        return res.status(500).json({message:error.message})
+    }
+}
+
+// reset Password
+export const resetPassword = async (req , res) => {
+  try {
+    const {email , password} = req.body;
+    console.log(email , password)
+
+    if(!email || !password){
+      return res.status(400).json({message:"email is required"})
+    }
+
+    const normailzedEmail = validator.normalizeEmail(email)
+    const hashedPassword = await bcrypt.hash(password,10)
+
+    const user = await User.findOneAndUpdate({email:normailzedEmail},{password:hashedPassword},{new:true}).select('-password')
+
+    if(!user){
+      return res.status(400).json({message:"user not found"})
+    }
+
+    console.log("user",user)
+    return res.status(200).json({message:"password updated successfully",user})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// get userdetails
+export const getUserDetails = async (req,res) => {
+  
+  try {
+    const {id} = req.user
+    console.log(id)
+    const user = await User.findById(id).select('-password')
+    if(!user){
+      return res.status(400).json({message:"no user found"})
+    }
+    return res.status(200).json({user,message:"user fetched successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+
+// logout
+export const logout = async (req,res) => {
+  try {
+    res.clearCookie("token",{
+      httpOnly: true,
+      sameSite: "lax",
+      })
+    return res.status(200).json({message:"logout successfully"})
+  } catch (error) {
+    return res.status(500).json({message:error.message})
   }
 }

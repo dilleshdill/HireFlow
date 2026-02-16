@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import Loader from "../Loader";
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 const FindCandidateCard = () => {
@@ -35,7 +36,7 @@ const FindCandidateCard = () => {
           { withCredentials: true },
         );
         if (response.status === 200) {
-          console.log(response.data.candidates);
+          
           setCandidates(response.data.candidates);
         }
       } catch (error) {
@@ -52,7 +53,6 @@ const FindCandidateCard = () => {
           { withCredentials: true },
         );
         if (response.status === 200) {
-          console.log(response.data.savedCandidates);
           setSavedCandidates(response.data.savedCandidates);
         }
       } catch (error) {
@@ -80,11 +80,11 @@ const FindCandidateCard = () => {
         { withCredentials: true },
       );
       if (response.status === 200) {
-        console.log(response.data);
+        toast.success("Added to Saved")
         setSavedCandidates((prev) => [...prev, response.data.savedCandidates]);
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("Error to add to Saved")
     }
   };
 
@@ -96,13 +96,13 @@ const FindCandidateCard = () => {
         { withCredentials: true },
       );
       if (response.status === 200) {
-        console.log(response.data);
+        toast.success("Removed from Saved")
         setCandidates((prev) =>
           prev.filter((saved) => saved.userId?._id !== userId),
         );
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("Error to remove")
     }
   };
 

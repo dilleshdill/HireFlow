@@ -69,8 +69,6 @@ const RecruiterJobFilters = () => {
   ],
 };
 
-console.log(jobType)
-
   return (
     <div className="w-full bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 py-4">

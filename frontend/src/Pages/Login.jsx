@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN
 
@@ -50,15 +51,19 @@ const Login = () => {
         console.log(response.data)
 
         if (response.status === 201 || response.status === 403 ){
+            toast.success("Otp sent Successfully")
             navigate('/email-verification',{
                 state:{role}
             })
         }
         if (response.status === 200){
+            toast.success("login Successfully")
             if (role === "USER"){
+                localStorage.setItem("userSideBar", "overview");
                 navigate("/user-dashboard")
             }
             else if(role === "RECRUITER"){
+                localStorage.setItem("sideBar", "overview");
                 navigate("/recruiter-dashboard")
             }
         }
@@ -70,6 +75,7 @@ const Login = () => {
         // }
     } catch (error) {
         console.log(error.response?.data || error.message)
+        toast.error(error.message)
     }
     }
 
@@ -119,7 +125,7 @@ const Login = () => {
                         <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0" value={formData.password} onChange={handleChange} required />
                     </div>
                     <div className="mt-4 text-left text-indigo-500">
-                        <button className="text-sm text-[#0A65CC]" type="reset">Forget password?</button>
+                        <button onClick={()=>navigate('/forget-password')} className="text-sm cursor-pointer text-[#0A65CC]" type="reset">Forget password?</button>
                     </div>
                     <button type="submit" className="mt-2 w-full h-11  text-white bg-[#0A65CC] hover:opacity-90 transition-opacity">
                         {state === "login" ? "Login" : "Sign up"}

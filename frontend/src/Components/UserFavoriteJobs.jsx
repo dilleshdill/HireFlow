@@ -13,6 +13,7 @@ import iphonelogo from "../assets/iphonelogo.png";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import Loader from "./Loader";
+import toast from "react-hot-toast";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -40,7 +41,6 @@ const UserFavoriteJobs = () => {
         );
 
         if (response.status === 200) {
-          console.log(response.data)
           setFavoriteJobs(response.data.jobs || []);
           setTotalPages(response.data.totalPages);
         }
@@ -64,12 +64,13 @@ const UserFavoriteJobs = () => {
       );
 
       if (response.status === 200) {
+        toast.success("Removed successfully")
         setFavoriteJobs((prev) =>
           prev.filter((fav) => fav.jobId?._id !== jobId)
         );
       }
     } catch (error) {
-      console.log(error.message);
+      toast.error("error to remove job")
     }
   };
 

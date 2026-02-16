@@ -31,7 +31,6 @@ const OnlineTestHomePage = () => {
       )
       
       if(response.status === 200){
-        console.log(response.data)
         setRelatedJobs(response.data.relatedJobs)
       }
     }catch(err){
@@ -48,7 +47,6 @@ const OnlineTestHomePage = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         const currentDate = new Date();
         const expirationDate = new Date(response.data.expirationData)
         if(currentDate > expirationDate){
