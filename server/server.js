@@ -16,7 +16,7 @@ const app = express()
 app.use(
     cors({
         origin:[
-            'http://localhost:5173',
+            'http://localhost:5173','https://hire-flow-zeta.vercel.app',
                 process.env.FRONTEND_DOMAIN
         ],
         credentials:true,
