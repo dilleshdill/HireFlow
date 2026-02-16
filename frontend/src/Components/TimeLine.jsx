@@ -17,7 +17,6 @@ export default function HowItWorks() {
       title: "Upload CV/Resume",
       desc: "Curabitur sit amet maximus ligula. Nam a nulla ante."
     },
-    
     {
       icon: <CheckCircle className="w-6 h-6 text-blue-600" />,
       title: "Apply job",
@@ -26,28 +25,42 @@ export default function HowItWorks() {
   ];
 
   return (
-    <div className="bg-gray-100 py-16">
-      <h2 className="text-center text-3xl font-semibold mb-12">
-        How HireFlow work
+    <div className="bg-gray-100 py-12 sm:py-16 px-4">
+      
+      <h2 className="text-center text-2xl sm:text-3xl font-semibold mb-10">
+        How HireFlow Works
       </h2>
 
-      <div className="flex justify-center gap-16 px-6">
-        {steps.map((item, idx) => (
-          <div key={idx} className="flex flex-col items-center max-w-xs text-center relative">
-            
-            <div className="w-16 h-16 rounded-full bg-white shadow flex items-center justify-center mb-4">
-              {item.icon}
+      <div className="relative max-w-7xl mx-auto">
+
+        {/* Steps Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 relative">
+          {steps.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col items-center text-center relative"
+            >
+              {/* Circle */}
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-md flex items-center justify-center mb-4">
+                {item.icon}
+              </div>
+
+              <h3 className="font-semibold text-base sm:text-lg">
+                {item.title}
+              </h3>
+
+              <p className="text-sm text-gray-500 mt-2 max-w-xs">
+                {item.desc}
+              </p>
+
+              {/* Connector line (Desktop only) */}
+              {idx < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-7 right-[-40%]  w-50 border-t-2 border-dashed border-blue-300"></div>
+              )}
             </div>
+          ))}
+        </div>
 
-            <h3 className="font-semibold text-lg">{item.title}</h3>
-            <p className="text-sm text-gray-500 mt-2">{item.desc}</p>
-
-            
-            {idx < steps.length - 1 && (
-              <div className="absolute top-8 -right-20 w-32 h-10 border-t-2 border-dashed border-blue-300 rounded-full"></div>
-            )}
-          </div>
-        ))}
       </div>
     </div>
   );

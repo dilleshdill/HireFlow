@@ -6,75 +6,85 @@ import generateUserToken from "../utils/generateUserToken.js";
 
 
 const sendOtpEmail = async (email, otp) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
 
-  await transporter.sendMail({
-    from: `"Hireflow" <${process.env.EMAIL}>`,
-    to: email,
-    subject: "Login OTP - Hireflow",
-    html: `
-        <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f4f6f8; padding: 30px;">
-            <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
-            
-            <!-- Header -->
-            <div style="background-color: #2563eb; padding: 20px; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 22px;">
-                Hireflow
-                </h1>
-            </div>
+    await transporter.sendMail({
+      from: `"Hireflow" <${process.env.EMAIL}>`,
+      to: email,
+      subject: "Login OTP - Hireflow",
+      html: `
+          <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f4f6f8; padding: 30px;">
+              <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
+              
+              <!-- Header -->
+              <div style="background-color: #2563eb; padding: 20px; text-align: center;">
+                  <h1 style="color: #ffffff; margin: 0; font-size: 22px;">
+                  Hireflow
+                  </h1>
+              </div>
 
-            <!-- Body -->
-            <div style="padding: 24px; color: #333333;">
-                <p style="font-size: 16px; margin-bottom: 12px;">
-                Hello,
-                </p>
+              <!-- Body -->
+              <div style="padding: 24px; color: #333333;">
+                  <p style="font-size: 16px; margin-bottom: 12px;">
+                  Hello,
+                  </p>
 
-                <p style="font-size: 15px; line-height: 1.6;">
-                Use the following One-Time Password (OTP) to complete your login.
-                </p>
+                  <p style="font-size: 15px; line-height: 1.6;">
+                  Use the following One-Time Password (OTP) to complete your login.
+                  </p>
 
-                <!-- OTP Box -->
-                <div style="margin: 24px 0; text-align: center;">
-                <span style="
-                    display: inline-block;
-                    font-size: 28px;
-                    letter-spacing: 6px;
-                    font-weight: bold;
-                    color: #2563eb;
-                    background-color: #f0f5ff;
-                    padding: 12px 24px;
-                    border-radius: 6px;
-                ">
-                    ${otp}
-                </span>
-                </div>
+                  <!-- OTP Box -->
+                  <div style="margin: 24px 0; text-align: center;">
+                  <span style="
+                      display: inline-block;
+                      font-size: 28px;
+                      letter-spacing: 6px;
+                      font-weight: bold;
+                      color: #2563eb;
+                      background-color: #f0f5ff;
+                      padding: 12px 24px;
+                      border-radius: 6px;
+                  ">
+                      ${otp}
+                  </span>
+                  </div>
 
-                <p style="font-size: 14px; color: #555555;">
-                This OTP is valid for <strong>30 minutes</strong>. Please do not share it with anyone.
-                </p>
+                  <p style="font-size: 14px; color: #555555;">
+                  This OTP is valid for <strong>30 minutes</strong>. Please do not share it with anyone.
+                  </p>
 
-                <p style="font-size: 14px; color: #555555; margin-top: 16px;">
-                If you did not request this, you can safely ignore this email.
-                </p>
-            </div>
+                  <p style="font-size: 14px; color: #555555; margin-top: 16px;">
+                  If you did not request this, you can safely ignore this email.
+                  </p>
+              </div>
 
-            <!-- Footer -->
-            <div style="background-color: #f4f6f8; padding: 16px; text-align: center; font-size: 12px; color: #777777;">
-                © ${new Date().getFullYear()} Hireflow. All rights reserved.
-            </div>
+              <!-- Footer -->
+              <div style="background-color: #f4f6f8; padding: 16px; text-align: center; font-size: 12px; color: #777777;">
+                  © ${new Date().getFullYear()} Hireflow. All rights reserved.
+              </div>
 
-            </div>
-        </div>
-        `
+              </div>
+          </div>
+          `
 
-  });
+    });
+
+    console.log("OTP Email Sent Successfully");
+  } catch (error) {
+    console.error("EMAIL ERROR:", error);
+    throw error;
+  }
 };
+
 
 const sendOtp = async (email) => {
   const normalizedEmail = validator.normalizeEmail(email);

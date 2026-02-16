@@ -1,33 +1,52 @@
-import { ArrowRight } from 'lucide-react'
-import React from 'react'
-
+import { ArrowRight } from "lucide-react";
+import React from "react";
 
 const UserRecurterRegister = () => {
   return (
-    <div className='flex bg-white w-full justify-center gap-10 mt-10'>
-        <div className='flex flex-col bg-gray-200 w-96 p-6 gap-3 rounded-xl'>
-            <h1 className='text-2xl'>Become a Candidate</h1>
-            <p className='text-gray-400'>Click on the Register Now to become a candidate in hireflow.Then you can apply for jobs</p>
-            <div className='flex items-center bg-white p-5 text-blue-500 w-fit rounded-xl'>
-                <button >
-                    Register Now 
-                </button>
-                <ArrowRight size={20}/>
-            </div>
-        </div>
-        <div className='flex flex-col bg-blue-900 w-96 p-6 gap-3 rounded-xl'>
-            <h1 className='text-2xl text-white'>Become a Recuruter</h1>
-            <p className='text-gray-400'>Click on the Register Now to become a candidate in hireflow.Then you can apply for jobs</p>
-            <div className='flex items-center bg-white p-5 text-blue-500 w-fit rounded-xl'>
-                <button >
-                    Register Now 
-                </button>
-                <ArrowRight size={20}/>
-            </div>
+    <section className="w-full bg-white py-12 px-4">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* Candidate Card */}
+        <div className="flex flex-col justify-between bg-gray-100 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-md transition duration-300">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+              Become a Candidate
+            </h1>
+
+            <p className="text-gray-500 mt-3 text-sm sm:text-base">
+              Register now to create your candidate profile and start applying
+              for top jobs that match your skills.
+            </p>
+          </div>
+
+          <button className="mt-6 flex items-center gap-2 bg-white text-blue-600 font-medium px-5 py-3 rounded-xl w-fit shadow hover:shadow-lg transition">
+            Register Now
+            <ArrowRight size={18} />
+          </button>
         </div>
 
-    </div>
-  )
-}
+        {/* Recruiter Card */}
+        <div className="flex flex-col justify-between bg-blue-900 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-md transition duration-300">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-semibold text-white">
+              Become a Recruiter
+            </h1>
 
-export default UserRecurterRegister
+            <p className="text-blue-100 mt-3 text-sm sm:text-base">
+              Create your recruiter account to post jobs, manage candidates,
+              and hire the best talent efficiently.
+            </p>
+          </div>
+
+          <button className="mt-6 flex items-center gap-2 bg-white text-blue-600 font-medium px-5 py-3 rounded-xl w-fit shadow hover:shadow-lg transition">
+            Register Now
+            <ArrowRight size={18} />
+          </button>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export default UserRecurterRegister;

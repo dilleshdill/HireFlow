@@ -2,7 +2,7 @@ import React from 'react'
 
 const MostPopular = () => {
   return (
-    <div>
+    <div className='pt-4'>
         <footer className="bg-neutral-primary">
             <div className="mx-auto w-full max-w-screen-xl">
             <h1 className='px-4 text-2xl'>Most Popular Vacancies</h1>    

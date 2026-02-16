@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const OnlineTestHomePage = () => {
@@ -18,29 +17,30 @@ const OnlineTestHomePage = () => {
   const [jobStatus, setJobStatus] = useState("start");
   const navigate = useNavigate();
   const [job, setJob] = useState({});
-  const [relatedJobs , setRelatedJobs] = useState([])
+  const [relatedJobs, setRelatedJobs] = useState([]);
 
-  const fetchRecommendJob = async() => {
-
-    try{
-      const response = await axios.post(DOMAIN + '/api/job/recommended-list',
-        {jobId:id},
+  const fetchRecommendJob = async () => {
+    try {
+      const response = await axios.post(
+        DOMAIN + "/api/job/recommended-list",
+        { jobId: id },
         {
-          withCredentials:true
-        }
-      )
-      
-      if(response.status === 200){
-        setRelatedJobs(response.data.relatedJobs)
+          withCredentials: true,
+        },
+      );
+
+      if (response.status === 200) {
+        setRelatedJobs(response.data.relatedJobs);
       }
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(DOMAIN + `/api/job/job-detailes?jobId=${id}`,
+      const response = await axios.get(
+        DOMAIN + `/api/job/job-detailes?jobId=${id}`,
         {
           withCredentials: true,
         },
@@ -48,22 +48,19 @@ const OnlineTestHomePage = () => {
 
       if (response.status === 200) {
         const currentDate = new Date();
-        const expirationDate = new Date(response.data.expirationData)
-        if(currentDate > expirationDate){
-            setJobStatus("completed")
+        const expirationDate = new Date(response.data.expirationData);
+        if (currentDate > expirationDate) {
+          setJobStatus("completed");
+        } else {
+          setJobStatus("start");
         }
-        else{
-            setJobStatus("start")
-        }
-        setJob(response.data.job)
-        fetchRecommendJob()
+        setJob(response.data.job);
+        fetchRecommendJob();
       }
     } catch (err) {
       console.log(err.msg);
     }
   };
-
-
 
   useEffect(() => {
     fetchData();
@@ -71,62 +68,81 @@ const OnlineTestHomePage = () => {
 
   return (
     <div>
-      <div className="min-h-screen flex max-w-7xl mx-auto gap-3">
-        
+      <div className="min-h-screen flex max-w-7xl mx-auto gap-3 flex-col sm:flex-row">
         <div className="flex flex-col h-fit max-w-4xl w-full gap-3">
-          <div className="flex flex-col bg-white rounded-xl shadow-2xl p-5">
+          <div className="flex flex-col bg-white rounded-xl shadow-xl p-4 sm:p-6">
+            {/* Banner */}
             <img
               src={naukriimage}
               alt="HireFlow"
-              className="w-full h-50 object-fill rounded-3xl"
+              className="w-full h-40 sm:h-56 object-cover rounded-2xl"
             />
 
-            <div className="flex items-center ">
-              <img src={hireflow} className="h-25 w-25 rounded-xl" />
+            {/* Company + Title */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-6">
+              <img
+                src={hireflow}
+                alt="company"
+                className="h-16 w-16 sm:h-24 sm:w-24 rounded-xl object-cover"
+              />
               <div>
-                <h1 className="text-3xl font-medium text-gray-900">
+                <h1 className="text-xl sm:text-3xl font-medium text-gray-900">
                   {job.title}
                 </h1>
-                <p className="text-lg text-gray-600">Hireflow campus</p>
+                <p className="text-sm sm:text-lg text-gray-600">
+                  Hireflow campus
+                </p>
               </div>
             </div>
-            <div className="border-b border-gray-300 w-full"></div>
-            <div className="flex flex-row justify-between mt-4">
-              <div className="flex gap-3 text-lg font-light">
-                <h1 className="flex text-gray-500 ">
-                  Participation :{" "}
-                  <span className="flex text-gray-700 font-normal">
+
+            <div className="border-b border-gray-300 w-full my-5"></div>
+
+            {/* Bottom Section */}
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-5">
+              {/* Left Info */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-sm sm:text-base font-light">
+                <h1 className="text-gray-500">
+                  Participation:
+                  <span className="text-gray-700 font-normal ml-1">
                     Individual
                   </span>
                 </h1>
-                <h1 className="flex text-gray-500">
-                  Enrolled :{" "}
-                  <span className="flex text-gray-700 font-normal">{job?.applications?.length}</span>
+
+                <h1 className="text-gray-500">
+                  Enrolled:
+                  <span className="text-gray-700 font-normal ml-1">
+                    {job?.applications?.length || 0}
+                  </span>
                 </h1>
               </div>
-              <div>
+
+              {/* Right Status */}
+              <div className="flex flex-wrap items-center gap-4">
                 {jobStatus === "completed" && (
-                  <div className="flex text-gray-400 items-center gap-2 font-semibold">
+                  <div className="flex text-gray-400 items-center gap-2 font-semibold text-sm sm:text-base">
                     <SiTicktick />
                     <p>Contest Completed</p>
                   </div>
                 )}
+
                 {jobStatus === "notstart" && (
-                  <div className="flex items-center">
-                    <h1 className="text-gray-700 font-medium">Round 1 </h1>
+                  <div className="flex items-center text-sm sm:text-base">
+                    <h1 className="text-gray-700 font-medium">Round 1</h1>
                     <PiDotDuotone size={20} className="fill-green-600" />
                     <p className="text-green-600">Upcoming</p>
                   </div>
                 )}
+
                 {jobStatus === "start" && (
-                  <div className="flex flex-row gap-9">
-                    <div className="flex items-center">
-                      <h1 className="text-gray-700 font-medium">Round 1 </h1>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex items-center text-sm sm:text-base">
+                      <h1 className="text-gray-700 font-medium">Round 1</h1>
                       <PiDotDuotone size={20} className="fill-red-600" />
                       <p className="text-red-600">Live</p>
                     </div>
+
                     <button
-                      className="bg-blue-700 text-white px-9 py-2 text-lg rounded-4xl font-medium"
+                      className="bg-blue-700 text-white px-6 sm:px-8 py-2 text-sm sm:text-lg rounded-full font-medium"
                       onClick={() => navigate(`/job/confirmTest/${id}`)}
                     >
                       Start
@@ -136,6 +152,7 @@ const OnlineTestHomePage = () => {
               </div>
             </div>
           </div>
+
           <div className="flex flex-col bg-white rounded-xl shadow-2xl p-5 gap-3">
             <h1 className="flex text-gray-700 font-medium text-2xl">
               Round details
@@ -146,10 +163,16 @@ const OnlineTestHomePage = () => {
               </h1>
               <div className="flex gap-10">
                 <p className="text-gray-500">
-                  From : <span className="text-gray-700">{new Date(job?.createdAt).toDateString()}</span>
+                  From :{" "}
+                  <span className="text-gray-700">
+                    {new Date(job?.createdAt).toDateString()}
+                  </span>
                 </p>
                 <p className="text-gray-500">
-                  To : <span className="text-gray-700">{new Date(job?.expirationDate).toDateString()}</span>
+                  To :{" "}
+                  <span className="text-gray-700">
+                    {new Date(job?.expirationDate).toDateString()}
+                  </span>
                 </p>
               </div>
             </div>
@@ -162,18 +185,14 @@ const OnlineTestHomePage = () => {
               {job.description}
             </h1>
             <ul className="list-disc pl-5">
-              {
-                job?.responsibilities?.map(eachItem => (
-                    <li className="text-gray-600 font-semibold">
-                        {eachItem}
-                    </li>
-                ))
-              }
-              
+              {job?.responsibilities?.map((eachItem) => (
+                <li className="text-gray-600 font-semibold">{eachItem}</li>
+              ))}
             </ul>
-            
+
             <h1 className="flex text-gray-600 font-semibold">
-              Duration - {job?.aptitudeTime + job?.codingTime + job?.coreTime} Minutes
+              Duration - {job?.aptitudeTime + job?.codingTime + job?.coreTime}{" "}
+              Minutes
             </h1>
 
             <h1 className="flex text-gray-700 font-medium text-lg mt-5 mb-4">
@@ -181,7 +200,8 @@ const OnlineTestHomePage = () => {
             </h1>
             <ul className="list-disc pl-5">
               <li className="text-gray-500 font-semibold">
-                Maximum time limit is {job?.aptitudeTime + job?.codingTime + job?.coreTime} minutes.
+                Maximum time limit is{" "}
+                {job?.aptitudeTime + job?.codingTime + job?.coreTime} minutes.
               </li>
               <li className="text-gray-500 font-semibold">
                 Please ensure you click the 'Submit' button after completing the
@@ -199,7 +219,6 @@ const OnlineTestHomePage = () => {
             <h1 className="flex text-gray-600 font-semibold mt-2">
               Experience : {job?.experience}
             </h1>
-
           </div>
         </div>
         <div className="flex flex-col h-fit max-w-xl gap-5">
@@ -230,7 +249,7 @@ const OnlineTestHomePage = () => {
             {relatedJobs?.map((job) => (
               <div
                 key={job._id}
-                onClick={()=>navigate(`/job/homepage/${job._id}`)}
+                onClick={() => navigate(`/job/homepage/${job._id}`)}
                 className="flex flex-col border border-gray-200 h-fit bg-white rounded-xl px-4 py-6 gap-3 shadow-xl"
               >
                 {/* Top Section */}
@@ -253,7 +272,8 @@ const OnlineTestHomePage = () => {
                 {/* Job Info */}
                 <div className="flex flex-wrap gap-3 text-sm">
                   <p className="text-gray-500">
-                    Experience: <span className="text-gray-700">{job.experience}</span>
+                    Experience:{" "}
+                    <span className="text-gray-700">{job.experience}</span>
                   </p>
                   <p className="text-gray-500">
                     Type: <span className="text-gray-700">{job.jobType}</span>
@@ -287,8 +307,7 @@ const OnlineTestHomePage = () => {
                   </div>
 
                   <p className="text-gray-500 text-sm">
-                    Expires:{" "}
-                    {new Date(job.expirationDate).toLocaleDateString()}
+                    Expires: {new Date(job.expirationDate).toLocaleDateString()}
                   </p>
                 </div>
 
@@ -299,8 +318,6 @@ const OnlineTestHomePage = () => {
                 </p>
               </div>
             ))}
-
-
           </div>
         </div>
       </div>
