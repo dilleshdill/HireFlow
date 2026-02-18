@@ -11,10 +11,10 @@ const Login = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-            name: '',
-            email: '',
-            password: '',
-            role:''
+            name: 'dillesh',
+            email: 'dangerdil43@gmail.com',
+            password: '123',
+            role:'USER'
         })
     
     const Data = [
@@ -22,6 +22,17 @@ const Login = () => {
         { id: "2", role: "ADMIN" },
         { id: "3", role: "RECRUITER" },
     ]
+
+    const handelChange = (val) => {
+        setRole(val)
+        if (role === "RECRUITER"){
+            setFormData({...formData, name:"dillesh", email:"dangerdil43@gmail.com", password:"123", role:role})
+        }else if (role === "USER"){
+            setFormData({...formData, name:"satwik", email:"satwikg00@gmail.com", password:"123", role:role})
+        }
+    }
+
+    
 
     const handleSubmit = async (e) => {
     e.preventDefault()
@@ -95,7 +106,7 @@ const Login = () => {
                             <div
                                 key={item.id}
                                 value={item.role}
-                                onClick={()=>setRole(item.role)}
+                                onClick={()=>handelChange(item.role)}
                                 className={`px-3 py-1.5 text-sm  font-medium transition-all  cursor-pointer
                                     ${
                                     role === item.role
